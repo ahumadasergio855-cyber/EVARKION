@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101010">
+    <meta name="description" content="Escucha y descubre los vídeos musicales de EVARKION.">
+    <title>EVARKION YT | Music Player</title>
+    <link rel="icon" href="assets/icon.jpg">
+    <link rel="stylesheet" href="evarkion-yt.css">
+    <script src="evarkion-yt.js" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="index.html" aria-label="Volver a Shop Evarkion">
+                <span class="brand-mark">E</span>
+                <span class="brand-name">EVARKION<span> MUSIC</span></span>
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación de música">
+                <a class="nav-link" href="index.html">
+                    <span class="nav-icon">⌂</span> Volver a la tienda
+                </a>
+                <a class="nav-link active" href="#inicio">
+                    <span class="nav-icon">▤</span> Explorar
+                </a>
+                <a class="nav-link" href="#biblioteca">
+                    <span class="nav-icon">♫</span> Biblioteca
+                </a>
+            </nav>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-heading">TU COLECCIÓN</div>
+            <a class="collection-link" href="#populares">
+                <span class="collection-cover cover-red">★</span>
+                <span>Éxitos de EVARKION</span>
+            </a>
+            <a class="collection-link" href="#biblioteca">
+                <span class="collection-cover cover-dark">♫</span>
+                <span>Todos los vídeos</span>
+            </a>
+
+            <div class="sidebar-bottom">
+                <p>Un universo, muchos sonidos.</p>
+                <a href="https://www.youtube.com/@EVARKION" target="_blank" rel="noopener noreferrer">
+                    Visitar canal de YouTube ↗
+                </a>
+            </div>
+        </aside>
+
+        <main class="content" id="inicio">
+            <header class="topbar">
+                <div class="history-buttons" aria-label="Navegación">
+                    <button type="button" class="circle-button" onclick="history.back()" aria-label="Volver">‹</button>
+                    <button type="button" class="circle-button" onclick="history.forward()" aria-label="Avanzar">›</button>
+                </div>
+                <a class="top-channel-link" href="https://www.youtube.com/@EVARKION" target="_blank" rel="noopener noreferrer">
+                    <span class="youtube-dot">▶</span> Canal oficial
+                </a>
+            </header>
+
+            <section class="welcome-section">
+                <p class="eyebrow">EL UNIVERSO MUSICAL DE EVARKION</p>
+                <h1>Tu próximo tema<br><span>empieza aquí.</span></h1>
+                <p class="welcome-copy">Descubre los lanzamientos, escucha los favoritos y explora el sonido de EVARKION.</p>
+            </section>
+
+            <section class="player-layout" aria-label="Reproductor de vídeos">
+                <div class="player-panel">
+                    <div class="section-kicker"><span class="live-dot"></span> REPRODUCIENDO EN EVARKION</div>
+                    <div class="video-frame">
+                        <iframe
+    
+                            id="youtube-player"
+                            src="https://www.youtube.com/embed/5ADbymfBY74?rel=0"
+                            title="Reproductor de EVARKION"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="origin"
+                            allowfullscreen>
+
+                        </iframe>
+                    </div>
+                    <div class="now-playing">
+                        <div class="now-playing-info">
+                            <p class="now-label">AHORA SUENA</p>
+                            <h2 id="current-title">El Circo De Los Cuerdos</h2>
+                            <p id="current-artist">EVARKION · Vídeo musical</p>
+                        </div>
+                        <a id="youtube-open" class="youtube-open" href="https://youtu.be/5ADbymfBY74" target="_blank" rel="noopener noreferrer">
+                            Abrir en YouTube ↗
+                        </a>
+                    </div>
+                </div>
+
+                <aside class="queue-panel">
+                    <div class="queue-heading">
+                        <div>
+                            <p class="section-kicker">TU SESIÓN</p>
+                            <h2>Éxitos de EVARKION</h2>
+                        </div>
+                        <span class="queue-count" id="queue-count">06</span>
+                    </div>
+                    <p class="queue-description">Una selección de los vídeos más vistos que aparecen en el canal.</p>
+                    <div class="queue-list" id="queue-list"></div>
+                </aside>
+            </section>
+
+            <section class="video-section" id="populares">
+                <div class="section-title-row">
+                    <div>
+                        <p class="section-kicker">LO MÁS ESCUCHADO</p>
+                        <h2>Vídeos destacados</h2>
+                    </div>
+                    <span class="section-note">Ordenados por visualizaciones de tu captura</span>
+                </div>
+                <div class="video-grid" id="video-grid"></div>
+            </section>
+
+            <section class="channel-banner" id="biblioteca">
+                <div class="channel-symbol">E</div>
+                <div class="channel-text">
+                    <p class="section-kicker">SIGUE DESCUBRIENDO</p>
+                    <h2>Esto es solo el comienzo.</h2>
+                    <p>Encuentra todos los lanzamientos y novedades en el canal oficial.</p>
+                </div>
+                <a href="https://www.youtube.com/@EVARKION" target="_blank" rel="noopener noreferrer" class="subscribe-button">
+                    <span>▶</span> Visitar EVARKION
+                </a>
+            </section>
+
+            <footer class="page-footer">
+                <span>© 2026 EVARKION</span>
+                <span>Reproducción mediante YouTube</span>
+                <a href="index.html">Volver a Shop Evarkion</a>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
