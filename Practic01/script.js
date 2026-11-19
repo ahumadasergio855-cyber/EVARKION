@@ -263,3 +263,148 @@ finalizarCompra.addEventListener("click", () => {
 // =================================
 
 actualizarCarrito();
+
+
+//personalizacion de las particulas de la pagina general
+
+
+// =====================================
+// SISTEMA DE PARTICULAS EVARKION
+// =====================================
+
+
+const canvas = document.getElementById("particulas-fondo");
+const ctx = canvas.getContext("2d");
+
+let particulas = [];
+
+const coloresParticulas = [
+    "#BF544B",
+    "#BF6C3B",
+    "#733E32",
+    "#F2CEA2"
+];
+
+// AJUSTAR CANVAS
+
+function ajustarCanvas() {
+
+    const escala = window.devicePixelRatio || 1;
+
+    canvas.width = window.innerWidth * escala;
+    canvas.height = window.innerHeight * escala;
+
+    ctx.setTransform(escala, 0, 0, escala, 0, 0);
+
+    crearParticulas();
+}
+
+// CREAR PARTICULAS
+
+function crearParticulas() {
+
+    particulas = [];
+
+    const cantidad = Math.min(
+        100,
+        Math.floor(window.innerWidth * window.innerHeight / 10000)
+    );
+
+    for (let i = 0; i < cantidad; i++) {
+
+        particulas.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+
+            radio: Math.random() * 2 + 0.5,
+
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+
+            opacidad: Math.random() * 0.6 + 0.2,
+
+            color: coloresParticulas[
+                Math.floor(Math.random() * coloresParticulas.length)
+            ]
+        });
+
+    }
+}
+
+// DIBUJAR PARTICULAS
+
+function dibujarParticulas() {
+
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    particulas.forEach(p => {
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
+
+        ctx.beginPath();
+
+        ctx.arc(p.x, p.y, p.radio, 0, Math.PI * 2);
+
+        ctx.globalAlpha = p.opacidad;
+        ctx.fillStyle = p.color;
+
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+    });
+
+    ctx.globalAlpha = 1;
+}
+
+// ANIMACION
+
+let animacionActiva = true;
+
+function animarParticulas() {
+
+    if (!animacionActiva) return;
+
+    dibujarParticulas();
+
+    requestAnimationFrame(animarParticulas);
+}
+
+// MOVIMIENTO REDUCIDO
+
+const movimientoReducido = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+);
+
+function iniciarParticulas() {
+
+    if (movimientoReducido.matches) {
+        animacionActiva = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    if (!animacionActiva) {
+        animacionActiva = true;
+        animarParticulas();
+    }
+}
+
+// INICIAR
+
+window.addEventListener("resize", ajustarCanvas);
+
+ajustarCanvas();
+iniciarParticulas();
+
+movimientoReducido.addEventListener("change", iniciarParticulas);
