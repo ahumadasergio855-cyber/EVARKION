@@ -1,151 +1,122 @@
 
-/* =============================================
+/* =====================================================
    EVARKION - GOUNTER AI
    ACTIONS.JS
-   Acciones físicas de Gounter
-============================================= */
+   Movimiento hacia objetos y acciones físicas
+===================================================== */
 
-const room = document.getElementById("room");
-const cat = document.getElementById("gounter");
-const catArea = document.getElementById("cat-area");
-const roomMessage = document.getElementById("room-message");
+export function createGounterActions({
+    getObject,
+    walkTo,
+    getObjectPosition,
+    say,
+    setState,
+    delay,
+    changeNeed,
+    rememberActivity
+}) {
 
-/* =============================================
-   UTILIDADES
-============================================= */
+    /* =================================================
+       APPROACH OBJECT
+       Acercarse a un objeto de la habitación
+    ================================================= */
 
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+    async function approachObject(action) {
 
-function getObject(action) {
-    return document.querySelector(
-        `.room-object[data-action="${action}"]`
-    );
-}
+        const object = getObject(action);
 
-/* =============================================
-   APPROACH OBJECT
-   Gounter se acerca a un objeto
-============================================= */
+        if (!object) {
+            console.warn(
+                `Gounter no encuentra el objeto: ${action}`
+            );
 
-export async function approachObject(action) {
+            return false;
+        }
 
-    const object = getObject(action);
+        const position = getObjectPosition(object);
 
-    if (!object || !catArea || !room) {
-        console.warn("Gounter no encuentra el objeto:", action);
-        return false;
+        // Gounter se coloca delante del objeto.
+        const success = await walkTo(
+            position.x,
+            position.y + 45
+        );
+
+        if (success === false) return false;
+
+        await delay(300);
+
+        return true;
     }
 
-    const roomRect = room.getBoundingClientRect();
-    const objectRect = object.getBoundingClientRect();
+    /* =================================================
+       EAT
+       Comer y recuperar hambre
+    ================================================= */
 
-    const targetX =
-        objectRect.left +
-        objectRect.width / 2 -
-        roomRect.left;
+    async function eat() {
 
-    const targetY =
-        objectRect.top +
-        objectRect.height / 2 -
-        roomRect.top;
+        setState("sniffing");
 
-    const catRect = catArea.getBoundingClientRect();
+        say("Gounter está olfateando la comida...");
 
-    const currentX =
-        catRect.left +
-        catRect.width / 2 -
-        roomRect.left;
+        await delay(1200);
 
-    const currentY =
-        catRect.top +
-        catRect.height / 2 -
-        roomRect.top;
+        setState("eating");
 
-    const distance = Math.hypot(
-        targetX - currentX,
-        targetY - currentY
-    );
+        say("¡Ñam, ñam! Gounter está comiendo. 🐱");
 
-    if (distance < 65) return true;
+        await delay(4500);
 
-    cat.classList.add("walking");
+        changeNeed("hunger", 45);
+        changeNeed("happiness", 5);
 
-    if (targetX < currentX) {
-        cat.classList.add("facing-left");
-        cat.classList.remove("facing-right");
-    } else {
-        cat.classList.add("facing-right");
-        cat.classList.remove("facing-left");
+        rememberActivity("eat");
+
+        setState(null);
+
+        say("Gounter ha terminado de comer.");
+
+        return true;
     }
 
-    const duration = Math.max(500, distance * 5);
+    /* =================================================
+       DRINK
+       Beber y recuperar sed
+    ================================================= */
 
-    catArea.style.transition =
-        `left ${duration}ms linear, top ${duration}ms linear`;
+    async function drink() {
 
-    catArea.style.left =
-        `${targetX - catArea.offsetWidth / 2}px`;
+        setState("sniffing");
 
-    catArea.style.top =
-        `${targetY - catArea.offsetHeight / 2}px`;
+        say("Gounter está investigando el cuenco de agua.");
 
-    await wait(duration);
+        await delay(1000);
 
-    cat.classList.remove("walking");
+        setState("drinking");
 
-    return true;
-}
+        say("Gounter está bebiendo agua. 💧");
 
-/* =============================================
-   EAT
-   Gounter come
-============================================= */
+        await delay(3500);
 
-export async function eat() {
+        changeNeed("thirst", 50);
+        changeNeed("happiness", 3);
 
-    if (!cat) return;
+        rememberActivity("drink");
 
-    cat.classList.add("eating");
+        setState(null);
 
-    if (roomMessage) {
-        roomMessage.textContent = "Gounter está comiendo...";
+        say("Gounter ha terminado de beber.");
+
+        return true;
     }
 
-    await wait(2500);
+    /* =================================================
+       EXPORTAR ACCIONES
+    ================================================= */
 
-    cat.classList.remove("eating");
-
-    if (roomMessage) {
-        roomMessage.textContent = "¡Gounter ha comido!";
-    }
-
-    return true;
-}
-
-/* =============================================
-   DRINK
-   Gounter bebe agua
-============================================= */
-
-export async function drink() {
-
-    if (!cat) return;
-
-    cat.classList.add("drinking");
-
-    if (roomMessage) {
-        roomMessage.textContent = "Gounter está bebiendo agua...";
-    }
-
-    await wait(2000);
-
-    cat.classList.remove("drinking");
-
-    if (roomMessage) {
-        roomMessage.textContent = "¡Gounter ha bebido agua!";
-    }
-
-    return true;
+    return {
+        approachObject,
+        eat,
+        drink
+    };
 }
