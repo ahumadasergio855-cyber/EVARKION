@@ -1,12 +1,26 @@
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#0d0d0d">
+
+    <meta name="description"
+          content="Entra en Gunter's World, cuida de Gunter y descubre su pequeño universo junto a Karu.">
+
     <title>Gunter's World | EVARKION</title>
 
-    <link rel="stylesheet" href="style.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
 </head>
+
 <body>
 
 <header>
@@ -21,61 +35,45 @@
 
 <main>
 
-    <section id="room">
+    <!-- HABITACIÓN -->
 
-        <!-- Gunter -->
+    <section id="room" aria-label="Habitación de Gunter">
 
         <img
             id="gunter"
             src="assets/characters/gunter_idle.png"
-            alt="Gunter">
+            alt="Gunter descansando en su habitación"
+        >
 
-        <!-- Caja -->
+        <div class="objeto caja" aria-label="Caja">📦</div>
 
-        <div class="objeto caja">
-            📦
-        </div>
+        <div class="objeto ovillo" aria-label="Ovillo">🧶</div>
 
-        <!-- Ovillo -->
+        <div class="objeto comida" aria-label="Comida">🥣</div>
 
-        <div class="objeto ovillo">
-            🧶
-        </div>
+        <div class="objeto agua" aria-label="Agua">💧</div>
 
-        <!-- Comida -->
-
-        <div class="objeto comida">
-            🥣
-        </div>
-
-        <!-- Agua -->
-
-        <div class="objeto agua">
-            💧
-        </div>
-
-        <!-- Saco -->
-
-        <div class="objeto saco">
-            👜
-        </div>
+        <div class="objeto saco" aria-label="Saco">👜</div>
 
     </section>
 
-    <aside id="karu-panel">
+    <!-- PANEL KARU -->
+
+    <aside id="karu-panel" aria-label="Asistente Karu">
 
         <div class="karu-top">
 
             <img
                 src="assets/characters/karu_avatar.png"
-                alt="Karu"
-                id="karu-avatar">
+                alt="Avatar de Karu"
+                id="karu-avatar"
+            >
 
             <h2>Karu</h2>
 
         </div>
 
-        <div id="karu-text">
+        <div id="karu-text" aria-live="polite">
 
             ¡Hola! Soy Karu.
             Gracias por visitar a Gunter.
@@ -84,7 +82,7 @@
 
         </div>
 
-        <button id="dato-btn">
+        <button id="dato-btn" type="button">
             Dato curioso
         </button>
 
@@ -99,4 +97,5 @@
 </footer>
 
 </body>
+
 </html>
