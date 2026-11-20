@@ -1649,3 +1649,101 @@ body {
     }
 
 }
+
+
+
+/* ==========================================
+   EVARKION - GOUNTER AI ANIMATIONS
+========================================== */
+
+/* OBSERVAR */
+
+.gounter.observing {
+    animation: gounter-observing 3s ease-in-out infinite;
+}
+
+@keyframes gounter-observing {
+    0%, 100% {
+        transform: translateY(0) rotate(0);
+    }
+    35% {
+        transform: translateY(-3px) rotate(-3deg);
+    }
+    65% {
+        transform: translateY(0) rotate(3deg);
+    }
+}
+
+/* CURIOSIDAD */
+
+.gounter.curious {
+    animation: gounter-curious 1.2s ease-in-out infinite;
+}
+
+@keyframes gounter-curious {
+    0%, 100% {
+        transform: translateY(0) rotate(0);
+    }
+    30% {
+        transform: translateY(-3px) rotate(-5deg);
+    }
+    65% {
+        transform: translateY(2px) rotate(4deg);
+    }
+}
+
+/* ACICALAMIENTO */
+
+.gounter.grooming {
+    animation: gounter-grooming 1.5s ease-in-out infinite;
+}
+
+@keyframes gounter-grooming {
+    0%, 100% {
+        transform: rotate(0) translateY(0);
+    }
+    50% {
+        transform: rotate(-7deg) translateY(5px);
+    }
+}
+
+/* AMASAR MANTAS */
+
+.gounter.kneading {
+    animation: gounter-kneading .8s ease-in-out infinite;
+}
+
+@keyframes gounter-kneading {
+    0%, 100% {
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        transform: translateY(3px) scaleY(.97);
+    }
+}
+
+/* SALTO */
+
+.gounter.jumping {
+    animation: gounter-jumping .65s ease-out;
+}
+
+@keyframes gounter-jumping {
+    0% {
+        transform: translateY(0);
+    }
+    45% {
+        transform: translateY(-45px) scale(1.04);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* EVITAR SELECCIONES ACCIDENTALES */
+
+.cat-area,
+.cat-area img {
+    -webkit-user-select: none;
+    user-select: none;
+}
