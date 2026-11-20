@@ -1,101 +1,118 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color" content="#0d0d0d">
-
-    <meta name="description"
-          content="Entra en Gunter's World, cuida de Gunter y descubre su pequeño universo junto a Karu.">
+    <meta name="theme-color" content="#080808">
+    <meta name="description" content="Gunter's World, el pequeño mundo interactivo de Gunter.">
 
     <title>Gunter's World | EVARKION</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
-
 </head>
 
 <body>
 
-<header>
+    <main id="game">
 
-    <h1>🐈 Gunter's World</h1>
+        <!-- ESCENARIO PRINCIPAL -->
+        <section id="room" aria-label="Habitación interactiva de Gunter">
 
-    <p>
-        Cuida de Gunter, juega con él y descubre curiosidades junto a Karu.
-    </p>
+            <!-- Título decorativo -->
+            <div id="game-sign">
+                <span class="sign-small">EVARKION PRESENTA</span>
+                <h1>GUNTER'S WORLD</h1>
+            </div>
 
-</header>
-
-<main>
-
-    <!-- HABITACIÓN -->
-
-    <section id="room" aria-label="Habitación de Gunter">
-
-        <img
-            id="gunter"
-            src="assets/characters/gunter_idle.png"
-            alt="Gunter descansando en su habitación"
-        >
-
-        <div class="objeto caja" aria-label="Caja">📦</div>
-
-        <div class="objeto ovillo" aria-label="Ovillo">🧶</div>
-
-        <div class="objeto comida" aria-label="Comida">🥣</div>
-
-        <div class="objeto agua" aria-label="Agua">💧</div>
-
-        <div class="objeto saco" aria-label="Saco">👜</div>
-
-    </section>
-
-    <!-- PANEL KARU -->
-
-    <aside id="karu-panel" aria-label="Asistente Karu">
-
-        <div class="karu-top">
-
+            <!-- PERSONAJE -->
             <img
-                src="assets/characters/karu_avatar.png"
-                alt="Avatar de Karu"
-                id="karu-avatar"
+                id="gunter"
+                src="assets/characters/gunter_idle.png"
+                alt="Gunter"
+                draggable="false"
             >
 
-            <h2>Karu</h2>
+            <!-- OBJETOS INTERACTIVOS -->
+            <button
+                class="game-object food-bowl"
+                data-object="comida"
+                data-action="comer"
+                aria-label="Comedero de comida"
+                title="Comedero de comida"
+            >
+                🥣
+            </button>
 
-        </div>
+            <button
+                class="game-object water-bowl"
+                data-object="agua"
+                data-action="beber"
+                aria-label="Comedero de agua"
+                title="Comedero de agua"
+            >
+                💧
+            </button>
 
-        <div id="karu-text" aria-live="polite">
+            <button
+                class="game-object food-bag"
+                data-object="saco"
+                data-action="inspeccionar"
+                aria-label="Saco de pienso"
+                title="Saco de pienso"
+            >
+                👜
+            </button>
 
-            ¡Hola! Soy Karu.
-            Gracias por visitar a Gunter.
+            <button
+                class="game-object cardboard-box"
+                data-object="caja"
+                data-action="sentarse"
+                aria-label="Caja de Gunter"
+                title="Caja pequeña"
+            >
+                📦
+            </button>
 
-            ¿Quieres ayudarme a cuidarlo?
+            <!-- MENSAJE DE ACCIÓN -->
+            <div id="action-message" role="status" aria-live="polite">
+                Gunter está descansando.
+            </div>
 
-        </div>
+            <!-- PANEL DE KARU -->
+            <aside id="karu-panel">
 
-        <button id="dato-btn" type="button">
-            Dato curioso
-        </button>
+                <div class="karu-heading">
+                    <img
+                        src="assets/characters/karu_avatar.png"
+                        alt="Karu"
+                        id="karu-avatar"
+                    >
 
-    </aside>
+                    <div>
+                        <h2>Karu</h2>
+                        <span>Asistente de Gunter</span>
+                    </div>
+                </div>
 
-</main>
+                <p id="karu-text">
+                    ¡Hola! Selecciona un objeto para ver qué hace Gunter.
+                </p>
 
-<footer>
+            </aside>
 
-    EVARKION © Gunter's World
+            <!-- INDICADOR DE ESTADO -->
+            <div id="status-indicator">
+                <span class="status-light"></span>
+                <span id="status-text">Gunter está tranquilo</span>
+            </div>
 
-</footer>
+        </section>
+
+    </main>
+
+    <script src="js/game.js"></script>
 
 </body>
-
 </html>
