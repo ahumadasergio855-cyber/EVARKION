@@ -710,3 +710,72 @@ body {
 .window-rays {
     user-select: none;
 }
+
+
+/* ==========================================
+   GOUNTER - SOMBRA DINÁMICA
+========================================== */
+
+.cat-shadow {
+    position: absolute;
+
+    width: 125px;
+    height: 20px;
+
+    bottom: 32px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, .65);
+
+    filter: blur(9px);
+
+    transform: scale(1);
+
+    transition:
+        transform .5s ease,
+        opacity .5s ease,
+        filter .5s ease;
+
+    animation: cat-shadow-breathe 4s ease-in-out infinite;
+}
+
+@keyframes cat-shadow-breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: .65;
+    }
+
+    50% {
+        transform: scale(.92);
+        opacity: .48;
+    }
+}
+
+/* Caminando */
+
+.cat-area:has(.gounter.walking) .cat-shadow {
+    transform: scale(.78);
+    opacity: .4;
+}
+
+/* Comiendo o bebiendo */
+
+.cat-area:has(.gounter.eating) .cat-shadow,
+.cat-area:has(.gounter.drinking) .cat-shadow {
+    transform: scale(.95);
+}
+
+/* Durmiendo */
+
+.cat-area:has(.gounter.sleeping) .cat-shadow {
+    transform: scale(1.12);
+    opacity: .7;
+    filter: blur(12px);
+}
+
+/* Ronroneando */
+
+.cat-area:has(.gounter.purring) .cat-shadow {
+    transform: scale(1.06);
+}
