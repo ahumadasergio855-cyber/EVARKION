@@ -1,14 +1,11 @@
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080808">
-    <meta name="description" content="Gunter's World, el pequeño mundo interactivo de Gunter.">
 
-    <title>Gunter's World | EVARKION</title>
+    <title>Refugio de Gunter | EVARKION</title>
 
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -17,105 +14,112 @@
 
     <main id="game">
 
-        <section id="room" aria-label="Habitación interactiva de Gunter">
+        <section id="room" aria-label="Habitación de Gunter">
 
-            <!-- TÍTULO -->
-            <div id="game-sign">
+            <!-- FONDO INDEPENDIENTE -->
+            <div class="room-background" aria-hidden="true"></div>
+
+            <!-- INDICADOR DE ESTADO -->
+            <div id="status-indicator">
+                <span class="status-light"></span>
+                <span id="status-text">Gunter está en casa</span>
+            </div>
+
+            <!-- CARTEL -->
+            <header id="game-sign">
                 <span class="sign-small">EVARKION PRESENTA</span>
-                <h1>GUNTER'S WORLD</h1>
-            </div>
+                <h1>REFUGIO DE GUNTER</h1>
+            </header>
 
-            <!-- GUNTER -->
-            <img
-                id="gunter"
-                src="./assets/characters/gunter_idle.png"
-                alt="Gunter"
-                draggable="false"
-            >
-
-            <!-- COMEDERO DE COMIDA -->
-            <button
-                class="game-object food-bowl"
-                data-object="comida"
-                data-action="comer"
-                aria-label="Comedero de comida"
-                type="button"
-            >
-                🥣
-            </button>
-
-            <!-- COMEDERO DE AGUA -->
-            <button
-                class="game-object water-bowl"
-                data-object="agua"
-                data-action="beber"
-                aria-label="Comedero de agua"
-                type="button"
-            >
-                💧
-            </button>
-
-            <!-- SACO DE PIENSO -->
-            <button
-                class="game-object food-bag"
-                data-object="saco"
-                data-action="inspeccionar"
-                aria-label="Saco de pienso"
-                type="button"
-            >
-                👜
-            </button>
-
-            <!-- CAJA -->
-            <button
-                class="game-object cardboard-box"
-                data-object="caja"
-                data-action="sentarse"
-                aria-label="Caja de Gunter"
-                type="button"
-            >
-                📦
-            </button>
-
-            <!-- MENSAJES -->
-            <div id="action-message" role="status" aria-live="polite">
-                Gunter está descansando.
-            </div>
-
-            <!-- KARU -->
+            <!-- PANEL DE KARU -->
             <aside id="karu-panel">
 
                 <div class="karu-heading">
 
                     <img
-                        src="./assets/characters/karu_avatar.png"
-                        alt="Karu"
                         id="karu-avatar"
+                        src="./assets/characters/karu_avatar.png"
+                        alt="Avatar de Karu"
                     >
 
                     <div>
                         <h2>Karu</h2>
-                        <span>Asistente de Gunter</span>
+                        <span>Asistente del refugio</span>
                     </div>
 
                 </div>
 
                 <p id="karu-text">
-                    ¡Hola! Selecciona un objeto para ver qué hace Gunter.
+                    ¡Bienvenido al refugio! Gunter está descansando.
                 </p>
 
             </aside>
 
-            <!-- ESTADO -->
-            <div id="status-indicator">
-                <span class="status-light"></span>
-                <span id="status-text">Gunter está tranquilo</span>
+            <!-- GUNTER -->
+            <img
+                id="gunter"
+                src="./assets/characters/gunter_idle.png"
+                alt="Gunter, el gato del refugio"
+                draggable="false"
+            >
+
+            <!-- CUENCO DE COMIDA -->
+            <button
+                type="button"
+                class="game-object food-bowl"
+                data-object="food-bowl"
+                data-action="feed"
+                aria-label="Cuenco de comida"
+            >
+                🥣
+            </button>
+
+            <!-- CUENCO DE AGUA -->
+            <button
+                type="button"
+                class="game-object water-bowl"
+                data-object="water-bowl"
+                data-action="drink"
+                aria-label="Cuenco de agua"
+            >
+                💧
+            </button>
+
+            <!-- SACO DE COMIDA -->
+            <button
+                type="button"
+                class="game-object food-bag"
+                data-object="food-bag"
+                data-action="food"
+                aria-label="Saco de comida"
+            >
+                🛍️
+            </button>
+
+            <!-- CAJA DE CARTÓN -->
+            <button
+                type="button"
+                class="game-object cardboard-box"
+                data-object="cardboard-box"
+                data-action="play"
+                aria-label="Caja de cartón"
+            >
+                📦
+            </button>
+
+            <!-- MENSAJES -->
+            <div id="action-message" aria-live="polite">
+                Gunter te está esperando...
             </div>
+
+            <!-- MARCO ANIMADO -->
+            <div class="room-frame" aria-hidden="true"></div>
 
         </section>
 
     </main>
 
+    <!-- JAVASCRIPT DEL JUEGO -->
     <script src="./js/game.js"></script>
 
 </body>
