@@ -1,126 +1,330 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Refugio de Gunter | EVARKION</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#080808">
+
+    <meta name="description"
+          content="El refugio interactivo de Gunter, una experiencia de EVARKION.">
+
+    <title>EVARKION | Refugio de Gunter</title>
 
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
 
-    <main id="game">
+    <main class="game-container">
 
-        <section id="room" aria-label="Habitación de Gunter">
+        <!-- =================================
+             CABECERA
+        ================================== -->
 
-            <!-- FONDO INDEPENDIENTE -->
-            <div class="room-background" aria-hidden="true"></div>
+        <header class="game-header">
 
-            <!-- INDICADOR DE ESTADO -->
-            <div id="status-indicator">
-                <span class="status-light"></span>
-                <span id="status-text">Gunter está en casa</span>
+            <div class="header-brand">
+                <span class="brand-symbol">✦</span>
+
+                <div>
+                    <h1>EVARKION</h1>
+                    <p>GUNTER'S WORLD</p>
+                </div>
             </div>
 
-            <!-- CARTEL -->
-            <header id="game-sign">
-                <span class="sign-small">EVARKION PRESENTA</span>
-                <h1>REFUGIO DE GUNTER</h1>
-            </header>
+            <div class="header-description">
+                <span class="online-indicator"></span>
+                <span>Refugio interactivo</span>
+            </div>
 
-            <!-- PANEL DE KARU -->
-            <aside id="karu-panel">
+        </header>
 
-                <div class="karu-heading">
 
-                    <img
-                        id="karu-avatar"
-                        src="./assets/characters/karu_avatar.png"
-                        alt="Avatar de Karu"
-                    >
+        <!-- =================================
+             HABITACIÓN
+        ================================== -->
 
-                    <div>
-                        <h2>Karu</h2>
-                        <span>Asistente del refugio</span>
+        <section id="room" class="room">
+
+            <!-- Fondo de la habitación -->
+
+            <div class="room-background" aria-hidden="true"></div>
+
+
+            <!-- Decoración superior -->
+
+            <div class="room-decoration">
+
+                <div class="decoration-light light-left"></div>
+                <div class="decoration-light light-right"></div>
+
+            </div>
+
+
+            <!-- Cartel -->
+
+            <div id="game-sign" class="game-sign">
+
+                <span class="sign-decoration">✦</span>
+
+                <div>
+                    <h2>EL REFUGIO DE GUNTER</h2>
+                    <p>Un pequeño mundo lleno de aventuras</p>
+                </div>
+
+                <span class="sign-decoration">✦</span>
+
+            </div>
+
+
+            <!-- =================================
+                 INDICADOR DE ESTADO
+            ================================== -->
+
+            <div id="status-indicator" class="status-indicator">
+
+                <span class="status-dot"></span>
+
+                <span id="status-text">
+                    Gunter está tranquilo
+                </span>
+
+            </div>
+
+
+            <!-- =================================
+                 OBJETOS INTERACTIVOS
+            ================================== -->
+
+
+            <!-- COMEDERO -->
+
+            <button
+                type="button"
+                class="game-object food-object"
+                data-object="food-bowl"
+                data-action="feed"
+                aria-label="Comedero de Gunter"
+                title="Comida de Gunter">
+
+                <img
+                    src="./assets/objects/comida.png"
+                    alt=""
+                    draggable="false">
+
+                <span class="object-label">COMIDA</span>
+
+            </button>
+
+
+            <!-- AGUA -->
+
+            <button
+                type="button"
+                class="game-object water-object"
+                data-object="water-bowl"
+                data-action="drink"
+                aria-label="Cuenco de agua"
+                title="Agua de Gunter">
+
+                <img
+                    src="./assets/objects/agua.png"
+                    alt=""
+                    draggable="false">
+
+                <span class="object-label">AGUA</span>
+
+            </button>
+
+
+            <!-- SACO DE PIENSO -->
+
+            <button
+                type="button"
+                class="game-object bag-object"
+                data-object="food-bag"
+                data-action="food"
+                aria-label="Saco de pienso"
+                title="Saco de pienso">
+
+                <img
+                    src="./assets/objects/saco.png"
+                    alt=""
+                    draggable="false">
+
+                <span class="object-label">PIENSO</span>
+
+            </button>
+
+
+            <!-- CAJA -->
+
+            <button
+                type="button"
+                class="game-object box-object"
+                data-object="cardboard-box"
+                data-action="play"
+                aria-label="Caja de cartón"
+                title="Caja de Gunter">
+
+                <img
+                    src="./assets/objects/caja.png"
+                    alt=""
+                    draggable="false">
+
+                <span class="object-label">CAJA</span>
+
+            </button>
+
+
+            <!-- =================================
+                 GUNTER
+            ================================== -->
+
+            <div
+                id="gunter"
+                class="gunter-character"
+                title="Haz clic para acariciar a Gunter">
+
+                <img
+                    src="./assets/characters/gunter_idle.png"
+                    alt="Gunter, el gato del refugio"
+                    draggable="false">
+
+                <span class="character-name">GUNTER</span>
+
+            </div>
+
+
+            <!-- =================================
+                 PANEL DE KARU
+            ================================== -->
+
+            <aside id="karu-panel" class="karu-panel">
+
+                <div class="karu-header">
+
+                    <div class="karu-status">
+                        <span class="karu-status-dot"></span>
+                        <span>KARU · ASISTENTE</span>
+                    </div>
+
+                    <span class="karu-decoration">✦</span>
+
+                </div>
+
+
+                <div class="karu-content">
+
+                    <button
+                        type="button"
+                        class="karu-avatar-button"
+                        aria-label="Hablar con Karu">
+
+                        <img
+                            id="karu-avatar"
+                            src="./assets/characters/karu_avatar.png"
+                            alt="Avatar de Karu"
+                            draggable="false">
+
+                    </button>
+
+
+                    <div class="karu-conversation">
+
+                        <span class="karu-name">Karu</span>
+
+                        <p id="karu-text" aria-live="polite">
+                            ¡Bienvenido al refugio! Puedes acariciar a
+                            Gunter, interactuar con los objetos o hablar
+                            conmigo haciendo clic en mi avatar.
+                        </p>
+
+                        <span class="karu-hint">
+                            Haz clic en mi avatar para conversar
+                        </span>
+
                     </div>
 
                 </div>
 
-                <p id="karu-text">
-                    ¡Bienvenido al refugio! Gunter está descansando.
-                </p>
-
             </aside>
 
-            <!-- GUNTER -->
-            <img
-                id="gunter"
-                src="./assets/characters/gunter_idle.png"
-                alt="Gunter, el gato del refugio"
-                draggable="false"
-            >
 
-            <!-- CUENCO DE COMIDA -->
-            <button
-                type="button"
-                class="game-object food-bowl"
-                data-object="food-bowl"
-                data-action="feed"
-                aria-label="Cuenco de comida"
-            >
-                🥣
-            </button>
+            <!-- =================================
+                 MENSAJE DE ACTIVIDAD
+            ================================== -->
 
-            <!-- CUENCO DE AGUA -->
-            <button
-                type="button"
-                class="game-object water-bowl"
-                data-object="water-bowl"
-                data-action="drink"
-                aria-label="Cuenco de agua"
-            >
-                💧
-            </button>
+            <div
+                id="action-message"
+                class="action-message"
+                role="status"
+                aria-live="polite">
 
-            <!-- SACO DE COMIDA -->
-            <button
-                type="button"
-                class="game-object food-bag"
-                data-object="food-bag"
-                data-action="food"
-                aria-label="Saco de comida"
-            >
-                🛍️
-            </button>
+                Gunter está descansando tranquilamente.
 
-            <!-- CAJA DE CARTÓN -->
-            <button
-                type="button"
-                class="game-object cardboard-box"
-                data-object="cardboard-box"
-                data-action="play"
-                aria-label="Caja de cartón"
-            >
-                📦
-            </button>
-
-            <!-- MENSAJES -->
-            <div id="action-message" aria-live="polite">
-                Gunter te está esperando...
             </div>
 
-            <!-- MARCO ANIMADO -->
+
+            <!-- =================================
+                 MARCO LUMINOSO
+            ================================== -->
+
             <div class="room-frame" aria-hidden="true"></div>
 
         </section>
 
+
+        <!-- =================================
+             INSTRUCCIONES
+        ================================== -->
+
+        <footer class="game-footer">
+
+            <div class="instruction">
+
+                <span class="instruction-icon">🖱</span>
+
+                <p>
+                    Haz clic en Gunter para acariciarlo.
+                    Selecciona los objetos para interactuar.
+                </p>
+
+            </div>
+
+            <div class="instruction">
+
+                <span class="instruction-icon">✥</span>
+
+                <p>
+                    También puedes arrastrar los objetos
+                    para reorganizar su habitación.
+                </p>
+
+            </div>
+
+        </footer>
+
+
+        <!-- =================================
+             PIE DE PÁGINA
+        ================================== -->
+
+        <div class="copyright">
+            EVARKION © 2026 · GUNTER'S WORLD
+        </div>
+
     </main>
 
-    <!-- JAVASCRIPT DEL JUEGO -->
-    <script src="./js/game.js"></script>
+
+    <!-- JAVASCRIPT -->
+
+    <script src="./js/game.js" defer></script>
 
 </body>
 </html>
