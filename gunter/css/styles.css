@@ -11,83 +11,71 @@
 
 :root {
     --orange: #ff8c32;
-    --orange-light: #ffb45e;
-    --dark: #11131a;
-    --white: #ffffff;
+    --orange-light: #ffbd75;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    min-height: 100vh;
-    background:
-        radial-gradient(circle at center, #29202a, #101018 75%);
-    color: var(--white);
-    font-family: Arial, Helvetica, sans-serif;
-    overflow-x: hidden;
+    background: #101016;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-/* CONTENEDOR */
+/* HABITACIÓN A PANTALLA COMPLETA */
 
 .refuge-container {
     width: 100%;
-    min-height: 100vh;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
+    height: 100vh;
+    height: 100dvh;
 }
-
-/* MARCO NARANJA */
 
 .room-frame {
     width: 100%;
-    max-width: 1500px;
-    height: min(82vh, 850px);
-    min-height: 520px;
+    height: 100%;
     padding: 4px;
-    border-radius: 18px;
 
     background: linear-gradient(
         120deg,
-        #ff6a00,
-        #ffbd69,
-        #ff6a00,
-        #ff9b36
+        #ff720e,
+        #ffd09a,
+        #ff720e,
+        #ff9b35
     );
 
     background-size: 300% 300%;
-    animation: orange-frame 7s ease infinite;
+
+    animation: frame-glow 7s ease infinite;
 
     box-shadow:
-        0 0 12px rgba(255, 126, 38, 0.7),
-        0 0 35px rgba(255, 126, 38, 0.35);
+        0 0 15px rgba(255, 127, 35, .65),
+        inset 0 0 8px rgba(255,255,255,.2);
 }
 
-@keyframes orange-frame {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+@keyframes frame-glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-/* HABITACIÓN */
+/* ESCENA */
 
 .room {
+    position: relative;
+    isolation: isolate;
+
     width: 100%;
     height: 100%;
-    position: relative;
+
     overflow: hidden;
-    isolation: isolate;
-    border-radius: 15px;
-    background: #24202b;
+    border-radius: 9px;
+
+    background: #211c20;
 }
 
 /* FONDO */
@@ -95,29 +83,31 @@ body {
 .room-background {
     position: absolute;
     inset: 0;
-    z-index: -3;
+    z-index: -2;
 
     background-image: url("../assets/background/habitacion.png");
-    background-position: center;
+
     background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
+
+    transform: scale(1.015);
 }
 
-/* CAPA DE ILUMINACIÓN */
+/* OSCURECIMIENTO SUTIL */
 
 .room-overlay {
     position: absolute;
     inset: 0;
-    z-index: -2;
+    z-index: -1;
 
-    background:
-        linear-gradient(
-            180deg,
-            rgba(10, 10, 18, 0.55),
-            transparent 32%,
-            rgba(10, 10, 18, 0.08) 65%,
-            rgba(10, 10, 18, 0.40)
-        );
+    background: linear-gradient(
+        180deg,
+        rgba(0,0,0,.27),
+        transparent 25%,
+        transparent 70%,
+        rgba(0,0,0,.15)
+    );
 
     pointer-events: none;
 }
@@ -129,13 +119,16 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 22px 28px;
+
+    padding: 20px 28px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    z-index: 10;
+    z-index: 15;
+
+    pointer-events: none;
 }
 
 .header-brand {
@@ -145,20 +138,20 @@ body {
 }
 
 .brand-icon {
+    font-size: 30px;
     color: var(--orange-light);
-    font-size: 35px;
     text-shadow: 0 0 15px var(--orange);
 }
 
 .header-brand h1 {
-    font-size: clamp(15px, 2vw, 23px);
+    font-size: clamp(14px, 1.5vw, 22px);
     letter-spacing: 3px;
-    text-shadow: 0 2px 8px #000;
+    text-shadow: 0 2px 8px black;
 }
 
 .header-brand p {
-    margin-top: 5px;
     font-size: 10px;
+    margin-top: 5px;
     letter-spacing: 2px;
     color: #ffd2a5;
 }
@@ -168,10 +161,11 @@ body {
     align-items: center;
     gap: 8px;
 
-    padding: 10px 15px;
-    border-radius: 30px;
+    padding: 9px 14px;
 
-    background: rgba(0, 0, 0, 0.45);
+    border-radius: 25px;
+
+    background: rgba(0,0,0,.45);
     backdrop-filter: blur(8px);
 
     font-size: 12px;
@@ -180,104 +174,137 @@ body {
 .status-dot {
     width: 9px;
     height: 9px;
-    background: #62ed91;
     border-radius: 50%;
+
+    background: #62ed91;
     box-shadow: 0 0 10px #62ed91;
-}
-
-/* ZONA DE JUEGO */
-
-.room-content {
-    position: absolute;
-    inset: 0;
 }
 
 /* OBJETOS */
 
 .objects-container {
     position: absolute;
-    left: 3%;
-    bottom: 8%;
-    z-index: 5;
+    inset: 0;
 
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    z-index: 4;
+
+    pointer-events: none;
 }
 
 .room-object {
-    width: 95px;
-    height: 95px;
+    position: absolute;
 
-    border: 1px solid rgba(255, 175, 100, 0.5);
-    border-radius: 15px;
-
-    background: rgba(15, 13, 18, 0.65);
-    backdrop-filter: blur(8px);
+    width: 100px;
+    height: 115px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 2px;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 
     cursor: grab;
     user-select: none;
     touch-action: none;
 
+    pointer-events: auto;
+
     transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+        filter .25s ease,
+        transform .25s ease;
 }
 
 .room-object img {
-    width: 62px;
-    height: 62px;
+    display: block;
+
+    width: 100%;
+    height: 92px;
+
     object-fit: contain;
+
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
     pointer-events: none;
-    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,.45));
 }
 
 .room-object span {
-    color: white;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: bold;
     letter-spacing: 1px;
+
+    color: white;
+    text-shadow:
+        0 2px 4px black,
+        0 0 5px black;
+
     pointer-events: none;
 }
 
 .room-object:hover {
+    filter: drop-shadow(0 0 9px rgba(255,157,75,.8));
     transform: scale(1.08);
-    border-color: var(--orange-light);
-
-    box-shadow:
-        0 0 12px rgba(255, 140, 50, 0.6);
 }
 
 .room-object:active {
     cursor: grabbing;
 }
 
+/* POSICIONES INICIALES */
+
+.food-object {
+    left: 3%;
+    top: 23%;
+}
+
+.water-object {
+    left: 18%;
+    top: 34%;
+}
+
+.sack-object {
+    left: 4%;
+    top: 46%;
+}
+
+.box-object {
+    left: 22%;
+    top: 69%;
+}
+
 /* GOUNTER */
 
 .cat-area {
     position: absolute;
-    left: 50%;
-    bottom: 9%;
 
-    width: 240px;
-    height: 260px;
+    left: 48%;
+    top: 68%;
 
-    transform: translateX(-50%);
-    z-index: 4;
+    width: 230px;
+    height: 245px;
+
+    transform: translate(-50%, -50%);
 
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: flex-end;
+    align-items: center;
+
+    z-index: 6;
 
     pointer-events: none;
+
+    transition:
+        left 1.5s cubic-bezier(.22,.8,.25,1),
+        top 1.5s cubic-bezier(.22,.8,.25,1);
 }
 
 .gounter {
@@ -288,45 +315,56 @@ body {
     object-position: center bottom;
 
     cursor: pointer;
-    user-select: none;
     pointer-events: auto;
+
+    user-select: none;
 
     transform-origin: center bottom;
 
-    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 7px 7px rgba(0,0,0,.4));
 
-    transition: filter 0.3s ease;
-    animation: cat-idle 3s ease-in-out infinite;
+    animation: idle-cat 4s ease-in-out infinite;
 }
 
-.gounter:hover {
-    filter:
-        drop-shadow(0 0 12px rgba(255, 177, 94, 0.8));
-}
-
-@keyframes cat-idle {
+@keyframes idle-cat {
     0%, 100% {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 
     50% {
-        transform: translateY(-5px);
+        transform: translateY(-4px) scale(1.008);
     }
 }
 
 /* MOVIMIENTO */
 
 .gounter.walking {
-    animation: cat-walk 0.35s ease-in-out infinite;
+    animation: walking-cat .38s ease-in-out infinite;
 }
 
-@keyframes cat-walk {
+@keyframes walking-cat {
     0%, 100% {
         transform: translateY(0) rotate(-2deg);
     }
 
     50% {
-        transform: translateY(-9px) rotate(2deg);
+        transform: translateY(-7px) rotate(2deg);
+    }
+}
+
+/* OLFATEAR */
+
+.gounter.sniffing {
+    animation: sniff-cat .7s ease-in-out infinite;
+}
+
+@keyframes sniff-cat {
+    0%, 100% {
+        transform: translateY(0) rotate(0);
+    }
+
+    50% {
+        transform: translateY(5px) rotate(-2deg);
     }
 }
 
@@ -334,32 +372,64 @@ body {
 
 .gounter.eating,
 .gounter.drinking {
-    animation: cat-eat 0.35s ease-in-out infinite;
+    animation: eat-cat .65s ease-in-out infinite;
 }
 
-@keyframes cat-eat {
+@keyframes eat-cat {
     0%, 100% {
-        transform: translateY(0);
+        transform: translateY(0) rotate(0);
     }
 
     50% {
-        transform: translateY(7px);
+        transform: translateY(8px) rotate(-2deg);
     }
 }
 
-/* RONRONEO */
+/* DORMIR */
+
+.gounter.sleeping {
+    animation: sleeping-cat 3s ease-in-out infinite;
+}
+
+@keyframes sleeping-cat {
+    0%, 100% {
+        transform: translateY(2px) scaleY(.96);
+    }
+
+    50% {
+        transform: translateY(5px) scaleY(.93);
+    }
+}
+
+/* JUGAR */
+
+.gounter.playing {
+    animation: playing-cat .55s ease-in-out infinite;
+}
+
+@keyframes playing-cat {
+    0%, 100% {
+        transform: translateY(0) rotate(-4deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(5deg);
+    }
+}
+
+/* RONRONEAR */
 
 .gounter.purring {
-    animation: cat-purr 0.2s ease-in-out infinite;
+    animation: purring-cat .3s ease-in-out infinite;
 }
 
-@keyframes cat-purr {
+@keyframes purring-cat {
     0%, 100% {
-        transform: rotate(-2deg) scale(1);
+        transform: scale(1) rotate(-1deg);
     }
 
     50% {
-        transform: rotate(2deg) scale(1.04);
+        transform: scale(1.04) rotate(1deg);
     }
 }
 
@@ -367,17 +437,17 @@ body {
 
 .cat-shadow {
     position: absolute;
-    bottom: 35px;
+    bottom: 32px;
 
-    width: 130px;
-    height: 20px;
+    width: 125px;
+    height: 19px;
 
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0,0,0,.4);
     filter: blur(8px);
 }
 
-/* NOMBRE DEL GATO */
+/* NOMBRE */
 
 .cat-name {
     position: absolute;
@@ -385,89 +455,57 @@ body {
 
     padding: 7px 17px;
 
-    border-radius: 20px;
-    background: rgba(0, 0, 0, 0.65);
-
-    border: 1px solid rgba(255, 161, 77, 0.6);
+    background: rgba(0,0,0,.62);
+    border: 1px solid rgba(255,156,75,.7);
+    border-radius: 25px;
 
     font-size: 11px;
-    letter-spacing: 2px;
     font-weight: bold;
-
-    display: flex;
-    align-items: center;
-    gap: 7px;
+    letter-spacing: 2px;
 }
 
-.cat-heart {
-    color: #ff775f;
+.cat-name span {
+    color: #ff826d;
 }
 
 /* MENSAJE */
 
 .room-message {
     position: absolute;
+
     left: 50%;
     bottom: 3%;
 
     transform: translateX(-50%);
 
-    padding: 11px 22px;
+    padding: 10px 20px;
+
     border-radius: 30px;
 
-    background: rgba(10, 10, 15, 0.75);
-    border: 1px solid rgba(255, 165, 80, 0.5);
+    background: rgba(10,10,15,.8);
+    border: 1px solid rgba(255,150,65,.7);
 
     color: white;
+
     font-size: 12px;
     text-align: center;
 
-    z-index: 8;
+    z-index: 12;
     pointer-events: none;
 
-    transition: opacity 0.3s ease;
-}
-
-/* PIE */
-
-.refuge-footer {
-    width: 100%;
-    max-width: 1500px;
-
-    display: flex;
-    justify-content: space-between;
-
-    padding: 5px 10px;
-
-    color: #a8a0a0;
-    font-size: 11px;
-    letter-spacing: 1px;
+    transition: opacity .3s ease;
 }
 
 /* RESPONSIVE */
 
-@media (max-width: 700px) {
-
-    .refuge-container {
-        padding: 8px;
-    }
-
-    .room-frame {
-        height: 85vh;
-        min-height: 580px;
-    }
+@media(max-width: 700px) {
 
     .room-header {
-        padding: 15px;
-    }
-
-    .room-status {
-        font-size: 9px;
-        padding: 7px;
+        padding: 12px;
     }
 
     .header-brand h1 {
-        font-size: 13px;
+        font-size: 12px;
         letter-spacing: 1px;
     }
 
@@ -475,20 +513,18 @@ body {
         font-size: 8px;
     }
 
-    .objects-container {
-        left: 8px;
-        bottom: 12%;
-        gap: 8px;
+    .room-status {
+        font-size: 9px;
+        padding: 7px;
     }
 
     .room-object {
-        width: 67px;
-        height: 72px;
+        width: 70px;
+        height: 85px;
     }
 
     .room-object img {
-        width: 45px;
-        height: 45px;
+        height: 65px;
     }
 
     .room-object span {
@@ -496,10 +532,8 @@ body {
     }
 
     .cat-area {
-        width: 180px;
-        height: 205px;
-        bottom: 13%;
-        left: 55%;
+        width: 175px;
+        height: 195px;
     }
 
     .gounter {
@@ -508,23 +542,15 @@ body {
     }
 
     .room-message {
-        bottom: 4%;
-        width: max-content;
-        max-width: 80%;
+        bottom: 2%;
+        max-width: 85%;
         font-size: 10px;
-    }
-
-    .refuge-footer {
-        font-size: 9px;
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+@media(prefers-reduced-motion: reduce) {
+    .room-frame,
+    .gounter {
+        animation-duration: 3s;
     }
 }
