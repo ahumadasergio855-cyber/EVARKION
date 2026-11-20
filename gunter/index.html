@@ -1,220 +1,219 @@
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Refugio de Gunter | EVARKION</title>
+    <title>Refugio de Gounter | EVARKION</title>
 
-    <!-- ESTILOS -->
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="./css/karu-chat.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/karu-chat.css">
 
-    <!-- JAVASCRIPT -->
-    <script src="./js/game.js" defer></script>
-    <script src="./js/karu-chat.js" defer></script>
+    <script src="js/game.js" defer></script>
+    <script src="js/karu-chat.js" defer></script>
 </head>
 
 <body>
 
-    <main class="game-container">
+    <main class="refuge-container">
 
-        <!-- ESCENARIO -->
+        <!-- Marco animado de la habitación -->
         <section class="room-frame">
 
             <div class="room" id="room">
 
-                <!-- FONDO -->
+                <!-- Fondo -->
                 <div class="room-background"></div>
 
-                <!-- OSCURIDAD -->
+                <!-- Capa decorativa -->
                 <div class="room-overlay"></div>
 
-                <!-- CABECERA -->
-                <header class="game-header">
+                <!-- Cabecera -->
+                <header class="room-header">
 
-                    <div class="brand">
-
-                        <div class="brand-icon">✦</div>
+                    <div class="header-brand">
+                        <span class="brand-icon">✦</span>
 
                         <div>
-                            <h1>REFUGIO DE GUNTER</h1>
-                            <p>EVARKION · Un pequeño mundo para un gran compañero</p>
+                            <h1>REFUGIO DE GOUNTER</h1>
+                            <p>EVARKION · UN PEQUEÑO MUNDO</p>
                         </div>
-
                     </div>
 
-                    <div class="header-status">
-                        <span class="online-dot"></span>
-                        Hogar activo
+                    <div class="room-status">
+                        <span class="status-dot"></span>
+                        <span>Gounter está en casa</span>
                     </div>
 
                 </header>
 
-                <!-- ESTADO DE GUNTER -->
-                <div id="status-indicator">
+                <!-- Zona de juego -->
+                <div class="room-content">
 
-                    <span class="status-light"></span>
+                    <!-- Objetos interactivos -->
+                    <div class="objects-container">
 
-                    <span id="status-text">
-                        Gunter está descansando
-                    </span>
+                        <button class="room-object"
+                                id="food-object"
+                                data-action="food"
+                                aria-label="Comida de Gounter"
+                                draggable="false">
+
+                            <img src="assets/objects/comida.png"
+                                 alt="Comida">
+
+                            <span>COMIDA</span>
+                        </button>
+
+                        <button class="room-object"
+                                id="water-object"
+                                data-action="water"
+                                aria-label="Agua de Gounter"
+                                draggable="false">
+
+                            <img src="assets/objects/agua.png"
+                                 alt="Agua">
+
+                            <span>AGUA</span>
+                        </button>
+
+                        <button class="room-object"
+                                id="sack-object"
+                                data-action="sack"
+                                aria-label="Saco de Gounter"
+                                draggable="false">
+
+                            <img src="assets/objects/saco.png"
+                                 alt="Saco">
+
+                            <span>SACO</span>
+                        </button>
+
+                        <button class="room-object"
+                                id="box-object"
+                                data-action="box"
+                                aria-label="Caja de Gounter"
+                                draggable="false">
+
+                            <img src="assets/objects/caja.png"
+                                 alt="Caja">
+
+                            <span>CAJA</span>
+                        </button>
+
+                    </div>
+
+                    <!-- Gounter -->
+                    <div class="cat-area">
+
+                        <div class="cat-shadow"></div>
+
+                        <img
+                            src="assets/characters/gunter_idle.png"
+                            alt="Gounter, el gato de EVARKION"
+                            id="gounter"
+                            class="gounter"
+                            draggable="false"
+                            title="Pulsa para acariciar a Gounter"
+                        >
+
+                        <div class="cat-name">
+                            <span>GOUNTER</span>
+                            <span class="cat-heart">♥</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Mensajes del refugio -->
+                    <div class="room-message" id="room-message">
+                        ¡Bienvenido al refugio!
+                    </div>
 
                 </div>
 
-                <!-- COMIDA -->
-                <div class="game-object object-food"
-                     data-object="food-bowl"
-                     data-action="feed">
+                <!-- Chat de Karu -->
+                <aside class="karu-chat" id="karu-chat">
 
-                    <img src="./assets/objects/comida.png"
-                         alt="Cuenco de comida"
-                         draggable="false">
+                    <div class="karu-header">
 
-                    <span class="object-label">Comida</span>
+                        <img
+                            src="assets/characters/karu_avatar.png"
+                            alt="Karu"
+                            class="karu-avatar"
+                        >
 
-                </div>
+                        <div class="karu-info">
+                            <strong>Karu</strong>
+                            <span>Asistente del refugio</span>
+                        </div>
 
-                <!-- AGUA -->
-                <div class="game-object object-water"
-                     data-object="water-bowl"
-                     data-action="drink">
+                        <button
+                            class="karu-minimize"
+                            id="karu-minimize"
+                            aria-label="Minimizar chat"
+                        >−</button>
 
-                    <img src="./assets/objects/agua.png"
-                         alt="Cuenco de agua"
-                         draggable="false">
+                    </div>
 
-                    <span class="object-label">Agua</span>
+                    <div class="karu-chat-content" id="karu-chat-content">
 
-                </div>
+                        <div class="karu-messages" id="karu-messages">
 
-                <!-- SACO DE PIENSO -->
-                <div class="game-object object-bag"
-                     data-object="food-bag"
-                     data-action="food">
+                            <div class="message karu-message">
+                                ¡Hola! Soy Karu. 🐾
 
-                    <img src="./assets/objects/saco.png"
-                         alt="Saco de pienso"
-                         draggable="false">
+                                Gounter está esperándote.
+                                Puedes darle comida, agua o jugar con él.
+                            </div>
 
-                    <span class="object-label">Pienso</span>
+                        </div>
 
-                </div>
+                        <div class="karu-options" id="karu-options">
 
-                <!-- CAJA -->
-                <div class="game-object object-box"
-                     data-object="cardboard-box"
-                     data-action="play">
+                            <button data-message="¿Cómo está Gounter?">
+                                ¿Cómo está Gounter?
+                            </button>
 
-                    <img src="./assets/objects/caja.png"
-                         alt="Caja de cartón"
-                         draggable="false">
+                            <button data-message="Quiero darle de comer">
+                                Darle de comer
+                            </button>
 
-                    <span class="object-label">Caja</span>
+                            <button data-message="Quiero jugar con Gounter">
+                                Jugar
+                            </button>
 
-                </div>
+                        </div>
 
-                <!-- GUNTER -->
-                <div class="gunter-character" id="gunter">
+                        <form class="karu-input-area" id="karu-form">
 
-                    <div class="character-shadow"></div>
+                            <input
+                                type="text"
+                                id="karu-input"
+                                placeholder="Habla con Karu..."
+                                autocomplete="off"
+                                maxlength="250"
+                            >
 
-                    <img src="./assets/characters/gunter_idle.png"
-                         alt="Gunter"
-                         draggable="false">
+                            <button type="submit" aria-label="Enviar mensaje">
+                                ➤
+                            </button>
 
-                </div>
+                        </form>
 
-                <!-- MENSAJE DEL JUEGO -->
-                <div class="action-message" id="action-message">
-                    ¡Bienvenido al refugio!
-                </div>
+                    </div>
 
-                <!-- VIÑETA -->
-                <div class="room-vignette"></div>
+                </aside>
 
             </div>
 
         </section>
 
-        <!-- AVATAR ORIGINAL DE KARU -->
-        <button class="karu-launcher"
-                id="karu-toggle"
-                type="button"
-                aria-label="Abrir chat con Karu"
-                aria-expanded="false">
-
-            <span class="karu-launcher-glow"></span>
-
-            <img id="karu-avatar"
-                 src="./assets/characters/karu_avatar.png"
-                 alt="Karu"
-                 draggable="false">
-
-            <span class="karu-online"></span>
-
-            <span class="karu-launcher-label">Karu</span>
-
-        </button>
-
-        <!-- VENTANA DEL CHAT -->
-        <section class="karu-chat"
-                 id="karu-chat"
-                 aria-label="Chat con Karu"
-                 aria-hidden="true"
-                 hidden>
-
-            <!-- CABECERA DEL CHAT -->
-            <div class="chat-header">
-
-                <div class="chat-character">
-
-                    <div class="chat-avatar">
-
-                        <img src="./assets/characters/karu_avatar.png"
-                             alt="Karu">
-
-                    </div>
-
-                    <div>
-                        <h2>Karu</h2>
-
-                        <span>
-                            <span class="chat-online-dot"></span>
-                            Disponible en el refugio
-                        </span>
-                    </div>
-
-                </div>
-
-                <button class="chat-close"
-                        id="karu-close"
-                        type="button"
-                        aria-label="Cerrar chat">
-                    ×
-                </button>
-
-            </div>
-
-            <!-- MENSAJES -->
-            <div class="chat-messages" id="chat-messages">
-
-                <div class="chat-message karu-message">
-
-                    <span class="message-author">Karu</span>
-
-                    ¡Hola! ¿Qué tal? Estoy aquí para acompañarte.
-
-                </div>
-
-            </div>
-
-            <!-- OPCIONES DE CONVERSACIÓN -->
-            <div class="chat-options" id="chat-options"></div>
-
-        </section>
+        <!-- Pie de página -->
+        <footer class="refuge-footer">
+            <span>EVARKION</span>
+            <span>Un lugar para descansar y compartir aventuras.</span>
+        </footer>
 
     </main>
 
