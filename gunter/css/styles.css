@@ -39,7 +39,7 @@ body {
 }
 
 /* =========================================
-   HABITACIÓN Y FONDO
+   HABITACIÓN
 ========================================= */
 
 #room {
@@ -51,43 +51,79 @@ body {
     overflow: hidden;
     isolation: isolate;
 
-    /* COLOR DE RESPALDO */
     background-color: #241a15;
 
-    /* RUTA REAL DE LA IMAGEN */
+    border: 0;
+    border-radius: 8px;
+}
+
+/* =========================================
+   FONDO DE LA HABITACIÓN
+========================================= */
+
+.room-background {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
     background-image: url("../assets/background/habitacion.png");
 
-    /* AJUSTE DEL FONDO */
     background-size: 100% 100%;
-    background-position: center center;
+    background-position: center;
     background-repeat: no-repeat;
 
-    /* MARCO */
-    border: 2px solid #21140e;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* =========================================
+   MARCO ANIMADO INDEPENDIENTE
+========================================= */
+
+.room-frame {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 100;
+
+    /* CENTRO COMPLETAMENTE TRANSPARENTE */
+    background: transparent;
+
+    /* SOLO SE DIBUJAN LOS BORDES */
+    border: 3px solid #d46a32;
     border-radius: 8px;
 
-    /* ILUMINACIÓN */
     box-shadow:
-        0 0 8px rgba(255, 115, 35, 0.35),
-        inset 0 0 15px rgba(0, 0, 0, 0.25);
+        0 0 7px rgba(255, 105, 35, 0.35),
+        inset 0 0 7px rgba(255, 105, 35, 0.12);
+
+    pointer-events: none;
 
     animation: room-glow 4s ease-in-out infinite;
 }
 
+/* ANIMACIÓN DEL MARCO */
+
 @keyframes room-glow {
+
     0%, 100% {
-        border-color: #21140e;
+        border-color: #d46a32;
+
         box-shadow:
-            0 0 7px rgba(255, 105, 35, 0.25),
-            inset 0 0 12px rgba(0, 0, 0, 0.2);
+            0 0 7px rgba(255, 105, 35, 0.3),
+            inset 0 0 7px rgba(255, 105, 35, 0.12);
     }
 
     50% {
-        border-color: #a84d22;
+        border-color: #ffbd68;
+
         box-shadow:
-            0 0 13px rgba(255, 105, 35, 0.65),
-            0 0 25px rgba(255, 105, 35, 0.2),
-            inset 0 0 12px rgba(0, 0, 0, 0.2);
+            0 0 13px rgba(255, 105, 35, 0.75),
+            0 0 25px rgba(255, 105, 35, 0.25),
+            inset 0 0 9px rgba(255, 170, 90, 0.15);
     }
 }
 
@@ -118,6 +154,7 @@ body {
 
 .sign-small {
     display: block;
+
     font-size: 8px;
     letter-spacing: 3px;
     color: #e7a47b;
@@ -169,7 +206,7 @@ body {
 }
 
 /* =========================================
-   OBJETOS
+   OBJETOS INTERACTIVOS
 ========================================= */
 
 .game-object {
@@ -180,8 +217,13 @@ body {
     justify-content: center;
     align-items: center;
 
+    padding: 0;
+
     border: none;
+    outline: none;
     background: transparent;
+
+    font-family: inherit;
 
     cursor: grab;
     touch-action: none;
@@ -212,35 +254,59 @@ body {
         drop-shadow(0 0 18px rgba(255, 115, 35, 0.6));
 }
 
+/* =========================================
+   CUENCO DE COMIDA
+========================================= */
+
 .food-bowl {
     left: 30%;
     top: 78%;
+
     width: clamp(38px, 5vw, 72px);
     height: clamp(38px, 5vw, 72px);
+
     font-size: clamp(30px, 4vw, 55px);
 }
+
+/* =========================================
+   CUENCO DE AGUA
+========================================= */
 
 .water-bowl {
     left: 39%;
     top: 78%;
+
     width: clamp(32px, 4.5vw, 65px);
     height: clamp(32px, 4.5vw, 65px);
+
     font-size: clamp(26px, 3.5vw, 48px);
 }
+
+/* =========================================
+   SACO DE COMIDA
+========================================= */
 
 .food-bag {
     left: 12%;
     top: 73%;
+
     width: clamp(45px, 6vw, 85px);
     height: clamp(55px, 7vw, 100px);
+
     font-size: clamp(35px, 5vw, 65px);
 }
+
+/* =========================================
+   CAJA DE CARTÓN
+========================================= */
 
 .cardboard-box {
     left: 72%;
     top: 74%;
+
     width: clamp(48px, 6vw, 90px);
     height: clamp(45px, 5.5vw, 80px);
+
     font-size: clamp(36px, 5vw, 65px);
 }
 
@@ -254,16 +320,19 @@ body {
 
     left: 50%;
     bottom: 3%;
+
     transform: translateX(-50%);
 
     max-width: 80%;
     padding: 9px 18px;
 
     background: rgba(8, 8, 8, 0.82);
+
     border: 1px solid rgba(255, 135, 65, 0.45);
     border-radius: 20px;
 
     color: #ffd1ad;
+
     font-size: clamp(11px, 1.2vw, 14px);
     text-align: center;
 
@@ -271,7 +340,7 @@ body {
 }
 
 /* =========================================
-   KARU
+   PANEL DE KARU
 ========================================= */
 
 #karu-panel {
@@ -285,16 +354,19 @@ body {
     padding: 12px;
 
     background: rgba(12, 12, 15, 0.88);
+
     border: 1px solid rgba(255, 135, 65, 0.45);
     border-radius: 12px;
 
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+
     backdrop-filter: blur(5px);
 }
 
 .karu-heading {
     display: flex;
     align-items: center;
+
     gap: 10px;
     margin-bottom: 9px;
 }
@@ -302,6 +374,7 @@ body {
 #karu-avatar {
     width: clamp(35px, 4vw, 55px);
     height: clamp(35px, 4vw, 55px);
+
     object-fit: contain;
     border-radius: 50%;
 }
@@ -318,6 +391,7 @@ body {
 
 #karu-text {
     color: #eee;
+
     font-size: clamp(10px, 1vw, 13px);
     line-height: 1.5;
 }
@@ -335,11 +409,12 @@ body {
 
     display: flex;
     align-items: center;
-    gap: 7px;
 
+    gap: 7px;
     padding: 8px 11px;
 
     background: rgba(10, 10, 10, 0.75);
+
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
 
@@ -351,8 +426,11 @@ body {
     width: 8px;
     height: 8px;
 
+    flex-shrink: 0;
+
     background: #7dce75;
     border-radius: 50%;
+
     box-shadow: 0 0 7px #7dce75;
 }
 
@@ -368,6 +446,11 @@ body {
 
     #room {
         border-radius: 5px;
+    }
+
+    .room-frame {
+        border-radius: 5px;
+        border-width: 2px;
     }
 
     #game-sign {
@@ -388,6 +471,7 @@ body {
     #karu-panel {
         top: 12%;
         right: 2%;
+
         width: 145px;
         padding: 8px;
     }
@@ -413,6 +497,7 @@ body {
     #status-indicator {
         top: 12%;
         left: 2%;
+
         padding: 6px 8px;
         font-size: 9px;
     }
@@ -446,6 +531,10 @@ body {
         padding: 7px 12px;
     }
 }
+
+/* =========================================
+   MÓVILES PEQUEÑOS
+========================================= */
 
 @media (max-width: 380px) {
 
