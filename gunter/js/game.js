@@ -2,7 +2,7 @@
 /* =====================================================
    EVARKION - GOUNTER AI SYSTEM
    Mascota virtual autónoma
-   Version 2.1
+   Versión 3.0
 ===================================================== */
 
 import { createGounterActions } from "./gounter-ai/actions.js";
@@ -10,7 +10,7 @@ import { createGounterActions } from "./gounter-ai/actions.js";
 document.addEventListener("DOMContentLoaded", () => {
 
     /* =================================================
-       1. ELEMENTOS PRINCIPALES
+       1. ELEMENTOS
     ================================================= */
 
     const room = document.getElementById("room");
@@ -18,19 +18,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const catArea = document.getElementById("cat-area");
     const message = document.getElementById("room-message");
 
-    const objects = document.querySelectorAll(".room-object");
-
     if (!room || !cat || !catArea) {
-        console.error("GOUNTER: No se encuentra la habitación.");
+        console.error("Gounter: faltan elementos principales del HTML.");
         return;
     }
+
+    const objects = [...document.querySelectorAll(".room-object")];
+
+    const hungerBar = document.getElementById("hunger-bar");
+    const thirstBar = document.getElementById("thirst-bar");
+    const energyBar = document.getElementById("energy-bar");
+    const happinessBar = document.getElementById("happiness-bar");
+
+    const hungerValue = document.getElementById("hunger-value");
+    const thirstValue = document.getElementById("thirst-value");
+    const energyValue = document.getElementById("energy-value");
+    const happinessValue = document.getElementById("happiness-value");
 
     /* =================================================
        2. CONFIGURACIÓN
     ================================================= */
 
-    const clamp = (v, min, max) =>
-        Math.max(min, Math.min(max, v));
+    const clamp = (value, min = 0, max = 100) =>
+        Math.max(min, Math.min(max, value));
 
     const random = (min, max) =>
         Math.random() * (max - min) + min;
@@ -39,23 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
         new Promise(resolve => setTimeout(resolve, ms));
 
     let busy = false;
-    let currentAction = "idle";
-    let currentLocation = "floor";
-
+    let currentState = "idle";
     let idleTimer = null;
-    let needsTimer = null;
+    let decisionTimer = null;
     let messageTimer = null;
     let drag = null;
-
-    let lastActivity = null;
-    let lastDecision = 0;
-
-    const DECISION_MIN = 7000;
-    const DECISION_MAX = 14000;
-
-    /* =================================================
-       3. NECESIDADES
-    ================================================= */
+    let lastActivity = Date.now();
 
     const needs = {
         hunger: 65,
@@ -63,44 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
         energy: 85,
         happiness: 90
     };
-
-    function updateNeedsUI() {
-
-        Object.entries(needs).forEach(([name, amount]) => {
-
-            const bar = document.getElementById(`${name}-bar`);
-            const value = document.getElementById(`${name}-value`);
-
-            if (!bar) return;
-
-            const number = Math.round(amount);
-
-            bar.style.width = `${number}%`;
-            bar.classList.toggle("low", number < 25);
-
-            if (value) {
-                value.textContent = `${number}%`;
-            }
-
-        });
-    }
-
-    function changeNeed(name, amount) {
-
-        if (!(name in needs)) return;
-
-        needs[name] = clamp(
-            needs[name] + amount,
-            0,
-            100
-        );
-
-        updateNeedsUI();
-    }
-
-    /* =================================================
-       4. PERSONALIDAD
-    ================================================= */
 
     const personality = {
         curiosity: 85,
@@ -111,75 +72,121 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /* =================================================
-       5. MEMORIA DE GOUNTER
+       3. MEMORIA LOCAL
     ================================================= */
 
-    const MEMORY_KEY = "evarkion_gounter_memory_v2";
+    const MEMORY_KEY = "evarkion_gounter_memory_v3";
 
     function loadMemory() {
-
         try {
+            const saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
 
-            const saved = JSON.parse(
-                localStorage.getItem(MEMORY_KEY)
-            );
-
-            if (saved && typeof saved === "object") {
-                return {
-                    visits: saved.visits || {},
-                    favorites: saved.favorites || [],
-                    activities: saved.activities || {},
-                    discoveries: saved.discoveries || [],
-                    lastLocation: saved.lastLocation || null
-                };
-            }
-
-        } catch (error) {
-            console.warn("Gounter: No se pudo cargar la memoria.");
+            return {
+                visits: saved?.visits || 0,
+                activities: saved?.activities || {},
+                discoveries: saved?.discoveries || [],
+                favorites: saved?.favorites || [],
+                lastLocation: saved?.lastLocation || "center"
+            };
+        } catch {
+            return {
+                visits: 0,
+                activities: {},
+                discoveries: [],
+                favorites: [],
+                lastLocation: "center"
+            };
         }
-
-        return {
-            visits: {},
-            favorites: [],
-            activities: {},
-            discoveries: [],
-            lastLocation: null
-        };
     }
 
     const memory = loadMemory();
 
+    memory.visits++;
+
     function saveMemory() {
-
-        try {
-            localStorage.setItem(
-                MEMORY_KEY,
-                JSON.stringify(memory)
-            );
-        } catch (error) {
-            console.warn("Gounter: No se pudo guardar la memoria.");
-        }
+        localStorage.setItem(MEMORY_KEY, JSON.stringify(memory));
     }
 
-    function rememberLocation(id) {
+    function rememberActivity(activity) {
+        memory.activities[activity] =
+            (memory.activities[activity] || 0) + 1;
 
-        memory.visits[id] = (memory.visits[id] || 0) + 1;
+        lastActivity = Date.now();
+        saveMemory();
+    }
 
-        if (!memory.discoveries.includes(id)) {
-            memory.discoveries.push(id);
+    function rememberLocation(location) {
+        memory.lastLocation = location;
+
+        if (!memory.discoveries.includes(location)) {
+            memory.discoveries.push(location);
         }
-
-        memory.lastLocation = id;
 
         saveMemory();
     }
 
-    function rememberActivity(action) {
+    /* =================================================
+       4. MENSAJES
+    ================================================= */
 
-        memory.activities[action] =
-            (memory.activities[action] || 0) + 1;
+    function say(text, duration = 3000) {
+        if (!message) return;
 
-        saveMemory();
+        message.textContent = text;
+        message.classList.add("visible");
+
+        clearTimeout(messageTimer);
+
+        messageTimer = setTimeout(() => {
+            message.classList.remove("visible");
+        }, duration);
+    }
+
+    /* =================================================
+       5. NECESIDADES
+    ================================================= */
+
+    function updateNeeds() {
+        const bars = {
+            hunger: [hungerBar, hungerValue],
+            thirst: [thirstBar, thirstValue],
+            energy: [energyBar, energyValue],
+            happiness: [happinessBar, happinessValue]
+        };
+
+        Object.entries(bars).forEach(([key, elements]) => {
+            const [bar, value] = elements;
+            const amount = Math.round(needs[key]);
+
+            if (bar) bar.style.width = `${amount}%`;
+            if (value) value.textContent = `${amount}%`;
+
+            if (bar) {
+                bar.classList.toggle("low", amount < 25);
+            }
+        });
+    }
+
+    function changeNeed(name, amount) {
+        if (!(name in needs)) return;
+
+        needs[name] = clamp(needs[name] + amount);
+        updateNeeds();
+    }
+
+    function degradeNeeds() {
+        needs.hunger = clamp(needs.hunger - 0.12);
+        needs.thirst = clamp(needs.thirst - 0.16);
+
+        if (currentState !== "sleeping") {
+            needs.energy = clamp(needs.energy - 0.07);
+        }
+
+        if (currentState !== "purring") {
+            needs.happiness = clamp(needs.happiness - 0.035);
+        }
+
+        updateNeeds();
     }
 
     /* =================================================
@@ -187,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ================================================= */
 
     const stateClasses = [
+        "idle",
         "walking",
         "sniffing",
         "eating",
@@ -202,507 +210,203 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     function setState(state) {
+        currentState = state;
 
         cat.classList.remove(...stateClasses);
+        cat.classList.add(state);
 
-        if (state) {
-            cat.classList.add(state);
-        }
-
-        currentAction = state || "idle";
+        catArea.dataset.state = state;
     }
 
     /* =================================================
-       7. MENSAJES
-    ================================================= */
-
-    function say(text, duration = 3500) {
-
-        if (!message) return;
-
-        message.textContent = text;
-        message.style.opacity = "1";
-
-        clearTimeout(messageTimer);
-
-        messageTimer = setTimeout(() => {
-            message.style.opacity = "0";
-        }, duration);
-    }
-
-    /* =================================================
-       8. POSICIONAMIENTO INICIAL
+       7. POSICIÓN DEL GATO
     ================================================= */
 
     function prepareCatPosition() {
-
         const roomRect = room.getBoundingClientRect();
-        const rect = catArea.getBoundingClientRect();
 
-        catArea.style.position = "absolute";
-        catArea.style.transform = "none";
-        catArea.style.right = "auto";
-        catArea.style.bottom = "auto";
+        const width = catArea.offsetWidth;
+        const height = catArea.offsetHeight;
 
-        catArea.style.left =
-            `${rect.left - roomRect.left}px`;
+        const left = roomRect.width * 0.5 - width / 2;
+        const top = roomRect.height * 0.68 - height / 2;
 
-        catArea.style.top =
-            `${rect.top - roomRect.top}px`;
+        catArea.style.left = `${left}px`;
+        catArea.style.top = `${top}px`;
     }
 
-    prepareCatPosition();
-
     function getCatPosition() {
-
-        const rect = room.getBoundingClientRect();
+        const roomRect = room.getBoundingClientRect();
         const catRect = catArea.getBoundingClientRect();
 
         return {
-            x: catRect.left + catRect.width / 2 - rect.left,
-            y: catRect.top + catRect.height / 2 - rect.top
+            x: catRect.left - roomRect.left + catRect.width / 2,
+            y: catRect.top - roomRect.top + catRect.height / 2
         };
     }
 
-    /* =================================================
-       9. RECONOCIMIENTO DE LA HABITACIÓN
-    ================================================= */
-
-    const locations = [
-
-        {
-            id: "main_bed",
-            name: "la cama",
-            x: 21,
-            y: 68,
-            type: "rest",
-            actions: ["sleep", "observe", "knead"],
-            interest: 75
-        },
-
-        {
-            id: "cat_bed",
-            name: "su pequeña cama",
-            x: 55,
-            y: 68,
-            type: "rest",
-            actions: ["sleep", "groom"],
-            interest: 90
-        },
-
-        {
-            id: "window",
-            name: "el ventanal",
-            x: 57,
-            y: 53,
-            type: "observation",
-            actions: ["observe"],
-            interest: 95
-        },
-
-        {
-            id: "armchair",
-            name: "el sillón",
-            x: 42,
-            y: 65,
-            type: "rest",
-            actions: ["sleep", "observe", "groom"],
-            interest: 70
-        },
-
-        {
-            id: "cat_tree",
-            name: "el árbol rascador",
-            x: 76,
-            y: 65,
-            type: "play",
-            actions: ["play", "observe"],
-            interest: 85
-        },
-
-        {
-            id: "rug",
-            name: "la alfombra",
-            x: 59,
-            y: 83,
-            type: "play",
-            actions: ["play", "sleep"],
-            interest: 80
-        },
-
-        {
-            id: "bookshelves",
-            name: "las estanterías",
-            x: 30,
-            y: 46,
-            type: "curiosity",
-            actions: ["investigate"],
-            interest: 65
-        },
-
-        {
-            id: "guitar",
-            name: "la guitarra",
-            x: 83,
-            y: 72,
-            type: "curiosity",
-            actions: ["investigate"],
-            interest: 60
-        },
-
-        {
-            id: "wardrobe",
-            name: "el armario",
-            x: 94,
-            y: 58,
-            type: "curiosity",
-            actions: ["investigate"],
-            interest: 55
-        },
-
-        {
-            id: "plants",
-            name: "las plantas",
-            x: 28,
-            y: 39,
-            type: "curiosity",
-            actions: ["investigate"],
-            interest: 75
-        }
-
-    ];
-
-    function getLocation(id) {
-        return locations.find(item => item.id === id);
-    }
-
-    function getLocationPosition(location) {
-
-        return {
-            x: room.clientWidth * location.x / 100,
-            y: room.clientHeight * location.y / 100
-        };
-    }
-
-    /* =================================================
-       10. MOVIMIENTO
-    ================================================= */
-
-    function walkTo(x, y) {
-
-        return new Promise(resolve => {
-
-            const width = catArea.offsetWidth;
-            const height = catArea.offsetHeight;
-
-            const start = getCatPosition();
-
-            const targetX = clamp(
-                x,
-                width / 2,
-                room.clientWidth - width / 2
-            );
-
-            const targetY = clamp(
-                y,
-                height / 2 + 35,
-                room.clientHeight - height / 2 - 20
-            );
-
-            const distance = Math.hypot(
-                targetX - start.x,
-                targetY - start.y
-            );
-
-            if (distance < 10) {
-                resolve(true);
-                return;
-            }
-
-            const duration = clamp(
-                distance * 4,
-                900,
-                2800
-            );
-
-            cat.classList.toggle(
-                "facing-left",
-                targetX < start.x
-            );
-
-            cat.classList.toggle(
-                "facing-right",
-                targetX >= start.x
-            );
-
-            setState("walking");
-
-            createPawTrail(
-                start,
-                { x: targetX, y: targetY },
-                duration
-            );
-
-            catArea.style.left =
-                `${targetX - width / 2}px`;
-
-            catArea.style.top =
-                `${targetY - height / 2}px`;
-
-            setTimeout(() => {
-
-                setState(null);
-                resolve(true);
-
-            }, duration + 100);
-
-        });
-    }
-
-    async function visitLocation(location) {
-
-        if (!location) return;
-
-        const position = getLocationPosition(location);
-
-        await walkTo(position.x, position.y);
-
-        currentLocation = location.id;
-
-        rememberLocation(location.id);
-    }
-
-    /* =================================================
-       11. EFECTOS: HUELLAS
-    ================================================= */
-
-    function createPaw(x, y, index) {
-
-        const paw = document.createElement("span");
-
-        paw.className = "cat-paw";
-        paw.textContent = "🐾";
-
-        paw.style.left = `${x}px`;
-        paw.style.top = `${y}px`;
-
-        paw.style.transform =
-            `rotate(${index % 2 ? 15 : -15}deg)`;
-
-        room.appendChild(paw);
-
-        setTimeout(() => paw.remove(), 2400);
-    }
-
-    function createPawTrail(start, target, duration) {
-
-        const distance = Math.hypot(
-            target.x - start.x,
-            target.y - start.y
-        );
-
-        const count = Math.min(
-            16,
-            Math.max(3, Math.floor(distance / 38))
-        );
-
-        for (let i = 0; i < count; i++) {
-
-            const progress = (i + 1) / (count + 1);
-
-            const x =
-                start.x + (target.x - start.x) * progress;
-
-            const y =
-                start.y + (target.y - start.y) * progress;
-
-            setTimeout(() => {
-
-                createPaw(
-                    x + (i % 2 ? 7 : -7),
-                    y + catArea.offsetHeight * .32,
-                    i
-                );
-
-            }, duration * progress);
-        }
-    }
-
-    /* =================================================
-       12. EFECTOS: CORAZONES
-    ================================================= */
-
-    function showHearts() {
-
-        const roomRect = room.getBoundingClientRect();
-        const rect = cat.getBoundingClientRect();
-
-        const x = rect.left - roomRect.left + rect.width / 2;
-        const y = rect.top - roomRect.top;
-
-        ["♥", "♡", "❤"].forEach((symbol, index) => {
-
-            const heart = document.createElement("span");
-
-            heart.className = "heart-float";
-            heart.textContent = symbol;
-
-            heart.style.left =
-                `${x + random(-30, 30)}px`;
-
-            heart.style.top =
-                `${y + random(0, 25)}px`;
-
-            heart.style.animationDelay =
-                `${index * 150}ms`;
-
-            room.appendChild(heart);
-
-            setTimeout(() => heart.remove(), 2500);
-        });
-    }
-
-    /* =================================================
-       13. ACCIONES FELINAS
-    ================================================= */
-
-    async function observe() {
-
-        setState("observing");
-
-        const thoughts = [
-            "Gounter está observando el atardecer...",
-            "¿Qué habrá detrás de aquella ventana?",
-            "Gounter sigue algo con la mirada.",
-            "Un pequeño ruido ha llamado su atención.",
-            "Gounter está contemplando la habitación."
-        ];
-
-        say(thoughts[Math.floor(Math.random() * thoughts.length)]);
-
-        await delay(random(4500, 7500));
-
-        changeNeed("happiness", 2);
-
-        setState(null);
-    }
-
-    async function investigate(location) {
-
-        setState("sniffing");
-
-        const messages = [
-            `Gounter está olfateando ${location.name}.`,
-            `¿Qué será esto? Gounter investiga ${location.name}.`,
-            `Gounter ha encontrado algo interesante cerca de ${location.name}.`
-        ];
-
-        say(messages[Math.floor(Math.random() * messages.length)]);
-
-        await delay(random(2500, 4500));
-
-        setState("curious");
-
-        await delay(1800);
-
-        changeNeed("happiness", 2);
-
-        setState(null);
-    }
-
-    async function groom() {
-
-        setState("grooming");
-
-        say("Gounter se está acicalando. 🐾");
-
-        await delay(5000);
-
-        changeNeed("happiness", 3);
-        changeNeed("energy", -1);
-
-        setState(null);
-    }
-
-    async function knead() {
-
-        setState("kneading");
-
-        say("Gounter está amasando las mantas. ❤️");
-
-        await delay(5000);
-
-        changeNeed("happiness", 4);
-
-        setState(null);
-    }
-
-    async function play() {
-
-        setState("playing");
-
-        say("Gounter está jugando y persiguiendo algo.");
-
-        await delay(4500);
-
-        changeNeed("happiness", 10);
-        changeNeed("energy", -7);
-
-        setState(null);
-    }
-
-    async function sleepAt(location) {
-
-        setState("sniffing");
-
-        say(`Gounter se acomoda en ${location.name}...`);
-
-        await delay(1400);
-
-        setState("sleeping");
-
-        say("Zzz... Gounter está profundamente dormido. 💤", 7000);
-
-        await delay(random(9000, 14000));
-
-        changeNeed("energy", 24);
-        changeNeed("happiness", 3);
-
-        setState(null);
-
-        say("Gounter se está despertando lentamente.");
-    }
-
-    /* =================================================
-       14. ACCIONES EXTERNAS
-       APPROACH OBJECT / EAT / DRINK
-    ================================================= */
-
-    function findObject(action) {
-
-        return document.querySelector(
-            `.room-object[data-action="${action}"]`
+    function getObject(action) {
+        return objects.find(object =>
+            object.dataset.action === action
         );
     }
 
     function getObjectPosition(object) {
+        if (!object) return null;
 
         const roomRect = room.getBoundingClientRect();
         const rect = object.getBoundingClientRect();
 
         return {
-            x: rect.left + rect.width / 2 - roomRect.left,
-            y: rect.top + rect.height / 2 - roomRect.top
+            x: rect.left - roomRect.left + rect.width / 2,
+            y: rect.top - roomRect.top + rect.height / 2
         };
     }
 
-    const {
-        approachObject,
-        eat,
-        drink
-    } = createGounterActions({
+    /* =================================================
+       8. MOVIMIENTO
+    ================================================= */
 
-        getObject: findObject,
+    function walkTo(x, y) {
+        return new Promise(resolve => {
+            const roomWidth = room.clientWidth;
+            const roomHeight = room.clientHeight;
+
+            const catWidth = catArea.offsetWidth;
+            const catHeight = catArea.offsetHeight;
+
+            const targetX = clamp(
+                x - catWidth / 2,
+                0,
+                roomWidth - catWidth
+            );
+
+            const targetY = clamp(
+                y - catHeight / 2,
+                0,
+                roomHeight - catHeight
+            );
+
+            const currentX = parseFloat(catArea.style.left) || 0;
+            const currentY = parseFloat(catArea.style.top) || 0;
+
+            const distance = Math.hypot(
+                targetX - currentX,
+                targetY - currentY
+            );
+
+            if (distance < 8) {
+                resolve(true);
+                return;
+            }
+
+            cat.classList.toggle(
+                "facing-left",
+                targetX < currentX
+            );
+
+            cat.classList.toggle(
+                "facing-right",
+                targetX >= currentX
+            );
+
+            setState("walking");
+
+            const duration = clamp(distance * 4, 500, 3000);
+
+            catArea.style.transition =
+                `left ${duration}ms ease-in-out, top ${duration}ms ease-in-out`;
+
+            requestAnimationFrame(() => {
+                catArea.style.left = `${targetX}px`;
+                catArea.style.top = `${targetY}px`;
+            });
+
+            setTimeout(() => {
+                catArea.style.transition = "";
+                setState("idle");
+                resolve(true);
+            }, duration + 50);
+        });
+    }
+
+    /* =================================================
+       9. UBICACIONES DE LA HABITACIÓN
+    ================================================= */
+
+    const locations = [
+        { name: "ventana", x: 60, y: 35 },
+        { name: "cama", x: 22, y: 68 },
+        { name: "alfombra", x: 57, y: 84 },
+        { name: "estanteria", x: 29, y: 28 },
+        { name: "sillon", x: 44, y: 58 },
+        { name: "plantas", x: 24, y: 16 },
+        { name: "guitarra", x: 83, y: 65 },
+        { name: "rascador", x: 76, y: 61 }
+    ];
+
+    async function visitLocation(location) {
+        const x = room.clientWidth * location.x / 100;
+        const y = room.clientHeight * location.y / 100;
+
+        await walkTo(x, y);
+
+        rememberLocation(location.name);
+
+        setState("observing");
+        say(`Gounter está explorando ${location.name}.`);
+
+        await delay(1800);
+
+        setState("idle");
+    }
+
+    /* =================================================
+       10. EFECTOS VISUALES
+    ================================================= */
+
+    function createEffect(className, x, y) {
+        const effect = document.createElement("div");
+
+        effect.className = className;
+        effect.style.left = `${x}px`;
+        effect.style.top = `${y}px`;
+
+        room.appendChild(effect);
+
+        setTimeout(() => effect.remove(), 1800);
+    }
+
+    function createHearts() {
+        const position = getCatPosition();
+
+        for (let i = 0; i < 3; i++) {
+            createEffect(
+                "gounter-heart",
+                position.x + random(-30, 30),
+                position.y - random(40, 90)
+            );
+        }
+    }
+
+    function createFootprint() {
+        if (currentState !== "walking") return;
+
+        const position = getCatPosition();
+
+        createEffect(
+            "gounter-footprint",
+            position.x + random(-15, 15),
+            position.y + 55
+        );
+    }
+
+    /* =================================================
+       11. SISTEMA DE ACCIONES
+    ================================================= */
+
+    const actions = createGounterActions({
+        getObject,
         walkTo,
         getObjectPosition,
         say,
@@ -710,617 +414,251 @@ document.addEventListener("DOMContentLoaded", () => {
         delay,
         changeNeed,
         rememberActivity
-
     });
 
-    /* =================================================
-       15. PROBABILIDADES DE INTERACCIÓN
-    ================================================= */
-
-    function calculateChance(action) {
-
-        switch (action) {
-
-            case "food":
-                return clamp(
-                    (100 - needs.hunger) * 0.95,
-                    5,
-                    95
-                );
-
-            case "water":
-                return clamp(
-                    (100 - needs.thirst) * 0.95,
-                    5,
-                    95
-                );
-
-            case "box":
-                return clamp(
-                    (100 - needs.energy) * 0.95,
-                    5,
-                    95
-                );
-
-            case "sack":
-                return clamp(
-                    needs.happiness * 0.55 +
-                    personality.playfulness * 0.4,
-                    5,
-                    95
-                );
-
-            default:
-                return 50;
-        }
-    }
-
-    function decideInteraction(action) {
-
-        const probability = calculateChance(action);
-
-        return Math.random() * 100 < probability;
-    }
-
-    async function rejectInteraction(action) {
-
-        setState("sniffing");
-
-        const messages = {
-
-            food: [
-                "Gounter no tiene demasiada hambre.",
-                "Gounter prefiere investigar otra cosa.",
-                "Ahora mismo no le apetece comer."
-            ],
-
-            water: [
-                "Gounter no tiene sed.",
-                "El agua puede esperar un poquito.",
-                "Gounter prefiere seguir explorando."
-            ],
-
-            box: [
-                "Gounter todavía no tiene sueño.",
-                "Prefiere seguir investigando.",
-                "Gounter está demasiado curioso para dormir."
-            ],
-
-            sack: [
-                "Gounter no está de humor para jugar.",
-                "Prefiere descansar un poco.",
-                "Gounter mira el saco con curiosidad."
-            ]
-
-        };
-
-        const options = messages[action] || [
-            "Gounter no está interesado ahora mismo."
-        ];
-
-        say(options[Math.floor(Math.random() * options.length)]);
-
-        await delay(1600);
-
-        setState(null);
-    }
-
-    /* =================================================
-       16. COMPORTAMIENTO DE OBJETOS
-    ================================================= */
-
-    async function useObject(action) {
-
-        switch (action) {
-
-            case "food":
-                await eat();
-                break;
-
-            case "water":
-                await drink();
-                break;
-
-            case "sack":
-                await play();
-                rememberActivity("play");
-                break;
-
-            case "box":
-                await sleepAt({
-                    name: "su caja",
-                    id: "box"
-                });
-                rememberActivity("sleep");
-                break;
-
-        }
-    }
-
-    async function interact(object) {
-
-        if (busy || !object) return;
-
-        const action = object.dataset.action;
-
-        if (!action) return;
-
-        busy = true;
-        clearTimeout(idleTimer);
-
-        try {
-
-            // Primero Gounter se acerca al objeto.
-            const approached = await approachObject(action);
-
-            if (!approached) {
-                return;
-            }
-
-            await delay(400);
-
-            // Después decide si quiere utilizarlo.
-            if (decideInteraction(action)) {
-
-                await useObject(action);
-
-            } else {
-
-                await rejectInteraction(action);
-
-            }
-
-        } catch (error) {
-
-            console.error("Gounter interaction:", error);
-
-        } finally {
-
-            busy = false;
-            scheduleIdle();
-        }
-    }
-
-    /* =================================================
-       17. CEREBRO AUTÓNOMO
-    ================================================= */
-
-    function calculateScore(location) {
-
-        let score = location.interest;
-
-        const visits = memory.visits[location.id] || 0;
-
-        score += Math.max(0, 35 - visits * 8);
-
-        if (memory.lastLocation === location.id) {
-            score *= 0.12;
-        }
-
-        if (location.type === "curiosity") {
-            score += personality.curiosity * .3;
-        }
-
-        if (location.type === "play") {
-            score += personality.playfulness * .25;
-            score += needs.happiness * .15;
-        }
-
-        if (location.type === "rest") {
-            score += personality.calmness * .2;
-            score += (100 - needs.energy) * .8;
-        }
-
-        if (location.type === "observation") {
-            score += personality.curiosity * .4;
-        }
-
-        return Math.max(1, score);
-    }
-
-    function weightedChoice(items) {
-
-        if (!items.length) return null;
-
-        const total = items.reduce(
-            (sum, item) => sum + item.score,
-            0
-        );
-
-        let roll = Math.random() * total;
-
-        for (const item of items) {
-
-            roll -= item.score;
-
-            if (roll <= 0) {
-                return item;
-            }
-        }
-
-        return items[items.length - 1];
-    }
-
-    async function autonomousDecision() {
-
+    async function executeAction(action) {
         if (busy || drag) return;
 
         busy = true;
-        lastDecision = Date.now();
 
         try {
-
-            /* NECESIDADES PRIORITARIAS */
-
-            if (needs.hunger < 18 && Math.random() < .85) {
-
-                const food = findObject("food");
-
-                if (food) {
-                    await approachObject("food");
-                    await eat();
-                    return;
-                }
+            if (action === "food") {
+                await actions.eat();
             }
 
-            if (needs.thirst < 18 && Math.random() < .9) {
-
-                const water = findObject("water");
-
-                if (water) {
-                    await approachObject("water");
-                    await drink();
-                    return;
-                }
+            if (action === "water") {
+                await actions.drink();
             }
 
-            /* DESCANSO */
-
-            if (needs.energy < 22 && Math.random() < .9) {
-
-                const beds = [
-                    getLocation("cat_bed"),
-                    getLocation("main_bed"),
-                    getLocation("armchair")
-                ].filter(Boolean);
-
-                const target = weightedChoice(
-                    beds.map(item => ({
-                        ...item,
-                        score: calculateScore(item)
-                    }))
-                );
-
-                if (target) {
-                    await visitLocation(target);
-                    await sleepAt(target);
-                }
-
-                return;
+            if (action === "sack") {
+                await actions.play();
             }
 
-            /* ACTIVIDAD AUTÓNOMA */
-
-            const choices = locations.map(location => ({
-                ...location,
-                score: calculateScore(location)
-            }));
-
-            const selected = weightedChoice(choices);
-
-            if (!selected) return;
-
-            await visitLocation(selected);
-
-            const action = selected.actions[
-                Math.floor(Math.random() * selected.actions.length)
-            ];
-
-            switch (action) {
-
-                case "observe":
-                    await observe();
-                    break;
-
-                case "investigate":
-                    await investigate(selected);
-                    break;
-
-                case "play":
-                    await play();
-                    break;
-
-                case "sleep":
-                    await sleepAt(selected);
-                    break;
-
-                case "groom":
-                    await groom();
-                    break;
-
-                case "knead":
-                    await knead();
-                    break;
-
+            if (action === "box") {
+                await actions.sleep();
             }
-
         } catch (error) {
-
-            console.error("Gounter AI:", error);
-
+            console.error("Gounter action error:", error);
+            setState("idle");
+            say("Gounter se ha distraído...");
         } finally {
-
             busy = false;
-
-            if (!drag) {
-                scheduleIdle();
-            }
+            scheduleDecision();
         }
     }
 
     /* =================================================
-       18. MOVIMIENTO ALEATORIO
+       12. DECISIONES AUTÓNOMAS
     ================================================= */
 
-    async function randomExplore() {
+    async function autonomousDecision() {
+        if (busy || drag) return;
 
-        const x = random(
-            room.clientWidth * .3,
-            room.clientWidth * .7
+        busy = true;
+
+        try {
+            if (needs.hunger < 35) {
+                await actions.eat();
+                return;
+            }
+
+            if (needs.thirst < 35) {
+                await actions.drink();
+                return;
+            }
+
+            if (needs.energy < 25) {
+                await actions.sleep();
+                return;
+            }
+
+            if (needs.happiness < 30) {
+                await actions.play();
+                return;
+            }
+
+            const choice = Math.random();
+
+            if (choice < 0.65) {
+                const location =
+                    locations[Math.floor(Math.random() * locations.length)];
+
+                await visitLocation(location);
+            } else if (choice < 0.82) {
+                setState("grooming");
+                say("Gounter se está acicalando.");
+                await delay(2500);
+                rememberActivity("groom");
+            } else {
+                setState("observing");
+                say("Gounter está observando la habitación.");
+                await delay(2500);
+                rememberActivity("observe");
+            }
+
+        } catch (error) {
+            console.error("Gounter AI error:", error);
+            setState("idle");
+        } finally {
+            busy = false;
+            scheduleDecision();
+        }
+    }
+
+    function scheduleDecision() {
+        clearTimeout(decisionTimer);
+
+        decisionTimer = setTimeout(
+            autonomousDecision,
+            random(7000, 14000)
         );
-
-        const y = random(
-            room.clientHeight * .62,
-            room.clientHeight * .86
-        );
-
-        await walkTo(x, y);
     }
 
     /* =================================================
-       19. PROGRAMAR DECISIONES
+       13. INTERACCIÓN CON EL GATO
     ================================================= */
 
-    function scheduleIdle() {
+    cat.addEventListener("click", event => {
+        event.stopPropagation();
+
+        if (busy || drag) return;
+
+        setState("purring");
+
+        changeNeed("happiness", 5);
+        rememberActivity("pet");
+
+        createHearts();
+
+        say("¡Miau! A Gounter le gustan las caricias.");
 
         clearTimeout(idleTimer);
 
         idleTimer = setTimeout(() => {
-
-            if (busy || drag) {
-                scheduleIdle();
-                return;
-            }
-
-            autonomousDecision();
-
-        }, random(DECISION_MIN, DECISION_MAX));
-    }
-
-    /* =================================================
-       20. NECESIDADES CON EL TIEMPO
-    ================================================= */
-
-    needsTimer = setInterval(() => {
-
-        changeNeed("hunger", -.12);
-        changeNeed("thirst", -.16);
-
-        if (currentAction !== "sleeping") {
-            changeNeed("energy", -.07);
-        }
-
-        if (currentAction !== "purring") {
-            changeNeed("happiness", -.035);
-        }
-
-    }, 10000);
-
-    /* =================================================
-       21. ACARICIAR
-    ================================================= */
-
-    cat.addEventListener("click", async () => {
-
-        if (busy || drag) return;
-
-        busy = true;
-
-        clearTimeout(idleTimer);
-
-        setState("purring");
-
-        showHearts();
-
-        changeNeed("happiness", 12);
-
-        rememberActivity("pet");
-
-        say("¡Prrrrrr! Gounter está disfrutando de las caricias. ❤️");
-
-        await delay(2800);
-
-        setState(null);
-
-        busy = false;
-
-        scheduleIdle();
+            if (!busy) setState("idle");
+        }, 2500);
     });
 
     /* =================================================
-       22. ARRASTRAR OBJETOS
+       14. ARRASTRAR OBJETOS
     ================================================= */
-
-    function prepareObjectPosition(object) {
-
-        const roomRect = room.getBoundingClientRect();
-        const rect = object.getBoundingClientRect();
-
-        object.style.position = "absolute";
-
-        object.style.left =
-            `${rect.left - roomRect.left}px`;
-
-        object.style.top =
-            `${rect.top - roomRect.top}px`;
-
-        object.style.right = "auto";
-        object.style.bottom = "auto";
-        object.style.transform = "none";
-    }
-
-    function isCloseToCat(object) {
-
-        const catPosition = getCatPosition();
-        const objectPosition = getObjectPosition(object);
-
-        return Math.hypot(
-            catPosition.x - objectPosition.x,
-            catPosition.y - objectPosition.y
-        ) < 190;
-    }
 
     objects.forEach(object => {
 
         object.addEventListener("pointerdown", event => {
-
-            if (event.button !== 0 || busy || drag) return;
+            if (busy) return;
 
             event.preventDefault();
 
-            clearTimeout(idleTimer);
-
-            prepareObjectPosition(object);
-
             const rect = object.getBoundingClientRect();
+            const roomRect = room.getBoundingClientRect();
 
             drag = {
                 object,
                 pointerId: event.pointerId,
-                startX: event.clientX,
-                startY: event.clientY,
                 offsetX: event.clientX - rect.left,
-                offsetY: event.clientY - rect.top,
-                moved: false
+                offsetY: event.clientY - rect.top
             };
 
             object.setPointerCapture(event.pointerId);
-            object.style.zIndex = "30";
+            object.classList.add("dragging");
         });
 
         object.addEventListener("pointermove", event => {
+            if (!drag || drag.object !== object) return;
 
-            if (!drag ||
-                drag.object !== object ||
-                drag.pointerId !== event.pointerId) return;
+            const roomRect = room.getBoundingClientRect();
 
-            const dx = event.clientX - drag.startX;
-            const dy = event.clientY - drag.startY;
+            const x =
+                event.clientX - roomRect.left - drag.offsetX;
 
-            if (Math.hypot(dx, dy) > 5) {
-                drag.moved = true;
-            }
+            const y =
+                event.clientY - roomRect.top - drag.offsetY;
 
-            if (!drag.moved) return;
+            object.style.left =
+                `${clamp(x, 0, room.clientWidth - object.offsetWidth)}px`;
 
-            const rect = room.getBoundingClientRect();
+            object.style.top =
+                `${clamp(y, 0, room.clientHeight - object.offsetHeight)}px`;
 
-            object.style.left = `${clamp(
-                event.clientX - rect.left - drag.offsetX,
-                0,
-                room.clientWidth - object.offsetWidth
-            )}px`;
-
-            object.style.top = `${clamp(
-                event.clientY - rect.top - drag.offsetY,
-                45,
-                room.clientHeight - object.offsetHeight
-            )}px`;
-
+            object.style.right = "auto";
+            object.style.bottom = "auto";
         });
 
-        object.addEventListener("pointerup", async event => {
+        object.addEventListener("pointerup", event => {
+            if (!drag || drag.object !== object) return;
 
-            if (!drag ||
-                drag.object !== object ||
-                drag.pointerId !== event.pointerId) return;
+            object.classList.remove("dragging");
 
-            const wasDragged = drag.moved;
+            const action = object.dataset.action;
+            const position = getObjectPosition(object);
+            const catPosition = getCatPosition();
+
+            const distance = Math.hypot(
+                position.x - catPosition.x,
+                position.y - catPosition.y
+            );
 
             drag = null;
 
-            object.style.zIndex = "4";
-
-            if (wasDragged) {
-
-                if (isCloseToCat(object)) {
-                    await interact(object);
-                } else {
-                    say("Gounter observa lo que has movido.");
-                    scheduleIdle();
-                }
-
+            if (distance < 190) {
+                executeAction(action);
             } else {
-
-                await interact(object);
+                say("Gounter está mirando el objeto desde lejos.");
             }
-
         });
 
         object.addEventListener("pointercancel", () => {
-
-            drag = null;
-            object.style.zIndex = "4";
-            scheduleIdle();
-
-        });
-
-        object.addEventListener("keydown", event => {
-
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                interact(object);
+            if (drag?.object === object) {
+                drag = null;
+                object.classList.remove("dragging");
             }
-
         });
 
+        object.addEventListener("click", event => {
+            if (drag) return;
+
+            executeAction(object.dataset.action);
+        });
     });
 
     /* =================================================
-       23. INICIALIZACIÓN
+       15. INICIALIZACIÓN
     ================================================= */
 
-    cat.classList.remove("facing-left");
-    cat.classList.add("facing-right");
+    function initialize() {
+        prepareCatPosition();
 
-    updateNeedsUI();
+        setState("idle");
+        updateNeeds();
 
-    say("Gounter está explorando su pequeño mundo. 🐾", 5000);
+        say("¡Bienvenido de nuevo! Gounter está en su refugio.");
 
-    scheduleIdle();
+        scheduleDecision();
+
+        setInterval(degradeNeeds, 10000);
+        setInterval(createFootprint, 700);
+
+        window.addEventListener("resize", prepareCatPosition);
+
+        console.log("EVARKION: Gounter AI iniciado correctamente.");
+    }
+
+    if (document.readyState === "complete") {
+        initialize();
+    } else {
+        window.addEventListener("load", initialize, { once: true });
+    }
 
     /* =================================================
-       24. LIMPIEZA
+       16. LIMPIEZA
     ================================================= */
 
     window.addEventListener("beforeunload", () => {
-
         clearTimeout(idleTimer);
+        clearTimeout(decisionTimer);
         clearTimeout(messageTimer);
-        clearInterval(needsTimer);
-
         saveMemory();
-
     });
-
-    console.log(
-        "EVARKION: GOUNTER AI SYSTEM iniciado.",
-        {
-            locations: locations.length,
-            personality,
-            memory,
-            actions: ["approachObject", "eat", "drink"]
-        }
-    );
 
 });
