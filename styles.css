@@ -1086,3 +1086,88 @@ header .container {
         animation: none;
     }
 }
+
+
+/* =====================================
+   BOTONES NEÓN EVARKION
+===================================== */
+
+button,
+.btn,
+.button,
+a.btn {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 40, 65, 0.55);
+    border-radius: 8px;
+    background: linear-gradient(
+        135deg,
+        #b90024,
+        #650014
+    );
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease,
+        border-color 0.3s ease;
+}
+
+/* EFECTO AL PASAR EL RATÓN */
+
+button:hover,
+.btn:hover,
+.button:hover,
+a.btn:hover {
+    background: linear-gradient(
+        135deg,
+        #ff1744,
+        #a00025
+    );
+
+    border-color: #ff405f;
+
+    box-shadow:
+        0 0 5px #ff1744,
+        0 0 12px rgba(255, 23, 68, 0.8),
+        0 0 25px rgba(255, 23, 68, 0.5);
+
+    transform: translateY(-3px);
+}
+
+/* EFECTO AL PULSAR */
+
+button:active,
+.btn:active,
+.button:active,
+a.btn:active {
+    transform: scale(0.96);
+
+    box-shadow:
+        0 0 8px #ff1744,
+        0 0 18px rgba(255, 23, 68, 0.8);
+}
+
+/* ACCESIBILIDAD: NAVEGACIÓN CON TECLADO */
+
+button:focus-visible,
+.btn:focus-visible,
+.button:focus-visible,
+a.btn:focus-visible {
+    outline: 2px solid #ff526e;
+    outline-offset: 4px;
+}
+
+/* RESPETAR PREFERENCIAS DE MOVIMIENTO */
+
+@media (prefers-reduced-motion: reduce) {
+    button,
+    .btn,
+    .button,
+    a.btn {
+        transition: none;
+    }
+}
