@@ -55,6 +55,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================
+       PREPARAR POSICIONES
+       Evita conflictos con translate(-50%, -50%)
+    ========================================= */
+
+    function prepareCatPosition() {
+
+        const roomRect = room.getBoundingClientRect();
+        const catRect = catArea.getBoundingClientRect();
+
+        catArea.style.position = "absolute";
+        catArea.style.transform = "none";
+        catArea.style.right = "auto";
+        catArea.style.bottom = "auto";
+
+        catArea.style.left =
+            `${catRect.left - roomRect.left}px`;
+
+        catArea.style.top =
+            `${catRect.top - roomRect.top}px`;
+
+        catArea.style.willChange = "left, top";
+    }
+
+    prepareCatPosition();
+
+
+    /* =========================================
        ACTUALIZAR INTERFAZ
     ========================================= */
 
@@ -164,9 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(messageTimer);
 
         messageTimer = setTimeout(() => {
-
             message.style.opacity = "0";
-
         }, duration);
     }
 
@@ -206,11 +231,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!shadow) {
 
             shadow = document.createElement("div");
-
             shadow.className = "cat-shadow";
 
             catArea.insertBefore(shadow, cat);
-
         }
 
         return shadow;
@@ -229,11 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const catRect = catArea.getBoundingClientRect();
 
         return {
-
             x: catRect.left + catRect.width / 2 - roomRect.left,
-
             y: catRect.top + catRect.height / 2 - roomRect.top
-
         };
     }
 
@@ -260,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const heart = document.createElement("span");
 
             heart.className = "heart-float";
-
             heart.textContent = symbol;
 
             heart.style.left =
@@ -274,10 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             room.appendChild(heart);
 
-            setTimeout(() => {
-                heart.remove();
-            }, 2500);
-
+            setTimeout(() => heart.remove(), 2500);
         });
     }
 
@@ -291,7 +307,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const paw = document.createElement("span");
 
         paw.className = "cat-paw";
-
         paw.textContent = "🐾";
 
         paw.style.left = `${x}px`;
@@ -302,11 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         room.appendChild(paw);
 
-        setTimeout(() => {
-
-            paw.remove();
-
-        }, 2400);
+        setTimeout(() => paw.remove(), 2400);
     }
 
 
@@ -328,19 +339,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 0; i < numberOfPaws; i++) {
 
-            const progress =
-                (i + 1) / (numberOfPaws + 1);
+            const progress = (i + 1) / (numberOfPaws + 1);
 
             const x =
-                start.x +
-                (target.x - start.x) * progress;
+                start.x + (target.x - start.x) * progress;
 
             const y =
-                start.y +
-                (target.y - start.y) * progress;
+                start.y + (target.y - start.y) * progress;
 
-            const side =
-                i % 2 === 0 ? -7 : 7;
+            const side = i % 2 === 0 ? -7 : 7;
 
             setTimeout(() => {
 
@@ -399,18 +406,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 2600
             );
 
-            /* Orientación */
+            // Orientar al gato según la dirección.
 
             cat.classList.toggle(
                 "facing-left",
                 targetX < start.x
             );
 
-            /* Animación */
+            // Activar animación de caminar.
 
             setState("walking");
 
-            /* Huellas */
+            // Crear huellas.
 
             createPawTrail(
                 start,
@@ -418,7 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 duration
             );
 
-            /* Desplazamiento */
+            // Desplazar el contenedor del gato.
 
             catArea.style.left =
                 `${targetX - catWidth / 2}px`;
@@ -429,12 +436,30 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
 
                 setState(null);
-
                 resolve();
 
-            }, duration);
+            }, duration + 80);
 
         });
+    }
+
+
+    /* =========================================
+       PREPARAR OBJETO PARA ARRASTRAR
+    ========================================= */
+
+    function prepareObjectPosition(object) {
+
+        const roomRect = room.getBoundingClientRect();
+        const rect = object.getBoundingClientRect();
+
+        object.style.position = "absolute";
+        object.style.left = `${rect.left - roomRect.left}px`;
+        object.style.top = `${rect.top - roomRect.top}px`;
+
+        object.style.right = "auto";
+        object.style.bottom = "auto";
+        object.style.transform = "none";
     }
 
 
@@ -461,11 +486,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 : -catWidth * 0.43;
 
         return {
-
             x: objectX + offset,
-
             y: objectY + 20
-
         };
     }
 
@@ -501,13 +523,11 @@ document.addEventListener("DOMContentLoaded", () => {
     async function eat() {
 
         say("Gounter está olfateando su comida...");
-
         setState("sniffing");
 
         await delay(900);
 
         say("¡Ñam, ñam! Gounter está comiendo. 🐱");
-
         setState("eating");
 
         await delay(4500);
@@ -515,7 +535,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardInteraction("food");
 
         setState(null);
-
         say("Gounter ha terminado de comer. ❤️");
     }
 
@@ -527,13 +546,11 @@ document.addEventListener("DOMContentLoaded", () => {
     async function drink() {
 
         say("Gounter se acerca al agua...");
-
         setState("sniffing");
 
         await delay(800);
 
         say("Gounter está bebiendo agua. 💧");
-
         setState("drinking");
 
         await delay(3500);
@@ -541,7 +558,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardInteraction("water");
 
         setState(null);
-
         say("Gounter ha terminado de beber.");
     }
 
@@ -567,7 +583,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardInteraction("sack");
 
         setState(null);
-
         say("Gounter vuelve a explorar la habitación.");
     }
 
@@ -593,7 +608,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardInteraction("box");
 
         setState(null);
-
         say("Gounter se ha despertado y está descansado.");
     }
 
@@ -607,14 +621,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (busy || !object) return;
 
         busy = true;
+        clearTimeout(idleTimer);
 
         try {
 
             const action = object.dataset.action;
 
+            if (!action) return;
+
+            // Calcular dónde debe acercarse Gounter.
+
             const target = getTargetPosition(object);
 
-            /* Acercarse al objeto */
+            // Acercarse al objeto.
 
             await walkTo(target.x, target.y);
 
@@ -622,52 +641,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
             await delay(700);
 
-            /* Ejecutar actividad */
+            // Realizar la actividad.
 
             switch (action) {
 
                 case "food":
-
                     await eat();
-
                     break;
 
                 case "water":
-
                     await drink();
-
                     break;
 
                 case "sack":
-
                     await explore();
-
                     break;
 
                 case "box":
-
                     await sleepInBox();
-
                     break;
 
                 default:
-
                     say("Gounter está investigando este objeto.");
-
             }
 
         } catch (error) {
 
-            console.error("Error al interactuar con Gounter:", error);
+            console.error(
+                "Error al interactuar con Gounter:",
+                error
+            );
 
             setState(null);
-
             say("Gounter ha tenido un pequeño problema.");
 
         } finally {
 
             busy = false;
-
             scheduleIdle();
 
         }
@@ -682,39 +692,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         object.addEventListener("pointerdown", event => {
 
-            if (event.button !== 0 || busy) return;
+            if (event.button !== 0 || busy || drag) return;
 
             event.preventDefault();
+
+            // Convertir la posición del objeto a coordenadas
+            // compatibles con el movimiento dentro de la habitación.
+
+            prepareObjectPosition(object);
 
             const rect = object.getBoundingClientRect();
 
             drag = {
-
                 object,
-
                 pointerId: event.pointerId,
-
                 startX: event.clientX,
-
                 startY: event.clientY,
-
                 offsetX: event.clientX - rect.left,
-
                 offsetY: event.clientY - rect.top,
-
                 moved: false
-
             };
 
             object.setPointerCapture(event.pointerId);
-
             object.style.zIndex = "30";
         });
 
 
         object.addEventListener("pointermove", event => {
 
-            if (!drag || drag.object !== object) return;
+            if (
+                !drag ||
+                drag.object !== object ||
+                drag.pointerId !== event.pointerId
+            ) {
+                return;
+            }
 
             const dx = event.clientX - drag.startX;
             const dy = event.clientY - drag.startY;
@@ -748,31 +760,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 45,
                 room.clientHeight - object.offsetHeight
             )}px`;
-
         });
 
 
         object.addEventListener("pointerup", async event => {
 
-            if (!drag || drag.object !== object) return;
+            if (
+                !drag ||
+                drag.object !== object ||
+                drag.pointerId !== event.pointerId
+            ) {
+                return;
+            }
 
-            const moved = drag.moved;
+            const wasDragged = drag.moved;
 
             drag = null;
 
             object.style.zIndex = "4";
 
-            /* Tanto mover como pulsar permite interactuar */
+            // Si solo hemos pulsado, interactuar normalmente.
+            if (!wasDragged) {
+                await interact(object);
+                return;
+            }
 
-            await interact(object);
+            // Si lo hemos arrastrado, solo interactúa
+            // cuando lo dejamos suficientemente cerca.
 
+            if (isCloseToCat(object)) {
+
+                await interact(object);
+
+            } else {
+
+                say("Gounter observa el objeto desde su sitio.");
+            }
         });
 
 
         object.addEventListener("pointercancel", () => {
 
             drag = null;
-
             object.style.zIndex = "4";
 
         });
@@ -794,11 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setState("purring");
 
-        /* Corazones */
-
         showHearts();
-
-        /* Felicidad */
 
         rewardInteraction("pet");
 
@@ -811,7 +836,6 @@ document.addEventListener("DOMContentLoaded", () => {
         busy = false;
 
         scheduleIdle();
-
     });
 
 
@@ -827,18 +851,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // La sed disminuye lentamente.
         changeNeed("thirst", -0.16);
 
-        // La energía baja cuando está despierto.
+        // La energía baja mientras está despierto.
         if (currentAction !== "sleeping") {
-
             changeNeed("energy", -0.05);
-
         }
 
         // La felicidad disminuye lentamente.
         if (currentAction !== "purring") {
-
             changeNeed("happiness", -0.025);
-
         }
 
     }, 10000);
@@ -848,6 +868,34 @@ document.addEventListener("DOMContentLoaded", () => {
        COMPORTAMIENTO AUTÓNOMO
     ========================================= */
 
+    function findObject(action) {
+
+        return document.querySelector(
+            `.room-object[data-action="${action}"]`
+        );
+    }
+
+
+    function randomWalkPosition() {
+
+        const current = getCatPosition();
+
+        return {
+            x: clamp(
+                current.x + (Math.random() - 0.5) * 180,
+                140,
+                room.clientWidth - 140
+            ),
+
+            y: clamp(
+                current.y + (Math.random() - 0.5) * 90,
+                150,
+                room.clientHeight - 150
+            )
+        };
+    }
+
+
     function scheduleIdle() {
 
         clearTimeout(idleTimer);
@@ -855,92 +903,76 @@ document.addEventListener("DOMContentLoaded", () => {
         idleTimer = setTimeout(async () => {
 
             if (busy) {
-
                 scheduleIdle();
-
                 return;
             }
 
             try {
 
-                /* Cansancio */
+                // Si tiene mucha hambre, buscar comida.
 
-                if (needs.energy < 25) {
+                if (needs.hunger < 25) {
 
-                    const box = document.querySelector(
-                        '.room-object[data-action="box"]'
-                    );
+                    const food = findObject("food");
 
-                    if (box) {
-
-                        await interact(box);
-
+                    if (food) {
+                        await interact(food);
                     } else {
-
-                        say("Gounter tiene sueño...");
-
+                        say("Miau... Gounter parece tener hambre.");
                     }
 
                 }
 
-                /* Hambre */
-
-                else if (needs.hunger < 25) {
-
-                    say("Miau... Gounter parece tener hambre.");
-
-                }
-
-                /* Sed */
+                // Si tiene mucha sed, buscar agua.
 
                 else if (needs.thirst < 25) {
 
-                    say("Gounter está buscando agua.");
+                    const water = findObject("water");
+
+                    if (water) {
+                        await interact(water);
+                    } else {
+                        say("Gounter está buscando agua.");
+                    }
 
                 }
 
-                /* Exploración */
+                // Si está cansado, buscar la caja.
+
+                else if (needs.energy < 25) {
+
+                    const box = findObject("box");
+
+                    if (box) {
+                        await interact(box);
+                    } else {
+                        say("Gounter tiene mucho sueño...");
+                    }
+
+                }
+
+                // Si está bien, explorar un poco.
 
                 else {
 
-                    const current = getCatPosition();
+                    const target = randomWalkPosition();
 
-                    const x = clamp(
-
-                        current.x +
-                        (Math.random() - 0.5) * 180,
-
-                        140,
-
-                        room.clientWidth - 140
-
-                    );
-
-                    const y = clamp(
-
-                        current.y +
-                        (Math.random() - 0.5) * 90,
-
-                        280,
-
-                        room.clientHeight - 150
-
-                    );
-
-                    await walkTo(x, y);
+                    await walkTo(target.x, target.y);
 
                 }
 
             } catch (error) {
 
-                console.error("Error en comportamiento autónomo:", error);
+                console.error(
+                    "Error en comportamiento autónomo:",
+                    error
+                );
 
             }
 
             scheduleIdle();
 
         }, 14000 + Math.random() * 10000);
-
     }
 
 
@@ -969,6 +1001,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    console.log("EVARKION: Gounter Pet System iniciado correctamente.");
+
+    console.log(
+        "EVARKION: Gounter Pet System iniciado correctamente."
+    );
 
 });
