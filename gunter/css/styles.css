@@ -1,6 +1,11 @@
 
 /* =========================================
    EVARKION - REFUGIO DE GOUNTER
+   Sistema visual unificado
+========================================= */
+
+/* =========================================
+   1. VARIABLES Y RESET
 ========================================= */
 
 * {
@@ -12,6 +17,11 @@
 :root {
     --orange: #ff8c32;
     --orange-light: #ffbd75;
+    --orange-glow: rgba(255, 140, 50, .65);
+
+    --panel-bg: rgba(15, 13, 19, .94);
+
+    --transition-cat: 1.2s cubic-bezier(.22,.61,.36,1);
 }
 
 html,
@@ -27,7 +37,9 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* HABITACIÓN A PANTALLA COMPLETA */
+/* =========================================
+   2. HABITACIÓN
+========================================= */
 
 .refuge-container {
     width: 100%;
@@ -63,8 +75,6 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* ESCENA */
-
 .room {
     position: relative;
     isolation: isolate;
@@ -78,7 +88,9 @@ body {
     background: #211c20;
 }
 
-/* FONDO */
+/* =========================================
+   3. FONDO
+========================================= */
 
 .room-background {
     position: absolute;
@@ -93,8 +105,6 @@ body {
 
     transform: scale(1.015);
 }
-
-/* OSCURECIMIENTO SUTIL */
 
 .room-overlay {
     position: absolute;
@@ -112,14 +122,135 @@ body {
     pointer-events: none;
 }
 
-/* CABECERA */
+/* =========================================
+   4. ILUMINACIÓN AMBIENTAL
+========================================= */
+
+.room-light {
+    position: absolute;
+
+    top: 2%;
+    left: 27%;
+
+    width: 53%;
+    height: 66%;
+
+    z-index: 1;
+    pointer-events: none;
+
+    background: radial-gradient(
+        ellipse at 50% 48%,
+        rgba(255,158,102,.25),
+        rgba(255,119,78,.15) 30%,
+        rgba(255,94,89,.07) 53%,
+        transparent 76%
+    );
+
+    filter: blur(22px);
+
+    animation: sunset-light 9s ease-in-out infinite alternate;
+}
+
+@keyframes sunset-light {
+    0% {
+        opacity: .65;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.035);
+    }
+
+    100% {
+        opacity: .8;
+        transform: scale(1.015);
+    }
+}
+
+.room-floor-light {
+    position: absolute;
+
+    left: 27%;
+    bottom: 0;
+
+    width: 58%;
+    height: 29%;
+
+    z-index: 1;
+    pointer-events: none;
+
+    background: radial-gradient(
+        ellipse at 50% 0%,
+        rgba(255,145,77,.20),
+        rgba(255,112,62,.08) 40%,
+        transparent 75%
+    );
+
+    filter: blur(15px);
+
+    animation: floor-glow 8s ease-in-out infinite alternate;
+}
+
+@keyframes floor-glow {
+    from { opacity: .5; }
+    to { opacity: 1; }
+}
+
+.window-rays {
+    position: absolute;
+
+    top: 10%;
+    left: 30%;
+
+    width: 50%;
+    height: 55%;
+
+    z-index: 1;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 20%,
+            rgba(255,185,125,.045) 38%,
+            transparent 55%
+        ),
+        linear-gradient(
+            72deg,
+            transparent 35%,
+            rgba(255,143,104,.04) 48%,
+            transparent 68%
+        );
+
+    filter: blur(12px);
+
+    animation: rays-move 13s ease-in-out infinite alternate;
+}
+
+@keyframes rays-move {
+    from {
+        transform: translateX(-8px);
+        opacity: .5;
+    }
+
+    to {
+        transform: translateX(10px);
+        opacity: 1;
+    }
+}
+
+/* =========================================
+   5. CABECERA
+========================================= */
 
 .room-header {
     position: absolute;
+
     top: 0;
     left: 0;
-    width: 100%;
 
+    width: 100%;
     padding: 20px 28px;
 
     display: flex;
@@ -140,6 +271,7 @@ body {
 .brand-icon {
     font-size: 30px;
     color: var(--orange-light);
+
     text-shadow: 0 0 15px var(--orange);
 }
 
@@ -174,13 +306,16 @@ body {
 .status-dot {
     width: 9px;
     height: 9px;
+
     border-radius: 50%;
 
     background: #62ed91;
     box-shadow: 0 0 10px #62ed91;
 }
 
-/* OBJETOS */
+/* =========================================
+   6. OBJETOS DE LA HABITACIÓN
+========================================= */
 
 .objects-container {
     position: absolute;
@@ -206,17 +341,20 @@ body {
     background: transparent;
     border: none;
     border-radius: 0;
+
     box-shadow: none;
 
     cursor: grab;
-    user-select: none;
-    touch-action: none;
 
+    user-select: none;
+    -webkit-user-select: none;
+
+    touch-action: none;
     pointer-events: auto;
 
-    transition:
-        filter .25s ease,
-        transform .25s ease;
+    transition: filter .25s ease;
+
+    will-change: left, top;
 }
 
 .room-object img {
@@ -233,6 +371,8 @@ body {
 
     pointer-events: none;
 
+    -webkit-user-drag: none;
+
     filter: drop-shadow(0 5px 5px rgba(0,0,0,.45));
 }
 
@@ -242,6 +382,7 @@ body {
     letter-spacing: 1px;
 
     color: white;
+
     text-shadow:
         0 2px 4px black,
         0 0 5px black;
@@ -251,7 +392,6 @@ body {
 
 .room-object:hover {
     filter: drop-shadow(0 0 9px rgba(255,157,75,.8));
-    transform: scale(1.08);
 }
 
 .room-object:active {
@@ -280,7 +420,48 @@ body {
     top: 69%;
 }
 
-/* GOUNTER */
+/*
+   IMPORTANTE:
+   El plato permanece siempre en la habitación.
+   No se oculta mediante CSS ni se elimina.
+*/
+
+.food-object {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}
+
+/* =========================================
+   7. LUGARES EXPLORABLES
+========================================= */
+
+.room-landmarks {
+    position: absolute;
+    inset: 0;
+
+    z-index: 3;
+
+    pointer-events: none;
+}
+
+.landmark {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    left: var(--landmark-x, 50%);
+    top: var(--landmark-y, 50%);
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+}
+
+/* =========================================
+   8. GOUNTER - CONTENEDOR
+========================================= */
 
 .cat-area {
     position: absolute;
@@ -291,23 +472,37 @@ body {
     width: 230px;
     height: 245px;
 
-    transform: translate(-50%, -50%);
-
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
 
-    z-index: 6;
+    transform: none;
+
+    z-index: 8;
 
     pointer-events: none;
 
+    will-change: left, top;
+
     transition:
-        left 1.5s cubic-bezier(.22,.8,.25,1),
-        top 1.5s cubic-bezier(.22,.8,.25,1);
+        left var(--transition-cat),
+        top var(--transition-cat);
+
+    filter: drop-shadow(
+        0 0 9px rgba(255,143,79,.12)
+    );
 }
 
+/* =========================================
+   9. GOUNTER - IMAGEN
+========================================= */
+
 .gounter {
+    position: relative;
+
+    z-index: 2;
+
     width: 210px;
     height: 210px;
 
@@ -315,16 +510,42 @@ body {
     object-position: center bottom;
 
     cursor: pointer;
+
     pointer-events: auto;
 
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 
     transform-origin: center bottom;
 
-    filter: drop-shadow(0 7px 7px rgba(0,0,0,.4));
+    filter: drop-shadow(
+        0 7px 7px rgba(0,0,0,.4)
+    );
 
     animation: idle-cat 4s ease-in-out infinite;
 }
+
+/* =========================================
+   10. ORIENTACIÓN
+========================================= */
+
+/*
+   La orientación se gestiona mediante scaleX
+   para evitar sobrescribir transform.
+*/
+
+.gounter.facing-left {
+    scale: -1 1;
+}
+
+.gounter:not(.facing-left) {
+    scale: 1 1;
+}
+
+/* =========================================
+   11. ANIMACIÓN IDLE
+========================================= */
 
 @keyframes idle-cat {
     0%, 100% {
@@ -336,7 +557,9 @@ body {
     }
 }
 
-/* MOVIMIENTO */
+/* =========================================
+   12. ANIMACIONES DE GOUNTER
+========================================= */
 
 .gounter.walking {
     animation: walking-cat .38s ease-in-out infinite;
@@ -433,358 +656,193 @@ body {
     }
 }
 
-/* SOMBRA */
+/* OBSERVAR */
 
-.cat-shadow {
-    position: absolute;
-    bottom: 32px;
-
-    width: 125px;
-    height: 19px;
-
-    border-radius: 50%;
-    background: rgba(0,0,0,.4);
-    filter: blur(8px);
+.gounter.observing {
+    animation: gounter-observing 3s ease-in-out infinite;
 }
 
-/* NOMBRE */
-
-.cat-name {
-    position: absolute;
-    bottom: 0;
-
-    padding: 7px 17px;
-
-    background: rgba(0,0,0,.62);
-    border: 1px solid rgba(255,156,75,.7);
-    border-radius: 25px;
-
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.cat-name span {
-    color: #ff826d;
-}
-
-/* MENSAJE */
-
-.room-message {
-    position: absolute;
-
-    left: 50%;
-    bottom: 3%;
-
-    transform: translateX(-50%);
-
-    padding: 10px 20px;
-
-    border-radius: 30px;
-
-    background: rgba(10,10,15,.8);
-    border: 1px solid rgba(255,150,65,.7);
-
-    color: white;
-
-    font-size: 12px;
-    text-align: center;
-
-    z-index: 12;
-    pointer-events: none;
-
-    transition: opacity .3s ease;
-}
-
-/* RESPONSIVE */
-
-@media(max-width: 700px) {
-
-    .room-header {
-        padding: 12px;
+@keyframes gounter-observing {
+    0%, 100% {
+        transform: translateY(0) rotate(0);
     }
 
-    .header-brand h1 {
-        font-size: 12px;
-        letter-spacing: 1px;
+    35% {
+        transform: translateY(-3px) rotate(-3deg);
     }
 
-    .header-brand p {
-        font-size: 8px;
-    }
-
-    .room-status {
-        font-size: 9px;
-        padding: 7px;
-    }
-
-    .room-object {
-        width: 70px;
-        height: 85px;
-    }
-
-    .room-object img {
-        height: 65px;
-    }
-
-    .room-object span {
-        font-size: 8px;
-    }
-
-    .cat-area {
-        width: 175px;
-        height: 195px;
-    }
-
-    .gounter {
-        width: 165px;
-        height: 165px;
-    }
-
-    .room-message {
-        bottom: 2%;
-        max-width: 85%;
-        font-size: 10px;
+    65% {
+        transform: translateY(0) rotate(3deg);
     }
 }
 
-@media(prefers-reduced-motion: reduce) {
-    .room-frame,
-    .gounter {
-        animation-duration: 3s;
+/* CURIOSIDAD */
+
+.gounter.curious {
+    animation: gounter-curious 1.2s ease-in-out infinite;
+}
+
+@keyframes gounter-curious {
+    0%, 100% {
+        transform: translateY(0) rotate(0);
+    }
+
+    30% {
+        transform: translateY(-3px) rotate(-5deg);
+    }
+
+    65% {
+        transform: translateY(2px) rotate(4deg);
     }
 }
 
+/* ACICALAMIENTO */
 
-/* ==========================================
-   EVARKION - ILUMINACIÓN DEL VENTANAL
-========================================== */
-
-/* La habitación será el origen de las capas */
-
-.room {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+.gounter.grooming {
+    animation: gounter-grooming 1.5s ease-in-out infinite;
 }
 
-/* Luz principal procedente del atardecer */
-
-.room-light {
-    position: absolute;
-
-    top: 2%;
-    left: 27%;
-
-    width: 53%;
-    height: 66%;
-
-    z-index: 1;
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 48%,
-            rgba(255, 158, 102, .25) 0%,
-            rgba(255, 119, 78, .15) 30%,
-            rgba(255, 94, 89, .07) 53%,
-            transparent 76%
-        );
-
-    filter: blur(22px);
-
-    animation: sunset-light 9s ease-in-out infinite alternate;
-}
-
-@keyframes sunset-light {
-
-    0% {
-        opacity: .65;
-        transform: scale(1);
+@keyframes gounter-grooming {
+    0%, 100% {
+        transform: rotate(0) translateY(0);
     }
 
     50% {
-        opacity: 1;
-        transform: scale(1.035);
+        transform: rotate(-7deg) translateY(5px);
+    }
+}
+
+/* AMASAR */
+
+.gounter.kneading {
+    animation: gounter-kneading .8s ease-in-out infinite;
+}
+
+@keyframes gounter-kneading {
+    0%, 100% {
+        transform: translateY(0) scaleY(1);
+    }
+
+    50% {
+        transform: translateY(3px) scaleY(.97);
+    }
+}
+
+/* SALTO */
+
+.gounter.jumping {
+    animation: gounter-jumping .65s ease-out;
+}
+
+@keyframes gounter-jumping {
+    0% {
+        transform: translateY(0);
+    }
+
+    45% {
+        transform: translateY(-45px) scale(1.04);
     }
 
     100% {
-        opacity: .8;
-        transform: scale(1.015);
+        transform: translateY(0);
     }
 }
 
-/* Reflejo cálido sobre el suelo */
-
-.room-floor-light {
-    position: absolute;
-
-    left: 27%;
-    bottom: 0;
-
-    width: 58%;
-    height: 29%;
-
-    z-index: 1;
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 0%,
-            rgba(255, 145, 77, .20),
-            rgba(255, 112, 62, .08) 40%,
-            transparent 75%
-        );
-
-    filter: blur(15px);
-
-    animation: floor-glow 8s ease-in-out infinite alternate;
-}
-
-@keyframes floor-glow {
-    from {
-        opacity: .5;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-/* Rayos de luz que entran por la ventana */
-
-.window-rays {
-    position: absolute;
-
-    top: 10%;
-    left: 30%;
-
-    width: 50%;
-    height: 55%;
-
-    z-index: 1;
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            115deg,
-            transparent 20%,
-            rgba(255, 185, 125, .045) 38%,
-            transparent 55%
-        ),
-        linear-gradient(
-            72deg,
-            transparent 35%,
-            rgba(255, 143, 104, .04) 48%,
-            transparent 68%
-        );
-
-    filter: blur(12px);
-
-    animation: rays-move 13s ease-in-out infinite alternate;
-}
-
-@keyframes rays-move {
-    from {
-        transform: translateX(-8px);
-        opacity: .5;
-    }
-
-    to {
-        transform: translateX(10px);
-        opacity: 1;
-    }
-}
-
-/* Reflejo cálido sobre Gounter */
-
-.cat-area {
-    filter:
-        drop-shadow(0 0 9px rgba(255, 143, 79, .12));
-}
-
-/* Evitar que las capas interfieran */
-
-.room-light,
-.room-floor-light,
-.window-rays {
-    user-select: none;
-}
-
-
-/* ==========================================
-   GOUNTER - SOMBRA DINÁMICA
-========================================== */
+/* =========================================
+   13. SOMBRA DINÁMICA
+========================================= */
 
 .cat-shadow {
     position: absolute;
 
-    width: 125px;
-    height: 20px;
+    left: 50%;
+    bottom: 30px;
 
-    bottom: 32px;
+    width: 125px;
+    height: 18px;
+
+    transform: translateX(-50%);
 
     border-radius: 50%;
 
-    background: rgba(0, 0, 0, .65);
+    background: rgba(0,0,0,.58);
 
     filter: blur(9px);
 
-    transform: scale(1);
+    z-index: 0;
 
-    transition:
-        transform .5s ease,
-        opacity .5s ease,
-        filter .5s ease;
+    pointer-events: none;
 
     animation: cat-shadow-breathe 4s ease-in-out infinite;
 }
 
 @keyframes cat-shadow-breathe {
     0%, 100% {
-        transform: scale(1);
         opacity: .65;
+        scale: 1;
     }
 
     50% {
-        transform: scale(.92);
-        opacity: .48;
+        opacity: .45;
+        scale: .9;
     }
 }
 
-/* Caminando */
-
 .cat-area:has(.gounter.walking) .cat-shadow {
-    transform: scale(.78);
+    scale: .78;
     opacity: .4;
 }
 
-/* Comiendo o bebiendo */
-
 .cat-area:has(.gounter.eating) .cat-shadow,
 .cat-area:has(.gounter.drinking) .cat-shadow {
-    transform: scale(.95);
+    scale: .95;
 }
 
-/* Durmiendo */
-
 .cat-area:has(.gounter.sleeping) .cat-shadow {
-    transform: scale(1.12);
+    scale: 1.12;
     opacity: .7;
     filter: blur(12px);
 }
 
-/* Ronroneando */
-
 .cat-area:has(.gounter.purring) .cat-shadow {
-    transform: scale(1.06);
+    scale: 1.06;
 }
 
+/* =========================================
+   14. NOMBRE DE GOUNTER
+========================================= */
 
+.cat-name {
+    position: absolute;
 
-/* ==========================================
-   GOUNTER - CORAZONES
-========================================== */
+    bottom: 0;
+
+    z-index: 3;
+
+    padding: 7px 17px;
+
+    background: rgba(0,0,0,.62);
+
+    border: 1px solid rgba(255,156,75,.7);
+
+    border-radius: 25px;
+
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+
+    pointer-events: none;
+}
+
+.cat-name span {
+    color: #ff826d;
+}
+
+/* =========================================
+   15. EFECTOS DE INTERACCIÓN
+========================================= */
+
+/* CORAZONES */
 
 .heart-float {
     position: absolute;
@@ -798,14 +856,13 @@ body {
     pointer-events: none;
 
     text-shadow:
-        0 0 7px rgba(255, 105, 135, .7),
-        0 0 15px rgba(255, 105, 135, .35);
+        0 0 7px rgba(255,105,135,.7),
+        0 0 15px rgba(255,105,135,.35);
 
     animation: heart-rise 1.8s ease-out forwards;
 }
 
 @keyframes heart-rise {
-
     0% {
         opacity: 0;
         transform: translateY(10px) scale(.4);
@@ -826,32 +883,27 @@ body {
     }
 }
 
-
-/* ==========================================
-   GOUNTER - HUELLAS
-========================================== */
+/* HUELLAS */
 
 .cat-paw {
     position: absolute;
 
     z-index: 5;
 
-    color: rgba(255, 190, 135, .75);
+    color: rgba(255,190,135,.75);
 
     font-size: 17px;
 
     pointer-events: none;
-
     user-select: none;
 
     animation: paw-fade 2.2s ease-out forwards;
 
     text-shadow:
-        0 0 5px rgba(255, 139, 64, .35);
+        0 0 5px rgba(255,139,64,.35);
 }
 
 @keyframes paw-fade {
-
     0% {
         opacity: 0;
         transform: scale(.4) rotate(-15deg);
@@ -859,7 +911,7 @@ body {
 
     20% {
         opacity: .75;
-        transform: scale(1) rotate(0deg);
+        transform: scale(1) rotate(0);
     }
 
     100% {
@@ -868,11 +920,43 @@ body {
     }
 }
 
+/* =========================================
+   16. MENSAJES
+========================================= */
 
+.room-message {
+    position: absolute;
 
-/* ==========================================
-   EVARKION - GOUNTER STATUS PANEL
-========================================== */
+    left: 50%;
+    bottom: 3%;
+
+    transform: translateX(-50%);
+
+    padding: 10px 20px;
+
+    max-width: min(85%, 440px);
+
+    border-radius: 30px;
+
+    background: rgba(10,10,15,.8);
+
+    border: 1px solid rgba(255,150,65,.7);
+
+    color: white;
+
+    font-size: 12px;
+    text-align: center;
+
+    z-index: 20;
+
+    pointer-events: none;
+
+    transition: opacity .3s ease;
+}
+
+/* =========================================
+   17. PANEL DE NECESIDADES
+========================================= */
 
 .pet-status {
     position: absolute;
@@ -888,28 +972,26 @@ body {
 
     background: linear-gradient(
         145deg,
-        rgba(24, 20, 23, .94),
-        rgba(12, 13, 20, .93)
+        rgba(24,20,23,.94),
+        rgba(12,13,20,.93)
     );
 
-    border: 1px solid rgba(255, 145, 69, .55);
+    border: 1px solid rgba(255,145,69,.55);
 
     border-radius: 13px;
 
     backdrop-filter: blur(12px);
 
     box-shadow:
-        0 0 15px rgba(255, 132, 55, .12),
-        inset 0 0 15px rgba(255, 153, 78, .035);
+        0 0 15px rgba(255,132,55,.12),
+        inset 0 0 15px rgba(255,153,78,.035);
 
     transition: border-color .3s ease;
 }
 
 .pet-status:hover {
-    border-color: rgba(255, 170, 104, .85);
+    border-color: rgba(255,170,104,.85);
 }
-
-/* CABECERA */
 
 .pet-status-header {
     display: flex;
@@ -920,7 +1002,6 @@ body {
 .pet-status-eyebrow {
     font-size: 8px;
     letter-spacing: 2px;
-
     color: #d99b69;
 }
 
@@ -944,7 +1025,6 @@ body {
     border-radius: 50%;
 
     background: #67e69a;
-
     box-shadow: 0 0 9px #67e69a;
 }
 
@@ -956,7 +1036,7 @@ body {
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 148, 76, .55),
+        rgba(255,148,76,.55),
         transparent
     );
 }
@@ -988,7 +1068,7 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-/* BASE DE LAS BARRAS */
+/* BARRAS */
 
 .need-bar {
     position: relative;
@@ -1006,9 +1086,9 @@ body {
     box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
 }
 
-/* RELLENO */
-
 .need-fill {
+    position: relative;
+
     height: 100%;
     width: 50%;
 
@@ -1017,11 +1097,7 @@ body {
     transition:
         width .8s cubic-bezier(.22,.8,.25,1),
         filter .4s ease;
-
-    position: relative;
 }
-
-/* REFLEJO ANIMADO */
 
 .need-fill::after {
     content: "";
@@ -1042,16 +1118,11 @@ body {
 }
 
 @keyframes need-shine {
-    0%, 100% {
-        left: -50%;
-    }
-
-    50% {
-        left: 120%;
-    }
+    0%, 100% { left: -50%; }
+    50% { left: 120%; }
 }
 
-/* PALETA DE CADA NECESIDAD */
+/* COLORES */
 
 .hunger-fill {
     background: linear-gradient(
@@ -1097,8 +1168,6 @@ body {
     box-shadow: 0 0 9px rgba(255,111,141,.45);
 }
 
-/* VALORES BAJOS */
-
 .need-fill.low {
     filter: saturate(.7);
     box-shadow: 0 0 7px rgba(255,70,55,.4);
@@ -1123,15 +1192,67 @@ body {
     color: #ff9c52;
 }
 
-/* RESPONSIVE */
+/* =========================================
+   18. CHAT KARU
+========================================= */
 
-@media(max-width: 700px) {
+.karu-chat {
+    z-index: 25;
+    pointer-events: auto;
+}
+
+/* =========================================
+   19. RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .room-header {
+        padding: 12px;
+    }
+
+    .header-brand h1 {
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .header-brand p {
+        font-size: 8px;
+    }
+
+    .room-status {
+        font-size: 9px;
+        padding: 7px;
+    }
+
+    .room-object {
+        width: 70px;
+        height: 85px;
+    }
+
+    .room-object img {
+        height: 65px;
+    }
+
+    .room-object span {
+        font-size: 8px;
+    }
+
+    .cat-area {
+        width: 175px;
+        height: 195px;
+    }
+
+    .gounter {
+        width: 165px;
+        height: 165px;
+    }
 
     .pet-status {
-        top: 65px;
-        right: 8px;
+        top: 85px;
+        right: 10px;
 
-        width: 170px;
+        width: 175px;
 
         padding: 10px;
     }
@@ -1151,628 +1272,27 @@ body {
     .pet-status-footer {
         font-size: 7px;
     }
-}
-
-
-
-/* Movimiento de Gounter */
-
-.cat-area {
-    position: absolute;
-    transition:
-        left 1.2s cubic-bezier(.22,.61,.36,1),
-        top 1.2s cubic-bezier(.22,.61,.36,1);
-    z-index: 8;
-}
-
-/* Sombra */
-
-.cat-shadow {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 125px;
-    height: 20px;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: rgba(0,0,0,.65);
-    filter: blur(9px);
-    pointer-events: none;
-    z-index: -1;
-    animation: cat-shadow-breathe 4s ease-in-out infinite;
-}
-
-@keyframes cat-shadow-breathe {
-    0%, 100% {
-        opacity: .65;
-        scale: 1;
-    }
-    50% {
-        opacity: .45;
-        scale: .9;
-    }
-}
-
-/* Dirección */
-
-.gounter.facing-left {
-    transform: scaleX(-1);
-}
-
-
-
-/* ==========================================
-   EVARKION - CORRECCIONES GOUNTER
-========================================== */
-
-/* ESCENA */
-
-.room {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-}
-
-/* CAPAS AMBIENTALES */
-
-.room-light,
-.room-floor-light,
-.window-rays {
-    pointer-events: none;
-    user-select: none;
-}
-
-/* GOUNTER: POSICIONAMIENTO */
-
-.cat-area {
-    transform: none !important;
-
-    will-change: left, top;
-
-    transition:
-        left 1.5s cubic-bezier(.22,.61,.36,1),
-        top 1.5s cubic-bezier(.22,.61,.36,1);
-
-    pointer-events: none;
-}
-
-/* IMAGEN DEL GATO */
-
-.gounter {
-    position: relative;
-    z-index: 2;
-
-    object-fit: contain;
-
-    transform-origin: center bottom;
-
-    pointer-events: auto;
-
-    -webkit-user-drag: none;
-}
-
-/* ORIENTACIÓN */
-
-.gounter.facing-left {
-    scale: -1 1;
-}
-
-/* ANIMACIONES */
-
-.gounter.walking {
-    animation: walking-cat .38s ease-in-out infinite;
-}
-
-.gounter.sniffing {
-    animation: sniff-cat .7s ease-in-out infinite;
-}
-
-.gounter.eating,
-.gounter.drinking {
-    animation: eat-cat .65s ease-in-out infinite;
-}
-
-.gounter.sleeping {
-    animation: sleeping-cat 3s ease-in-out infinite;
-}
-
-.gounter.playing {
-    animation: playing-cat .55s ease-in-out infinite;
-}
-
-.gounter.purring {
-    animation: purring-cat .3s ease-in-out infinite;
-}
-
-/* SOMBRA */
-
-.cat-shadow {
-    position: absolute;
-
-    left: 50%;
-    bottom: 30px;
-
-    width: 125px;
-    height: 18px;
-
-    transform: translateX(-50%);
-
-    border-radius: 50%;
-
-    background: rgba(0,0,0,.48);
-
-    filter: blur(9px);
-
-    z-index: 0;
-
-    pointer-events: none;
-
-    animation: cat-shadow-breathe 4s ease-in-out infinite;
-}
-
-/* NOMBRE */
-
-.cat-name {
-    z-index: 3;
-    pointer-events: none;
-}
-
-/* OBJETOS */
-
-.objects-container {
-    pointer-events: none;
-}
-
-.room-object {
-    pointer-events: auto;
-
-    touch-action: none;
-
-    -webkit-user-select: none;
-    user-select: none;
-
-    cursor: grab;
-
-    will-change: left, top;
-}
-
-.room-object:active {
-    cursor: grabbing;
-}
-
-.room-object img {
-    pointer-events: none;
-
-    -webkit-user-drag: none;
-}
-
-/* HUELLAS */
-
-.cat-paw {
-    z-index: 5;
-    pointer-events: none;
-}
-
-/* CORAZONES */
-
-.heart-float {
-    z-index: 10;
-    pointer-events: none;
-}
-
-/* PANEL DE NECESIDADES */
-
-.pet-status {
-    z-index: 18;
-    pointer-events: auto;
-}
-
-/* CHAT */
-
-.karu-chat {
-    z-index: 25;
-    pointer-events: auto;
-}
-
-/* MENSAJES */
-
-.room-message {
-    z-index: 20;
-    max-width: min(85%, 440px);
-}
-
-/* EVITAR QUE LAS CAPAS BLOQUEEN LOS CLICS */
-
-.room-light,
-.room-floor-light,
-.window-rays,
-.room-overlay {
-    pointer-events: none !important;
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 700px) {
-
-    .pet-status {
-        width: 175px;
-        right: 10px;
-        top: 85px;
-        padding: 10px;
-    }
-
-    .cat-area {
-        width: 175px;
-        height: 195px;
-    }
 
     .room-message {
         bottom: 12px;
+        font-size: 10px;
     }
-
 }
 
-/* MOVIMIENTO REDUCIDO */
+/* =========================================
+   20. MOVIMIENTO REDUCIDO
+========================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
+    .room-frame,
     .room-light,
     .room-floor-light,
     .window-rays,
-    .cat-shadow {
-        animation: none;
+    .cat-shadow,
+    .gounter,
+    .need-fill::after {
+        animation: none !important;
     }
 
-}
-
-
-/* ==========================================
-   EVARKION - CORRECCIONES GOUNTER
-========================================== */
-
-/* ESCENA */
-
-.room {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-}
-
-/* CAPAS AMBIENTALES */
-
-.room-light,
-.room-floor-light,
-.window-rays {
-    pointer-events: none;
-    user-select: none;
-}
-
-/* GOUNTER: POSICIONAMIENTO */
-
-.cat-area {
-    transform: none !important;
-
-    will-change: left, top;
-
-    transition:
-        left 1.5s cubic-bezier(.22,.61,.36,1),
-        top 1.5s cubic-bezier(.22,.61,.36,1);
-
-    pointer-events: none;
-}
-
-/* IMAGEN DEL GATO */
-
-.gounter {
-    position: relative;
-    z-index: 2;
-
-    object-fit: contain;
-
-    transform-origin: center bottom;
-
-    pointer-events: auto;
-
-    -webkit-user-drag: none;
-}
-
-/* ORIENTACIÓN */
-
-.gounter.facing-left {
-    scale: -1 1;
-}
-
-/* ANIMACIONES */
-
-.gounter.walking {
-    animation: walking-cat .38s ease-in-out infinite;
-}
-
-.gounter.sniffing {
-    animation: sniff-cat .7s ease-in-out infinite;
-}
-
-.gounter.eating,
-.gounter.drinking {
-    animation: eat-cat .65s ease-in-out infinite;
-}
-
-.gounter.sleeping {
-    animation: sleeping-cat 3s ease-in-out infinite;
-}
-
-.gounter.playing {
-    animation: playing-cat .55s ease-in-out infinite;
-}
-
-.gounter.purring {
-    animation: purring-cat .3s ease-in-out infinite;
-}
-
-/* SOMBRA */
-
-.cat-shadow {
-    position: absolute;
-
-    left: 50%;
-    bottom: 30px;
-
-    width: 125px;
-    height: 18px;
-
-    transform: translateX(-50%);
-
-    border-radius: 50%;
-
-    background: rgba(0,0,0,.48);
-
-    filter: blur(9px);
-
-    z-index: 0;
-
-    pointer-events: none;
-
-    animation: cat-shadow-breathe 4s ease-in-out infinite;
-}
-
-/* NOMBRE */
-
-.cat-name {
-    z-index: 3;
-    pointer-events: none;
-}
-
-/* OBJETOS */
-
-.objects-container {
-    pointer-events: none;
-}
-
-.room-object {
-    pointer-events: auto;
-
-    touch-action: none;
-
-    -webkit-user-select: none;
-    user-select: none;
-
-    cursor: grab;
-
-    will-change: left, top;
-}
-
-.room-object:active {
-    cursor: grabbing;
-}
-
-.room-object img {
-    pointer-events: none;
-
-    -webkit-user-drag: none;
-}
-
-/* HUELLAS */
-
-.cat-paw {
-    z-index: 5;
-    pointer-events: none;
-}
-
-/* CORAZONES */
-
-.heart-float {
-    z-index: 10;
-    pointer-events: none;
-}
-
-/* PANEL DE NECESIDADES */
-
-.pet-status {
-    z-index: 18;
-    pointer-events: auto;
-}
-
-/* CHAT */
-
-.karu-chat {
-    z-index: 25;
-    pointer-events: auto;
-}
-
-/* MENSAJES */
-
-.room-message {
-    z-index: 20;
-    max-width: min(85%, 440px);
-}
-
-/* EVITAR QUE LAS CAPAS BLOQUEEN LOS CLICS */
-
-.room-light,
-.room-floor-light,
-.window-rays,
-.room-overlay {
-    pointer-events: none !important;
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 700px) {
-
-    .pet-status {
-        width: 175px;
-        right: 10px;
-        top: 85px;
-        padding: 10px;
-    }
-
-    .cat-area {
-        width: 175px;
-        height: 195px;
-    }
-
-    .room-message {
-        bottom: 12px;
-    }
-
-}
-
-/* MOVIMIENTO REDUCIDO */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .room-light,
-    .room-floor-light,
-    .window-rays,
-    .cat-shadow {
-        animation: none;
-    }
-
-}
-
-
-
-/* ==========================================
-   EVARKION - GOUNTER AI ANIMATIONS
-========================================== */
-
-/* OBSERVAR */
-
-.gounter.observing {
-    animation: gounter-observing 3s ease-in-out infinite;
-}
-
-@keyframes gounter-observing {
-    0%, 100% {
-        transform: translateY(0) rotate(0);
-    }
-    35% {
-        transform: translateY(-3px) rotate(-3deg);
-    }
-    65% {
-        transform: translateY(0) rotate(3deg);
-    }
-}
-
-/* CURIOSIDAD */
-
-.gounter.curious {
-    animation: gounter-curious 1.2s ease-in-out infinite;
-}
-
-@keyframes gounter-curious {
-    0%, 100% {
-        transform: translateY(0) rotate(0);
-    }
-    30% {
-        transform: translateY(-3px) rotate(-5deg);
-    }
-    65% {
-        transform: translateY(2px) rotate(4deg);
-    }
-}
-
-/* ACICALAMIENTO */
-
-.gounter.grooming {
-    animation: gounter-grooming 1.5s ease-in-out infinite;
-}
-
-@keyframes gounter-grooming {
-    0%, 100% {
-        transform: rotate(0) translateY(0);
-    }
-    50% {
-        transform: rotate(-7deg) translateY(5px);
-    }
-}
-
-/* AMASAR MANTAS */
-
-.gounter.kneading {
-    animation: gounter-kneading .8s ease-in-out infinite;
-}
-
-@keyframes gounter-kneading {
-    0%, 100% {
-        transform: translateY(0) scaleY(1);
-    }
-    50% {
-        transform: translateY(3px) scaleY(.97);
-    }
-}
-
-/* SALTO */
-
-.gounter.jumping {
-    animation: gounter-jumping .65s ease-out;
-}
-
-@keyframes gounter-jumping {
-    0% {
-        transform: translateY(0);
-    }
-    45% {
-        transform: translateY(-45px) scale(1.04);
-    }
-    100% {
-        transform: translateY(0);
-    }
-}
-
-/* EVITAR SELECCIONES ACCIDENTALES */
-
-.cat-area,
-.cat-area img {
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-
-
-
-
-/* =====================================
-   GOUNTER - LUGARES EXPLORABLES
-===================================== */
-
-.room-landmarks {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-}
-
-.landmark {
-    position: absolute;
-
-    width: 1px;
-    height: 1px;
-
-    left: var(--landmark-x, 50%);
-    top: var(--landmark-y, 50%);
-
-    transform: translate(-50%, -50%);
-
-    pointer-events: none;
 }
