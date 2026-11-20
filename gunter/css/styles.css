@@ -1,296 +1,551 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+
+/* =========================================
+   GUNTER'S WORLD — EVARKION
+   Diseño responsive PC + móvil
+========================================= */
+
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-
-    background:#0d0d0d;
-    color:white;
-
-    font-family:Segoe UI, sans-serif;
-
-    min-height:100vh;
-
-    display:flex;
-    flex-direction:column;
+html {
+    min-width: 320px;
+    min-height: 100%;
 }
 
-/* HEADER */
+body {
+    background: #0d0d0d;
+    color: white;
+    font-family: "Segoe UI", Arial, sans-serif;
 
-header{
+    min-height: 100vh;
+    min-height: 100svh;
 
-    text-align:center;
+    display: flex;
+    flex-direction: column;
 
-    padding:30px;
-
-    border-bottom:1px solid #222;
+    overflow-x: hidden;
 }
 
-header h1{
+/* =========================================
+   HEADER
+========================================= */
 
-    color:#e7915c;
+header {
+    text-align: center;
+    padding: 20px 15px;
 
-    margin-bottom:10px;
-
-    font-size:2.4rem;
+    border-bottom: 1px solid #222;
 }
 
-header p{
-
-    color:#bbbbbb;
+header h1 {
+    color: #e7915c;
+    margin-bottom: 7px;
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
 }
 
-/* MAIN */
-
-main{
-
-    flex:1;
-
-    display:flex;
-    gap:20px;
-
-    padding:20px;
+header p {
+    color: #bbbbbb;
+    font-size: clamp(12px, 1.5vw, 15px);
 }
 
-/* HABITACIÓN */
+/* =========================================
+   MAIN
+========================================= */
 
-#room{
+main {
+    position: relative;
 
-    flex:1;
+    flex: 1;
 
-    position:relative;
+    width: 100%;
+    max-width: 1700px;
 
-    min-height:650px;
+    margin: 0 auto;
+    padding: 20px;
 
-    border-radius:20px;
+    display: flex;
+}
+
+/* =========================================
+   HABITACIÓN
+========================================= */
+
+#room {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 520px;
+    height: clamp(520px, 70svh, 760px);
+
+    border-radius: 20px;
 
     background:
-    linear-gradient(
-        to top,
-        #1c1c1c,
-        #2c2c2c
-    );
+        radial-gradient(
+            ellipse at 50% 45%,
+            rgba(115, 90, 75, 0.18),
+            transparent 55%
+        ),
+        linear-gradient(
+            to top,
+            #1c1c1c,
+            #34302e
+        );
 
-    overflow:hidden;
+    overflow: hidden;
 
-    border:2px solid #333;
+    border: 2px solid #333;
+
+    isolation: isolate;
 }
 
-/* SUELO */
+/* =========================================
+   SUELO
+========================================= */
 
-#room::after{
+#room::after {
+    content: "";
 
-    content:"";
+    position: absolute;
 
-    position:absolute;
+    left: 0;
+    bottom: 0;
 
-    bottom:0;
+    width: 100%;
+    height: 110px;
 
-    width:100%;
-    height:140px;
+    background:
+        linear-gradient(
+            to bottom,
+            #202020,
+            #141414
+        );
 
-    background:#161616;
+    border-top: 2px solid #38302c;
+
+    z-index: 1;
+
+    pointer-events: none;
 }
 
-/* GUNTER */
+/* =========================================
+   GUNTER
+========================================= */
 
-#gunter{
+#gunter {
+    position: absolute;
 
-    position:absolute;
+    width: clamp(130px, 18vw, 220px);
+    height: auto;
 
-    width:180px;
+    max-height: 45%;
 
-    bottom:90px;
+    object-fit: contain;
 
-    left:45%;
+    left: 50%;
+    bottom: 75px;
 
-    transform:translateX(-50%);
+    transform: translateX(-50%);
 
-    z-index:10;
+    z-index: 10;
 
-    animation:respirar 3s infinite;
+    user-select: none;
+    -webkit-user-drag: none;
+
+    animation: respirar 3s ease-in-out infinite;
 }
 
 /* RESPIRACIÓN */
 
-@keyframes respirar{
+@keyframes respirar {
 
-    0%{
-        transform:
-        translateX(-50%)
-        scale(1);
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
     }
 
-    50%{
-        transform:
-        translateX(-50%)
-        scale(1.03);
-    }
-
-    100%{
-        transform:
-        translateX(-50%)
-        scale(1);
+    50% {
+        transform: translateX(-50%) scale(1.03);
     }
 }
 
-/* OBJETOS */
+/* =========================================
+   OBJETOS
+========================================= */
 
-.objeto{
+.objeto {
+    position: absolute;
 
-    position:absolute;
+    font-size: clamp(30px, 5vw, 55px);
 
-    font-size:60px;
+    z-index: 5;
 
-    z-index:5;
+    user-select: none;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
 }
 
-/* Caja */
+.objeto:hover {
+    transform: scale(1.12);
 
-.caja{
-
-    left:120px;
-    bottom:100px;
+    filter: drop-shadow(
+        0 0 10px rgba(255, 255, 255, 0.2)
+    );
 }
 
-/* Ovillo */
+/* CAJA */
 
-.ovillo{
-
-    right:150px;
-    bottom:110px;
+.caja {
+    left: 7%;
+    bottom: 75px;
 }
 
-/* Pienso */
+/* OVILLO */
 
-.comida{
-
-    left:350px;
-    bottom:100px;
+.ovillo {
+    right: 7%;
+    bottom: 85px;
 }
 
-/* Agua */
+/* COMIDA */
 
-.agua{
-
-    left:500px;
-    bottom:100px;
+.comida {
+    left: 28%;
+    bottom: 75px;
 }
 
-/* Saco */
+/* AGUA */
 
-.saco{
-
-    right:320px;
-    bottom:100px;
+.agua {
+    right: 28%;
+    bottom: 75px;
 }
 
-/* PANEL KARU */
+/* SACO */
 
-#karu-panel{
-
-    width:320px;
-
-    background:#181818;
-
-    border-radius:20px;
-
-    padding:20px;
-
-    border:1px solid #333;
-
-    height:fit-content;
+.saco {
+    right: 43%;
+    bottom: 180px;
 }
 
-.karu-top{
+/* =========================================
+   PANEL KARU
+========================================= */
 
-    text-align:center;
+#karu-panel {
+    position: absolute;
+
+    top: 38px;
+    right: 38px;
+
+    width: 225px;
+
+    padding: 15px;
+
+    background: rgba(24, 24, 24, 0.94);
+
+    border: 1px solid #514137;
+    border-radius: 18px;
+
+    z-index: 20;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.35),
+        0 0 15px rgba(231, 145, 92, 0.06);
+
+    backdrop-filter: blur(8px);
 }
 
-#karu-avatar{
+/* AVATAR KARU */
 
-    width:120px;
-    height:120px;
+.karu-top {
+    display: flex;
 
-    border-radius:50%;
+    align-items: center;
 
-    object-fit:cover;
-
-    border:3px solid #e7915c;
+    gap: 12px;
 }
 
-.karu-top h2{
+#karu-avatar {
+    width: 65px;
+    height: 65px;
 
-    margin-top:10px;
+    flex-shrink: 0;
 
-    color:#e7915c;
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 2px solid #e7915c;
+
+    box-shadow:
+        0 0 12px rgba(231, 145, 92, 0.3);
 }
 
-#karu-text{
-
-    margin-top:20px;
-
-    line-height:1.6;
-
-    color:#ddd;
+.karu-top h2 {
+    color: #e7915c;
+    font-size: 19px;
 }
 
-/* BOTÓN */
+/* TEXTO KARU */
 
-#dato-btn{
+#karu-text {
+    margin-top: 13px;
 
-    width:100%;
+    line-height: 1.5;
 
-    margin-top:20px;
+    color: #ddd;
 
-    padding:12px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#e7915c;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:0.3s;
+    font-size: 12px;
 }
 
-#dato-btn:hover{
+/* =========================================
+   BOTÓN
+========================================= */
 
-    background:#ff9f61;
+#dato-btn {
+    width: 100%;
+
+    margin-top: 14px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #e7915c;
+    color: white;
+
+    font-weight: bold;
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
 }
 
-/* FOOTER */
+#dato-btn:hover {
+    background: #ff9f61;
 
-footer{
-
-    text-align:center;
-
-    padding:15px;
-
-    border-top:1px solid #222;
-
-    color:#777;
+    box-shadow:
+        0 0 15px rgba(231, 145, 92, 0.3);
 }
 
-/* MÓVIL */
+/* =========================================
+   FOOTER
+========================================= */
 
-@media(max-width:900px){
+footer {
+    text-align: center;
 
-    main{
+    padding: 12px;
 
-        flex-direction:column;
+    border-top: 1px solid #222;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+/* =========================================
+   TABLETS
+========================================= */
+
+@media (max-width: 900px) {
+
+    main {
+        padding: 14px;
     }
 
-    #karu-panel{
+    #room {
+        height: 65svh;
+        min-height: 520px;
+    }
 
-        width:100%;
+    #karu-panel {
+        top: 20px;
+        right: 20px;
+    }
+
+    #gunter {
+        width: clamp(130px, 23vw, 190px);
+    }
+}
+
+/* =========================================
+   MÓVILES
+========================================= */
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 15px 10px;
+    }
+
+    header h1 {
+        font-size: 1.65rem;
+    }
+
+    header p {
+        max-width: 330px;
+        margin: 0 auto;
+
+        line-height: 1.5;
+        font-size: 12px;
+    }
+
+    main {
+        padding: 9px;
+    }
+
+    #room {
+        width: 100%;
+
+        height: 68svh;
+        min-height: 480px;
+        max-height: 680px;
+
+        border-radius: 14px;
+    }
+
+    /* GUNTER EN EL CENTRO */
+
+    #gunter {
+        width: clamp(120px, 36vw, 175px);
+
+        max-height: 38%;
+
+        left: 50%;
+        bottom: 65px;
+    }
+
+    /* OBJETOS MÁS PEQUEÑOS */
+
+    .objeto {
+        font-size: clamp(27px, 8vw, 39px);
+    }
+
+    .caja {
+        left: 5%;
+        bottom: 65px;
+    }
+
+    .ovillo {
+        right: 5%;
+        bottom: 65px;
+    }
+
+    .comida {
+        left: 8%;
+        bottom: 175px;
+    }
+
+    .agua {
+        right: 8%;
+        bottom: 175px;
+    }
+
+    .saco {
+        right: 12%;
+        bottom: 260px;
+    }
+
+    /* KARU EN LA ESQUINA SUPERIOR */
+
+    #karu-panel {
+        top: 12px;
+        right: 12px;
+
+        width: 145px;
+
+        padding: 9px;
+
+        border-radius: 12px;
+    }
+
+    .karu-top {
+        gap: 7px;
+    }
+
+    #karu-avatar {
+        width: 42px;
+        height: 42px;
+
+        border-width: 2px;
+    }
+
+    .karu-top h2 {
+        font-size: 15px;
+    }
+
+    #karu-text {
+        margin-top: 8px;
+
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    #dato-btn {
+        margin-top: 9px;
+
+        padding: 8px 5px;
+
+        font-size: 10px;
+    }
+
+    footer {
+        padding: 10px;
+        font-size: 10px;
+    }
+}
+
+/* =========================================
+   MÓVILES PEQUEÑOS
+========================================= */
+
+@media (max-width: 360px) {
+
+    #karu-panel {
+        width: 132px;
+        top: 9px;
+        right: 9px;
+    }
+
+    #karu-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    #gunter {
+        width: 120px;
+    }
+
+    .objeto {
+        font-size: 27px;
+    }
+}
+
+/* =========================================
+   REDUCIR MOVIMIENTO
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #gunter {
+        animation: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
     }
 }
