@@ -1747,3 +1747,25 @@ body {
     -webkit-user-select: none;
     user-select: none;
 }
+
+
+
+
+/* =====================================
+   GOUNTER - LUGARES EXPLORABLES
+===================================== */
+
+.room-landmarks {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.landmark {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
