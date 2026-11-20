@@ -6,13 +6,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta name="theme-color" content="#101016">
+    <meta name="description" content="Refugio de Gounter, un pequeño mundo de EVARKION.">
+
     <title>Refugio de Gounter | EVARKION</title>
 
+    <!-- ESTILOS -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/karu-chat.css">
 
+    <!-- JAVASCRIPT -->
     <script src="js/game.js" defer></script>
     <script src="js/karu-chat.js" defer></script>
+
 </head>
 
 <body>
@@ -21,257 +27,433 @@
 
         <section class="room-frame">
 
+            <!-- =================================
+                 HABITACIÓN PRINCIPAL
+            ================================== -->
+
             <div class="room" id="room">
 
-                <!-- HABITACIÓN -->
+                <!-- FONDO Y AMBIENTACIÓN -->
+
                 <div class="room-background"></div>
+
                 <div class="room-overlay"></div>
 
                 <div class="room-light"></div>
+
                 <div class="room-floor-light"></div>
+
                 <div class="window-rays"></div>
-                <!-- CABECERA -->
+
+
+                <!-- =================================
+                     CABECERA
+                ================================== -->
+
                 <header class="room-header">
 
                     <div class="header-brand">
+
                         <span class="brand-icon">✦</span>
 
                         <div>
+
                             <h1>REFUGIO DE GOUNTER</h1>
+
                             <p>EVARKION · UN PEQUEÑO MUNDO</p>
+
                         </div>
+
                     </div>
 
+
                     <div class="room-status">
+
                         <span class="status-dot"></span>
+
                         <span>Gounter está en casa</span>
+
                     </div>
-                      
-                <!-- =====================================
-                     ESTADO Y NECESIDADES DE GOUNTER
-                ===================================== -->
-                
-                <section class="pet-status" id="pet-status">
-                
-                    <div class="pet-status-header">
-                
-                        <div>
-                            <span class="pet-status-eyebrow">
-                                EVARKION COMPANION
-                            </span>
-                
-                            <h2>GOUNTER <span>♥</span></h2>
-                        </div>
-                
-                        <span class="pet-status-indicator"></span>
-                
-                    </div>
-                
-                    <div class="pet-status-divider"></div>
-                
-                    <!-- HAMBRE -->
-                
-                    <div class="need-item">
-                
-                        <div class="need-heading">
-                            <span>🍖 Hambre</span>
-                            <span id="hunger-value">65%</span>
-                        </div>
-                
-                        <div class="need-bar">
-                            <div class="need-fill hunger-fill"
-                                 id="hunger-bar"></div>
-                        </div>
-                
-                    </div>
-                
-                    <!-- SED -->
-                
-                    <div class="need-item">
-                
-                        <div class="need-heading">
-                            <span>💧 Sed</span>
-                            <span id="thirst-value">75%</span>
-                        </div>
-                
-                        <div class="need-bar">
-                            <div class="need-fill thirst-fill"
-                                 id="thirst-bar"></div>
-                        </div>
-                
-                    </div>
-                
-                    <!-- ENERGÍA -->
-                
-                    <div class="need-item">
-                
-                        <div class="need-heading">
-                            <span>🌙 Energía</span>
-                            <span id="energy-value">85%</span>
-                        </div>
-                
-                        <div class="need-bar">
-                            <div class="need-fill energy-fill"
-                                 id="energy-bar"></div>
-                        </div>
-                
-                    </div>
-                
-                    <!-- FELICIDAD -->
-                
-                    <div class="need-item">
-                
-                        <div class="need-heading">
-                            <span>♥ Felicidad</span>
-                            <span id="happiness-value">90%</span>
-                        </div>
-                
-                        <div class="need-bar">
-                            <div class="need-fill happiness-fill"
-                                 id="happiness-bar"></div>
-                        </div>
-                
-                    </div>
-                
-                    <div class="pet-status-footer">
-                        <span>✦</span> Un pequeño mundo, una gran amistad.
-                    </div>
-                
-                </section>
 
                 </header>
 
-                <!-- OBJETOS -->
+
+                <!-- =================================
+                     NECESIDADES DE GOUNTER
+                ================================== -->
+
+                <section class="pet-status" id="pet-status">
+
+                    <div class="pet-status-header">
+
+                        <div>
+
+                            <span class="pet-status-eyebrow">
+                                EVARKION COMPANION
+                            </span>
+
+                            <h2>GOUNTER <span>♥</span></h2>
+
+                        </div>
+
+                        <span class="pet-status-indicator"></span>
+
+                    </div>
+
+
+                    <div class="pet-status-divider"></div>
+
+
+                    <!-- HAMBRE -->
+
+                    <div class="need-item">
+
+                        <div class="need-heading">
+
+                            <span>🍖 Hambre</span>
+
+                            <span id="hunger-value">65%</span>
+
+                        </div>
+
+                        <div class="need-bar">
+
+                            <div
+                                class="need-fill hunger-fill"
+                                id="hunger-bar">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SED -->
+
+                    <div class="need-item">
+
+                        <div class="need-heading">
+
+                            <span>💧 Sed</span>
+
+                            <span id="thirst-value">75%</span>
+
+                        </div>
+
+                        <div class="need-bar">
+
+                            <div
+                                class="need-fill thirst-fill"
+                                id="thirst-bar">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ENERGÍA -->
+
+                    <div class="need-item">
+
+                        <div class="need-heading">
+
+                            <span>🌙 Energía</span>
+
+                            <span id="energy-value">85%</span>
+
+                        </div>
+
+                        <div class="need-bar">
+
+                            <div
+                                class="need-fill energy-fill"
+                                id="energy-bar">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FELICIDAD -->
+
+                    <div class="need-item">
+
+                        <div class="need-heading">
+
+                            <span>♥ Felicidad</span>
+
+                            <span id="happiness-value">90%</span>
+
+                        </div>
+
+                        <div class="need-bar">
+
+                            <div
+                                class="need-fill happiness-fill"
+                                id="happiness-bar">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="pet-status-footer">
+
+                        <span>✦</span>
+
+                        Un pequeño mundo, una gran amistad.
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================
+                     OBJETOS INTERACTIVOS
+                ================================== -->
+
                 <div class="objects-container">
 
-                    <div class="room-object food-object"
-                         data-action="food"
-                         draggable="false">
 
-                        <img src="assets/objects/comida.png"
-                             alt="Comida de Gounter"
-                             draggable="false">
+                    <!-- COMIDA -->
+
+                    <div
+                        class="room-object food-object"
+                        data-action="food"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Dar comida a Gounter">
+
+                        <img
+                            src="assets/objects/comida.png"
+                            alt="Cuenco de comida"
+                            draggable="false">
 
                         <span>COMIDA</span>
+
                     </div>
 
-                    <div class="room-object water-object"
-                         data-action="water"
-                         draggable="false">
 
-                        <img src="assets/objects/agua.png"
-                             alt="Agua de Gounter"
-                             draggable="false">
+                    <!-- AGUA -->
+
+                    <div
+                        class="room-object water-object"
+                        data-action="water"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Dar agua a Gounter">
+
+                        <img
+                            src="assets/objects/agua.png"
+                            alt="Cuenco de agua"
+                            draggable="false">
 
                         <span>AGUA</span>
+
                     </div>
 
-                    <div class="room-object sack-object"
-                         data-action="sack"
-                         draggable="false">
 
-                        <img src="assets/objects/saco.png"
-                             alt="Saco de Gounter"
-                             draggable="false">
+                    <!-- SACO -->
+
+                    <div
+                        class="room-object sack-object"
+                        data-action="sack"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Jugar con el saco de Gounter">
+
+                        <img
+                            src="assets/objects/saco.png"
+                            alt="Saco de juegos"
+                            draggable="false">
 
                         <span>SACO</span>
+
                     </div>
 
-                    <div class="room-object box-object"
-                         data-action="box"
-                         draggable="false">
 
-                        <img src="assets/objects/caja.png"
-                             alt="Caja de Gounter"
-                             draggable="false">
+                    <!-- CAJA -->
+
+                    <div
+                        class="room-object box-object"
+                        data-action="box"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Dejar dormir a Gounter">
+
+                        <img
+                            src="assets/objects/caja.png"
+                            alt="Caja para dormir"
+                            draggable="false">
 
                         <span>CAJA</span>
+
                     </div>
+
 
                 </div>
 
-                <!-- GOUNTER -->
+
+                <!-- =================================
+                     GOUNTER
+                ================================== -->
+
                 <div class="cat-area" id="cat-area">
 
+                    <!-- SOMBRA DINÁMICA -->
+
                     <div class="cat-shadow"></div>
+
+
+                    <!-- IMAGEN DEL GATO -->
 
                     <img
                         src="assets/characters/gunter_idle.png"
                         id="gounter"
                         class="gounter"
-                        alt="Gounter"
+                        alt="Gounter, mascota de EVARKION"
                         draggable="false"
                     >
 
+
+                    <!-- NOMBRE -->
+
                     <div class="cat-name">
+
                         GOUNTER <span>♥</span>
+
                     </div>
 
                 </div>
 
-                <!-- MENSAJE -->
-                <div class="room-message" id="room-message">
+
+                <!-- =================================
+                     MENSAJES DE GOUNTER
+                ================================== -->
+
+                <div
+                    class="room-message"
+                    id="room-message"
+                    aria-live="polite">
+
                     Gounter está descansando. 🐾
+
                 </div>
 
-                <!-- CHAT ÚNICO DE KARU -->
-                <aside class="karu-chat" id="karu-chat">
+
+                <!-- =================================
+                     CHAT DE KARU
+                ================================== -->
+
+                <aside
+                    class="karu-chat"
+                    id="karu-chat"
+                    aria-label="Chat con Karu">
+
+
+                    <!-- CABECERA DEL CHAT -->
 
                     <div class="karu-header">
 
                         <img
                             src="assets/characters/karu_avatar.png"
                             class="karu-avatar"
-                            alt="Karu"
+                            alt="Avatar de Karu"
                         >
 
+
                         <div class="karu-info">
+
                             <strong>Karu</strong>
+
                             <span>Asistente del refugio</span>
+
                         </div>
+
+
+                        <!-- MINIMIZAR -->
 
                         <button
                             class="karu-minimize"
                             id="karu-minimize"
                             type="button"
                             aria-label="Minimizar chat"
-                        >−</button>
+                            aria-expanded="true">
+
+                            −
+
+                        </button>
 
                     </div>
 
-                    <div class="karu-chat-content"
-                         id="karu-chat-content">
 
-                        <div class="karu-messages"
-                             id="karu-messages">
+                    <!-- CONTENIDO DEL CHAT -->
+
+                    <div
+                        class="karu-chat-content"
+                        id="karu-chat-content">
+
+
+                        <!-- MENSAJES -->
+
+                        <div
+                            class="karu-messages"
+                            id="karu-messages">
 
                             <div class="message karu-message">
+
                                 ¡Hola! Soy Karu. 🐱
 
                                 Gounter está esperándote.
+
                                 Puedes darle comida, agua o jugar con él.
+
                             </div>
 
                         </div>
 
+
+                        <!-- OPCIONES RÁPIDAS -->
+
                         <div class="karu-options">
 
-                            <button data-message="¿Cómo está Gounter?">
+                            <button
+                                type="button"
+                                data-message="¿Cómo está Gounter?">
+
                                 ¿Cómo está Gounter?
+
                             </button>
 
-                            <button data-message="Quiero darle de comer">
+
+                            <button
+                                type="button"
+                                data-message="Quiero darle de comer">
+
                                 Darle de comer
+
                             </button>
 
-                            <button data-message="Quiero jugar con Gounter">
+
+                            <button
+                                type="button"
+                                data-message="Quiero jugar con Gounter">
+
                                 Jugar
+
                             </button>
 
                         </div>
 
-                        <form class="karu-input-area"
-                              id="karu-form">
+
+                        <!-- ENVIAR MENSAJES -->
+
+                        <form
+                            class="karu-input-area"
+                            id="karu-form">
 
                             <input
                                 type="text"
@@ -279,16 +461,24 @@
                                 placeholder="Habla con Karu..."
                                 maxlength="250"
                                 autocomplete="off"
+                                aria-label="Escribe un mensaje para Karu"
                             >
 
-                            <button type="submit"
-                                    aria-label="Enviar">➤</button>
+
+                            <button
+                                type="submit"
+                                aria-label="Enviar mensaje">
+
+                                ➤
+
+                            </button>
 
                         </form>
 
                     </div>
 
                 </aside>
+
 
             </div>
 
@@ -297,4 +487,5 @@
     </main>
 
 </body>
+
 </html>
