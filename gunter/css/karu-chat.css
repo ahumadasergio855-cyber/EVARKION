@@ -1,9 +1,4 @@
 
-/* =====================================
-   KARU CHAT - EVARKION
-   Diseño independiente de Gunter
-===================================== */
-
 #karu-chat-widget {
     position: fixed;
     right: 25px;
@@ -12,26 +7,19 @@
     font-family: Arial, sans-serif;
 }
 
-/* BOTÓN DE CONVERSACIÓN */
-
 #karu-chat-toggle {
-    padding: 12px 18px;
+    background: #211c1a;
     color: white;
-    background: rgba(25, 25, 30, .95);
     border: 1px solid #ff8c32;
-    border-radius: 30px;
+    border-radius: 25px;
+    padding: 12px 18px;
     cursor: pointer;
-    box-shadow: 0 0 12px rgba(255, 140, 50, .4);
-    transition: .25s ease;
+    box-shadow: 0 0 15px #ff8c3260;
 }
 
 #karu-chat-toggle:hover {
-    background: #b95c20;
-    box-shadow: 0 0 20px #ff8c32;
-    transform: translateY(-3px);
+    background: #a95320;
 }
-
-/* VENTANA */
 
 #karu-chat-window {
     position: absolute;
@@ -40,83 +28,54 @@
     width: 350px;
     height: 470px;
     max-height: calc(100vh - 110px);
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: hidden;
-
-    background: rgba(15, 18, 25, .97);
+    background: #151820;
     border: 1px solid #ff8c32;
     border-radius: 16px;
-
-    box-shadow:
-        0 0 15px rgba(255, 140, 50, .25),
-        0 0 35px rgba(255, 140, 50, .1);
-
-    animation: karuAppear .25s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 25px #ff8c3240;
 }
 
 #karu-chat-window.karu-hidden {
     display: none;
 }
 
-@keyframes karuAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-/* CABECERA */
-
 .karu-chat-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: linear-gradient(110deg, #22212b, #402619);
+    color: white;
+    background: linear-gradient(110deg, #25212b, #49301f);
     border-bottom: 1px solid #ff8c32;
 }
 
-.karu-header-info {
-    flex: 1;
-    color: white;
-}
-
-.karu-header-info h3 {
+.karu-chat-header h3 {
     margin: 0 0 5px;
     color: #ffad63;
 }
 
-.karu-header-info span {
+.karu-chat-header span {
     color: #aaa;
     font-size: 11px;
 }
 
 #karu-close {
+    color: white;
+    font-size: 25px;
     background: none;
     border: none;
-    color: white;
-    font-size: 27px;
     cursor: pointer;
 }
 
-/* MENSAJES */
-
 #karu-messages {
     flex: 1;
+    padding: 15px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 15px;
-    overflow-y: auto;
 }
 
 .karu-message {
@@ -126,8 +85,6 @@
     color: white;
     font-size: 13px;
     line-height: 1.5;
-    overflow-wrap: anywhere;
-    white-space: pre-wrap;
 }
 
 .karu-message.bot {
@@ -141,58 +98,49 @@
     background: #a95320;
 }
 
-/* FORMULARIO */
-
-#karu-chat-form {
+#karu-options {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     padding: 12px;
     border-top: 1px solid #393939;
+    max-height: 180px;
+    overflow-y: auto;
 }
 
-#karu-message-input {
-    flex: 1;
-    min-width: 0;
-    padding: 12px;
-    background: #20232b;
-    color: white;
-    border: 1px solid #555;
+.karu-option,
+.karu-back {
+    padding: 10px;
     border-radius: 9px;
-    outline: none;
-}
-
-#karu-message-input:focus {
-    border-color: #ff8c32;
-}
-
-#karu-send {
-    width: 42px;
-    border: none;
-    border-radius: 9px;
-    background: #ff8c32;
-    color: white;
-    font-size: 20px;
+    border: 1px solid #a95e2c;
+    background: #242731;
+    color: #ffbd83;
+    text-align: left;
     cursor: pointer;
+    transition: .2s;
 }
 
-#karu-send:disabled {
-    opacity: .5;
-    cursor: wait;
+.karu-option:hover,
+.karu-back:hover {
+    background: #a95320;
+    color: white;
 }
 
-/* PIE */
+.karu-back {
+    text-align: center;
+    border-color: #555;
+    color: #ccc;
+}
 
 .karu-chat-footer {
-    padding: 8px;
     text-align: center;
+    padding: 8px;
     color: #999;
     font-size: 10px;
+    background: #11141b;
 }
 
-/* MÓVILES */
-
 @media (max-width: 480px) {
-
     #karu-chat-widget {
         right: 15px;
         bottom: 15px;
@@ -202,9 +150,8 @@
         position: fixed;
         left: 10px;
         right: 10px;
-        bottom: 85px;
+        bottom: 80px;
         width: auto;
         height: min(470px, calc(100dvh - 110px));
     }
-
 }
