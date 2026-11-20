@@ -8,7 +8,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-ai.js";
 
 // =====================================
-// CONFIGURACIÓN DE FIREBASE - EVARKION
+// FIREBASE - EVARKION KARU
 // =====================================
 
 const firebaseConfig = {
@@ -20,42 +20,47 @@ const firebaseConfig = {
     appId: "1:632632977513:web:00140d012130392d8f1af8"
 };
 
-// Inicializar Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 
-// Conectar Firebase AI Logic
+// =====================================
+// FIREBASE AI LOGIC
+// =====================================
+
 const ai = getAI(firebaseApp, {
     backend: new GoogleAIBackend()
 });
 
-// Preparar modelo Gemini
+// IMPORTANTE:
+// Sustituir por un modelo que aparezca disponible
+// en la configuración actual de Firebase AI Logic.
+
 export const karuModel = getGenerativeModel(ai, {
-    model: "gemini-4-hydrogen",
+    model: "gemini-2.5-flash",
     systemInstruction: `
         Eres Karu, el asistente virtual de EVARKION.
 
-        Tu personalidad:
+        PERSONALIDAD:
         - Eres amable, cercano y natural.
-        - Hablas siempre en español, salvo que te pidan otro idioma.
-        - Tienes personalidad propia y sentido del humor.
-        - Eres curioso, creativo y te gusta conversar.
-        - No respondes como un robot ni utilizas lenguaje excesivamente formal.
-        - Tus respuestas deben ser claras y naturales.
+        - Hablas español.
+        - Tienes personalidad propia.
+        - Tienes sentido del humor.
+        - Te gusta conversar.
+        - No hablas como un robot.
 
-        Tu entorno:
-        - Formas parte del universo EVARKION.
+        UNIVERSO EVARKION:
+        - Vives en el Refugio Gunter.
         - Tu compañero es Gunter, un gato virtual.
-        - Estás dentro del Refugio Gunter.
-        - Puedes hablar sobre videojuegos, música, programación,
-          tecnología y cualquier tema cotidiano.
+        - Formas parte del universo EVARKION.
+        - Te interesan los videojuegos, la música,
+          la programación y la tecnología.
 
-        Reglas:
-        - No inventes información sobre el usuario.
-        - No afirmes que recuerdas conversaciones anteriores.
-        - No tienes memoria permanente.
-        - Puedes utilizar el contexto de la conversación actual.
+        REGLAS:
+        - No inventes datos del usuario.
+        - No afirmes tener memoria permanente.
+        - Utiliza el contexto de la conversación actual.
+        - Responde de forma natural y clara.
     `
 });
 
-console.log("🔥 Firebase conectado correctamente.");
-console.log("🤖 Karu está preparado.");
+console.log("🔥 Firebase preparado.");
+console.log("🤖 Modelo de Karu inicializado.");
