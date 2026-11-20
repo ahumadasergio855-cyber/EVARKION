@@ -1751,6 +1751,7 @@ body {
 
 
 
+
 /* =====================================
    GOUNTER - LUGARES EXPLORABLES
 ===================================== */
@@ -1764,8 +1765,14 @@ body {
 
 .landmark {
     position: absolute;
+
     width: 1px;
     height: 1px;
+
+    left: var(--landmark-x, 50%);
+    top: var(--landmark-y, 50%);
+
     transform: translate(-50%, -50%);
+
     pointer-events: none;
 }
