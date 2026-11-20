@@ -1,20 +1,7 @@
 
-/* ==========================================
-   EVARKION - REFUGIO DE GUNTER
-   FULLSCREEN + MARCO NARANJA + CHAT KARU
-========================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-    --orange: #ff8c32;
-    --orange-light: #ffc078;
-    --orange-glow: #ff6a00;
-    --purple: #a78bfa;
-    --pink: #f0a6d5;
-    --text: #ffffff;
-    --muted: #c5c2d7;
-}
+/* =========================================
+   EVARKION - REFUGIO DE GOUNTER
+========================================= */
 
 * {
     margin: 0;
@@ -22,1002 +9,513 @@
     box-sizing: border-box;
 }
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+:root {
+    --orange: #ff8c32;
+    --orange-light: #ffb45e;
+    --dark: #11131a;
+    --white: #ffffff;
 }
 
 body {
-    background: #080811;
-    color: var(--text);
-    font-family: 'Nunito', Arial, sans-serif;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at center, #29202a, #101018 75%);
+    color: var(--white);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 
-/* ==========================================
-   CONTENEDOR
-========================================== */
+/* CONTENEDOR */
 
-.game-container {
-    position: fixed;
-    inset: 0;
+.refuge-container {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
 }
 
-/* ==========================================
-   MARCO ANIMADO NARANJA
-========================================== */
+/* MARCO NARANJA */
 
 .room-frame {
-    position: absolute;
-    inset: 9px;
+    width: 100%;
+    max-width: 1500px;
+    height: min(82vh, 850px);
+    min-height: 520px;
+    padding: 4px;
+    border-radius: 18px;
 
-    padding: 3px;
-    border-radius: 19px;
-
-    isolation: isolate;
-}
-
-/* Borde luminoso animado */
-
-.room-frame::before {
-    content: "";
-
-    position: absolute;
-    z-index: -1;
-
-    inset: -3px;
-    border-radius: 22px;
-
-    background: conic-gradient(
-        from 0deg,
+    background: linear-gradient(
+        120deg,
         #ff6a00,
-        #ffcf72,
-        #ff8c32,
-        #ff4d00,
         #ffbd69,
-        #ff6a00
+        #ff6a00,
+        #ff9b36
     );
 
-    background-size: 200% 200%;
+    background-size: 300% 300%;
+    animation: orange-frame 7s ease infinite;
 
-    animation: orangeFrame 5s linear infinite;
-
-    filter: blur(5px);
+    box-shadow:
+        0 0 12px rgba(255, 126, 38, 0.7),
+        0 0 35px rgba(255, 126, 38, 0.35);
 }
 
-/* Borde exterior */
-
-.room-frame::after {
-    content: "";
-
-    position: absolute;
-    z-index: -2;
-
-    inset: -5px;
-    border-radius: 24px;
-
-    background: var(--orange);
-
-    filter: blur(16px);
-    opacity: 0.45;
-
-    animation: orangePulse 3s ease-in-out infinite alternate;
-}
-
-@keyframes orangeFrame {
-    from {
-        filter: hue-rotate(0deg) blur(5px);
+@keyframes orange-frame {
+    0% {
+        background-position: 0% 50%;
     }
 
-    to {
-        filter: hue-rotate(-35deg) blur(5px);
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
     }
 }
 
-@keyframes orangePulse {
-    from {
-        opacity: 0.25;
-        transform: scale(0.998);
-    }
-
-    to {
-        opacity: 0.75;
-        transform: scale(1.003);
-    }
-}
-
-/* ==========================================
-   HABITACIÓN
-========================================== */
+/* HABITACIÓN */
 
 .room {
-    position: relative;
-
     width: 100%;
     height: 100%;
-
+    position: relative;
     overflow: hidden;
     isolation: isolate;
-
-    border-radius: 16px;
-
-    background: #151321;
+    border-radius: 15px;
+    background: #24202b;
 }
 
-/* Imagen de fondo */
+/* FONDO */
 
 .room-background {
     position: absolute;
-    z-index: 0;
-
     inset: 0;
+    z-index: -3;
 
     background-image: url("../assets/background/habitacion.png");
-
+    background-position: center;
     background-size: cover;
-    background-position: center center;
     background-repeat: no-repeat;
-
-    pointer-events: none;
 }
 
-/* Capa oscura muy sutil para facilitar lectura */
+/* CAPA DE ILUMINACIÓN */
 
 .room-overlay {
     position: absolute;
-    z-index: 1;
-
     inset: 0;
+    z-index: -2;
 
-    background: linear-gradient(
-        180deg,
-        #09071665 0%,
-        transparent 25%,
-        transparent 70%,
-        #09071645 100%
-    );
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10, 10, 18, 0.55),
+            transparent 32%,
+            rgba(10, 10, 18, 0.08) 65%,
+            rgba(10, 10, 18, 0.40)
+        );
 
     pointer-events: none;
 }
 
-/* ==========================================
-   CABECERA SUPERPUESTA
-========================================== */
+/* CABECERA */
 
-.game-header {
+.room-header {
     position: absolute;
-    z-index: 50;
-
-    top: 20px;
-    left: 24px;
-    right: 24px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 22px 28px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    pointer-events: none;
+    z-index: 10;
 }
 
-.brand {
+.header-brand {
     display: flex;
     align-items: center;
     gap: 12px;
-
-    padding: 11px 17px;
-
-    border: 1px solid #ffffff30;
-    border-radius: 15px;
-
-    background: #11101bc9;
-    backdrop-filter: blur(12px);
-
-    box-shadow: 0 6px 25px #0004;
 }
 
 .brand-icon {
-    width: 40px;
-    height: 40px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 12px;
-
-    background: linear-gradient(
-        135deg,
-        #ffb15d,
-        #ff7135
-    );
-
-    color: #351b0b;
-    font-size: 23px;
-
-    box-shadow: 0 0 20px #ff8c3266;
+    color: var(--orange-light);
+    font-size: 35px;
+    text-shadow: 0 0 15px var(--orange);
 }
 
-.brand h1 {
-    font-size: 16px;
-    font-weight: 900;
-    letter-spacing: 1.8px;
+.header-brand h1 {
+    font-size: clamp(15px, 2vw, 23px);
+    letter-spacing: 3px;
+    text-shadow: 0 2px 8px #000;
 }
 
-.brand p {
-    margin-top: 2px;
-
-    color: #d3c9dd;
+.header-brand p {
+    margin-top: 5px;
     font-size: 10px;
+    letter-spacing: 2px;
+    color: #ffd2a5;
 }
 
-.header-status {
+.room-status {
     display: flex;
     align-items: center;
     gap: 8px;
 
     padding: 10px 15px;
-
-    border: 1px solid #ffffff30;
     border-radius: 30px;
 
-    background: #11101bc9;
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
 
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 12px;
 }
 
-.online-dot,
-.status-light,
-.chat-online-dot {
-    width: 8px;
-    height: 8px;
-
-    display: inline-block;
-    flex-shrink: 0;
-
+.status-dot {
+    width: 9px;
+    height: 9px;
+    background: #62ed91;
     border-radius: 50%;
-
-    background: #7be6a6;
-    box-shadow: 0 0 10px #7be6a6;
+    box-shadow: 0 0 10px #62ed91;
 }
 
-/* ==========================================
-   ESTADO DE GUNTER
-========================================== */
+/* ZONA DE JUEGO */
 
-#status-indicator {
+.room-content {
     position: absolute;
-    z-index: 45;
+    inset: 0;
+}
 
-    top: 95px;
-    left: 24px;
+/* OBJETOS */
+
+.objects-container {
+    position: absolute;
+    left: 3%;
+    bottom: 8%;
+    z-index: 5;
 
     display: flex;
-    align-items: center;
-    gap: 9px;
-
-    max-width: calc(100% - 48px);
-
-    padding: 10px 15px;
-
-    border: 1px solid #ffffff30;
-    border-radius: 30px;
-
-    background: #151321c9;
-    backdrop-filter: blur(12px);
-
-    color: white;
-    font-size: 11px;
-    font-weight: 800;
-
-    box-shadow: 0 5px 20px #0003;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* ==========================================
-   OBJETOS DEL JUEGO
-========================================== */
+.room-object {
+    width: 95px;
+    height: 95px;
 
-.game-object {
-    position: absolute;
-    z-index: 10;
+    border: 1px solid rgba(255, 175, 100, 0.5);
+    border-radius: 15px;
 
-    width: clamp(75px, 9vw, 125px);
-    height: clamp(85px, 11vw, 140px);
+    background: rgba(15, 13, 18, 0.65);
+    backdrop-filter: blur(8px);
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
 
     cursor: grab;
-
     user-select: none;
     touch-action: none;
 
     transition:
-        filter 0.2s ease,
-        transform 0.2s ease;
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
-.game-object img {
-    width: 85%;
-    height: 85%;
-
+.room-object img {
+    width: 62px;
+    height: 62px;
     object-fit: contain;
-
-    filter: drop-shadow(0 9px 6px #0009);
-
     pointer-events: none;
-    -webkit-user-drag: none;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
 }
 
-.game-object:hover {
-    filter: brightness(1.12);
-    transform: translateY(-5px);
+.room-object span {
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    pointer-events: none;
 }
 
-.game-object:active {
+.room-object:hover {
+    transform: scale(1.08);
+    border-color: var(--orange-light);
+
+    box-shadow:
+        0 0 12px rgba(255, 140, 50, 0.6);
+}
+
+.room-object:active {
     cursor: grabbing;
 }
 
-.object-label {
-    padding: 4px 11px;
+/* GOUNTER */
 
-    border: 1px solid #ffffff35;
-    border-radius: 20px;
-
-    background: #171321e8;
-
-    color: white;
-    font-size: 10px;
-    font-weight: 900;
-
-    opacity: 0;
-    transform: translateY(5px);
-
-    transition: 0.2s ease;
-}
-
-.game-object:hover .object-label,
-.game-object.selected .object-label {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Posiciones iniciales */
-
-.object-food {
-    left: 13%;
-    bottom: 10%;
-}
-
-.object-water {
-    left: 29%;
-    bottom: 10%;
-}
-
-.object-bag {
-    right: 13%;
-    bottom: 10%;
-}
-
-.object-box {
-    right: 29%;
-    bottom: 10%;
-}
-
-/* ==========================================
-   GUNTER
-========================================== */
-
-.gunter-character {
+.cat-area {
     position: absolute;
-    z-index: 20;
+    left: 50%;
+    bottom: 9%;
 
-    left: 52%;
-    top: 65%;
+    width: 240px;
+    height: 260px;
 
-    width: clamp(130px, 17vw, 220px);
-    height: clamp(150px, 20vw, 250px);
+    transform: translateX(-50%);
+    z-index: 4;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 
-    transform: translate(-50%, -50%);
-
-    cursor: pointer;
-
-    transition:
-        left 0.8s cubic-bezier(.2,.8,.2,1),
-        top 0.8s cubic-bezier(.2,.8,.2,1),
-        filter 0.3s ease;
+    pointer-events: none;
 }
 
-.gunter-character img {
-    position: relative;
-    z-index: 2;
-
-    width: 100%;
-    height: 100%;
+.gounter {
+    width: 210px;
+    height: 210px;
 
     object-fit: contain;
+    object-position: center bottom;
 
-    filter: drop-shadow(0 12px 9px #0008);
-
+    cursor: pointer;
     user-select: none;
-    -webkit-user-drag: none;
+    pointer-events: auto;
+
+    transform-origin: center bottom;
+
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.3));
+
+    transition: filter 0.3s ease;
+    animation: cat-idle 3s ease-in-out infinite;
 }
 
-.character-shadow {
-    position: absolute;
-    z-index: 1;
-
-    bottom: 4px;
-
-    width: 75%;
-    height: 18px;
-
-    border-radius: 50%;
-
-    background: #0007;
-    filter: blur(8px);
-}
-
-.gunter-character:hover {
-    filter: brightness(1.1);
-}
-
-.gunter-character:active {
-    transform: translate(-50%, -50%) scale(0.96);
-}
-
-/* ==========================================
-   MENSAJE DE INTERACCIÓN
-========================================== */
-
-.action-message {
-    position: absolute;
-    z-index: 45;
-
-    left: 24px;
-    bottom: 23px;
-
-    max-width: min(360px, 45%);
-
-    padding: 12px 17px;
-
-    border: 1px solid #ffffff35;
-    border-radius: 13px;
-
-    background: #151321d9;
-    backdrop-filter: blur(12px);
-
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
-
-    box-shadow: 0 5px 20px #0004;
-}
-
-/* ==========================================
-   EFECTO DE SELECCIÓN
-========================================== */
-
-.game-object.selected {
-    filter: drop-shadow(0 0 13px #ffb66b);
-}
-
-.game-object.selected img {
+.gounter:hover {
     filter:
-        drop-shadow(0 0 8px #ffbd72)
-        drop-shadow(0 9px 6px #0008);
+        drop-shadow(0 0 12px rgba(255, 177, 94, 0.8));
 }
 
-/* ==========================================
-   VIÑETA
-========================================== */
-
-.room-vignette {
-    position: absolute;
-    z-index: 35;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    box-shadow:
-        inset 0 0 75px #140b2b35,
-        inset 0 -35px 55px #140b2b30;
-}
-
-/* ==========================================
-   AVATAR FLOTANTE DE KARU
-========================================== */
-
-.karu-launcher {
-    position: fixed;
-    z-index: 110;
-
-    right: 28px;
-    bottom: 27px;
-
-    width: 82px;
-    height: 82px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 3px solid #ffae63;
-    border-radius: 50%;
-
-    background: linear-gradient(
-        145deg,
-        #a78bfa,
-        #e99dc9
-    );
-
-    cursor: pointer;
-
-    box-shadow:
-        0 0 0 5px #ff8c3222,
-        0 0 25px #ff8c3280;
-
-    transition: transform 0.25s ease;
-}
-
-.karu-launcher:hover {
-    transform: translateY(-5px) scale(1.05);
-}
-
-.karu-launcher img {
-    position: relative;
-    z-index: 2;
-
-    width: 90%;
-    height: 90%;
-
-    object-fit: contain;
-    pointer-events: none;
-}
-
-.karu-online {
-    position: absolute;
-    z-index: 3;
-
-    right: 3px;
-    bottom: 5px;
-
-    width: 13px;
-    height: 13px;
-
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-
-    background: #7be6a6;
-}
-
-.karu-launcher-label {
-    position: absolute;
-
-    right: 0;
-    bottom: -24px;
-
-    padding: 3px 10px;
-
-    border-radius: 15px;
-
-    background: #171321e8;
-
-    color: white;
-    font-size: 10px;
-    font-weight: 900;
-}
-
-.karu-launcher-glow {
-    position: absolute;
-    inset: -7px;
-
-    border: 2px solid #ffb66b88;
-    border-radius: 50%;
-
-    animation: karuGlow 2s ease-in-out infinite;
-}
-
-@keyframes karuGlow {
+@keyframes cat-idle {
     0%, 100% {
-        transform: scale(1);
-        opacity: 0.8;
+        transform: translateY(0);
     }
 
     50% {
-        transform: scale(1.17);
-        opacity: 0.15;
+        transform: translateY(-5px);
     }
 }
 
-#karu-avatar.talking {
-    animation: karuTalking 0.45s ease-in-out infinite alternate;
+/* MOVIMIENTO */
+
+.gounter.walking {
+    animation: cat-walk 0.35s ease-in-out infinite;
 }
 
-@keyframes karuTalking {
-    from {
-        transform: translateY(0) scale(1);
+@keyframes cat-walk {
+    0%, 100% {
+        transform: translateY(0) rotate(-2deg);
     }
 
-    to {
-        transform: translateY(-4px) scale(1.06);
+    50% {
+        transform: translateY(-9px) rotate(2deg);
     }
 }
 
-/* ==========================================
-   CHAT FLOTANTE
-========================================== */
+/* COMER Y BEBER */
 
-.karu-chat {
-    position: fixed;
-    z-index: 105;
-
-    right: 27px;
-    bottom: 125px;
-
-    width: min(350px, calc(100vw - 30px));
-    height: 430px;
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: hidden;
-
-    border: 1px solid #ffad6266;
-    border-radius: 19px;
-
-    background: #151321f5;
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 15px 55px #0009,
-        0 0 25px #ff8c3225;
-
-    opacity: 0;
-    visibility: hidden;
-
-    transform: translateY(15px) scale(0.96);
-    transform-origin: bottom right;
-
-    transition:
-        opacity 0.25s ease,
-        transform 0.25s ease,
-        visibility 0.25s ease;
+.gounter.eating,
+.gounter.drinking {
+    animation: cat-eat 0.35s ease-in-out infinite;
 }
 
-.karu-chat.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-}
-
-/* CABECERA DEL CHAT */
-
-.chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 14px 15px;
-
-    border-bottom: 1px solid #ffffff18;
-
-    background: linear-gradient(
-        120deg,
-        #342341,
-        #252039
-    );
-}
-
-.chat-character {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.chat-avatar {
-    width: 43px;
-    height: 43px;
-
-    display: grid;
-    place-items: center;
-
-    overflow: hidden;
-
-    border-radius: 50%;
-    background: linear-gradient(135deg, #b99aff, #f0a6d5);
-}
-
-.chat-avatar img {
-    width: 95%;
-    height: 95%;
-    object-fit: contain;
-}
-
-.chat-character h2 {
-    font-size: 14px;
-    font-weight: 900;
-}
-
-.chat-character div:last-child span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-
-    margin-top: 3px;
-
-    color: #c7c0d7;
-    font-size: 10px;
-}
-
-.chat-online-dot {
-    width: 6px;
-    height: 6px;
-}
-
-.chat-close {
-    width: 30px;
-    height: 30px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: #ffffff15;
-
-    color: white;
-    font-size: 23px;
-
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.chat-close:hover {
-    background: #ff8c3244;
-}
-
-/* MENSAJES */
-
-.chat-messages {
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    overflow-y: auto;
-
-    padding: 15px;
-}
-
-.chat-message {
-    width: fit-content;
-    max-width: 88%;
-
-    padding: 10px 12px;
-
-    border-radius: 13px;
-
-    font-size: 12px;
-    line-height: 1.5;
-
-    overflow-wrap: anywhere;
-    animation: messageAppear 0.2s ease;
-}
-
-@keyframes messageAppear {
-    from {
-        opacity: 0;
-        transform: translateY(7px);
-    }
-
-    to {
-        opacity: 1;
+@keyframes cat-eat {
+    0%, 100% {
         transform: translateY(0);
     }
+
+    50% {
+        transform: translateY(7px);
+    }
 }
 
-.karu-message {
-    align-self: flex-start;
+/* RONRONEO */
 
-    border: 1px solid #b99aff30;
-    border-bottom-left-radius: 3px;
-
-    background: #342b4b;
-    color: #f3eaff;
+.gounter.purring {
+    animation: cat-purr 0.2s ease-in-out infinite;
 }
 
-.user-message {
-    align-self: flex-end;
+@keyframes cat-purr {
+    0%, 100% {
+        transform: rotate(-2deg) scale(1);
+    }
 
-    border: 1px solid #ffae6344;
-    border-bottom-right-radius: 3px;
-
-    background: #774a34;
-    color: white;
+    50% {
+        transform: rotate(2deg) scale(1.04);
+    }
 }
 
-.message-author {
-    display: block;
+/* SOMBRA */
 
-    margin-bottom: 4px;
+.cat-shadow {
+    position: absolute;
+    bottom: 35px;
 
-    color: #ffca91;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 0.7px;
+    width: 130px;
+    height: 20px;
+
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    filter: blur(8px);
 }
 
-/* ENTRADA DE MENSAJES */
+/* NOMBRE DEL GATO */
 
-.chat-input-area {
+.cat-name {
+    position: absolute;
+    bottom: 0;
+
+    padding: 7px 17px;
+
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.65);
+
+    border: 1px solid rgba(255, 161, 77, 0.6);
+
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: bold;
+
     display: flex;
-    gap: 8px;
-
-    padding: 12px;
-
-    border-top: 1px solid #ffffff18;
-    background: #100f1c;
+    align-items: center;
+    gap: 7px;
 }
 
-.chat-input-area input {
-    flex: 1;
-    min-width: 0;
+.cat-heart {
+    color: #ff775f;
+}
 
-    padding: 11px 13px;
+/* MENSAJE */
 
-    outline: none;
+.room-message {
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
 
-    border: 1px solid #ffffff20;
-    border-radius: 12px;
+    transform: translateX(-50%);
 
-    background: #242136;
+    padding: 11px 22px;
+    border-radius: 30px;
+
+    background: rgba(10, 10, 15, 0.75);
+    border: 1px solid rgba(255, 165, 80, 0.5);
 
     color: white;
-    font-family: inherit;
     font-size: 12px;
+    text-align: center;
+
+    z-index: 8;
+    pointer-events: none;
+
+    transition: opacity 0.3s ease;
 }
 
-.chat-input-area input::placeholder {
-    color: #9993ac;
+/* PIE */
+
+.refuge-footer {
+    width: 100%;
+    max-width: 1500px;
+
+    display: flex;
+    justify-content: space-between;
+
+    padding: 5px 10px;
+
+    color: #a8a0a0;
+    font-size: 11px;
+    letter-spacing: 1px;
 }
 
-.chat-input-area input:focus {
-    border-color: #ffae63;
-    box-shadow: 0 0 0 2px #ff8c3220;
-}
+/* RESPONSIVE */
 
-.chat-input-area button {
-    width: 42px;
+@media (max-width: 700px) {
 
-    border: none;
-    border-radius: 12px;
-
-    background: linear-gradient(135deg, #ffb15d, #ff7135);
-
-    color: #321a0c;
-    font-size: 19px;
-    font-weight: 900;
-
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.chat-input-area button:hover {
-    filter: brightness(1.15);
-    transform: scale(1.04);
-}
-
-/* ==========================================
-   RESPONSIVE
-========================================== */
-
-@media (max-width: 650px) {
+    .refuge-container {
+        padding: 8px;
+    }
 
     .room-frame {
-        inset: 6px;
-        padding: 3px;
+        height: 85vh;
+        min-height: 580px;
     }
 
-    .game-header {
-        top: 13px;
-        left: 12px;
-        right: 12px;
-        align-items: flex-start;
+    .room-header {
+        padding: 15px;
     }
 
-    .brand {
-        gap: 8px;
-        padding: 8px 10px;
+    .room-status {
+        font-size: 9px;
+        padding: 7px;
     }
 
-    .brand-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
-
-    .brand h1 {
-        font-size: 11px;
+    .header-brand h1 {
+        font-size: 13px;
         letter-spacing: 1px;
     }
 
-    .brand p {
+    .header-brand p {
         font-size: 8px;
     }
 
-    .header-status {
-        padding: 8px;
-        font-size: 9px;
+    .objects-container {
+        left: 8px;
+        bottom: 12%;
+        gap: 8px;
     }
 
-    #status-indicator {
-        top: 76px;
-        left: 12px;
-        font-size: 9px;
-        padding: 8px 11px;
+    .room-object {
+        width: 67px;
+        height: 72px;
     }
 
-    .game-object {
-        width: 65px;
-        height: 75px;
+    .room-object img {
+        width: 45px;
+        height: 45px;
     }
 
-    .object-food {
-        left: 3%;
+    .room-object span {
+        font-size: 8px;
     }
 
-    .object-water {
-        left: 21%;
+    .cat-area {
+        width: 180px;
+        height: 205px;
+        bottom: 13%;
+        left: 55%;
     }
 
-    .object-bag {
-        right: 3%;
+    .gounter {
+        width: 165px;
+        height: 165px;
     }
 
-    .object-box {
-        right: 21%;
-    }
-
-    .gunter-character {
-        width: 115px;
-        height: 140px;
-    }
-
-    .action-message {
-        left: 12px;
-        bottom: 15px;
-
-        max-width: calc(100% - 115px);
-
+    .room-message {
+        bottom: 4%;
+        width: max-content;
+        max-width: 80%;
         font-size: 10px;
-        padding: 9px 11px;
     }
 
-    .karu-launcher {
-        right: 17px;
-        bottom: 22px;
-
-        width: 66px;
-        height: 66px;
-    }
-
-    .karu-chat {
-        right: 12px;
-        bottom: 105px;
-
-        width: min(340px, calc(100vw - 24px));
-        height: 390px;
+    .refuge-footer {
+        font-size: 9px;
     }
 }
 
@@ -1027,234 +525,6 @@ body {
     *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-    }
-}
-
-
-
-/* =====================================
-   KARU CHAT - EVARKION
-===================================== */
-
-#karu-chat-widget {
-    position: fixed;
-    right: 25px;
-    bottom: 25px;
-    z-index: 9999;
-    font-family: Arial, sans-serif;
-}
-
-/* AVATAR FLOTANTE */
-
-#karu-chat-toggle {
-    position: relative;
-    width: 75px;
-    height: 75px;
-    padding: 0;
-    border: 2px solid #ff8c32;
-    border-radius: 50%;
-    background: #151515;
-    cursor: pointer;
-    overflow: visible;
-    box-shadow: 0 0 15px #ff7b24;
-    transition: transform .25s, box-shadow .25s;
-}
-
-#karu-chat-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 25px #ff8c32;
-}
-
-#karu-chat-toggle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.karu-online {
-    position: absolute;
-    right: 2px;
-    bottom: 4px;
-    width: 13px;
-    height: 13px;
-    background: #36e879;
-    border: 2px solid #111;
-    border-radius: 50%;
-}
-
-/* VENTANA */
-
-#karu-chat-window {
-    position: absolute;
-    right: 0;
-    bottom: 90px;
-    width: 350px;
-    height: 470px;
-    max-height: calc(100vh - 130px);
-    background: rgba(15, 18, 25, .97);
-    border: 1px solid #ff8c32;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 0 25px rgba(255, 130, 35, .3);
-    display: flex;
-    flex-direction: column;
-    animation: karuAppear .25s ease;
-}
-
-#karu-chat-window.karu-hidden {
-    display: none;
-}
-
-@keyframes karuAppear {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* CABECERA */
-
-.karu-chat-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 13px;
-    background: linear-gradient(110deg, #22212b, #402619);
-    border-bottom: 1px solid #ff8c32;
-}
-
-.karu-header-avatar img {
-    width: 43px;
-    height: 43px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #ff8c32;
-}
-
-.karu-header-info {
-    flex: 1;
-    color: white;
-}
-
-.karu-header-info h3 {
-    margin: 0 0 4px;
-    font-size: 16px;
-}
-
-.karu-header-info span {
-    color: #a9d9b1;
-    font-size: 11px;
-}
-
-#karu-close {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 27px;
-    cursor: pointer;
-}
-
-/* MENSAJES */
-
-#karu-messages {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 15px;
-    overflow-y: auto;
-}
-
-.karu-message {
-    max-width: 85%;
-    padding: 11px 13px;
-    border-radius: 12px;
-    font-size: 13px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-    white-space: pre-wrap;
-}
-
-.karu-message.bot {
-    align-self: flex-start;
-    background: #292c35;
-    color: white;
-    border-left: 3px solid #ff8c32;
-}
-
-.karu-message.user {
-    align-self: flex-end;
-    background: #b95c20;
-    color: white;
-}
-
-/* FORMULARIO */
-
-#karu-chat-form {
-    display: flex;
-    gap: 8px;
-    padding: 12px;
-    border-top: 1px solid #393939;
-}
-
-#karu-message-input {
-    flex: 1;
-    min-width: 0;
-    padding: 12px;
-    border: 1px solid #555;
-    border-radius: 9px;
-    background: #20232b;
-    color: white;
-    outline: none;
-}
-
-#karu-message-input:focus {
-    border-color: #ff8c32;
-}
-
-#karu-send {
-    width: 42px;
-    border: none;
-    border-radius: 9px;
-    background: #ff8c32;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-#karu-send:disabled {
-    opacity: .5;
-    cursor: wait;
-}
-
-.karu-chat-footer {
-    padding: 8px;
-    text-align: center;
-    color: #999;
-    font-size: 10px;
-}
-
-/* MÓVILES */
-
-@media (max-width: 480px) {
-    #karu-chat-widget {
-        right: 15px;
-        bottom: 15px;
-    }
-
-    #karu-chat-window {
-        position: fixed;
-        left: 10px;
-        right: 10px;
-        bottom: 100px;
-        width: auto;
-        height: min(470px, calc(100dvh - 130px));
+        transition-duration: 0.01ms !important;
     }
 }
