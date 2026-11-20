@@ -293,3 +293,29 @@ export async function rest() {
         { energy: 12 }
     );
 }
+
+
+export async function approachObject(action) {
+    if (busy) return false;
+
+    const object = document.querySelector(
+        `.room-object[data-action="${action}"]`
+    );
+
+    if (!object) return false;
+
+    const roomRect = room.getBoundingClientRect();
+    const objectRect = object.getBoundingClientRect();
+
+    const x = objectRect.left - roomRect.left + objectRect.width / 2;
+    const y = objectRect.top - roomRect.top + objectRect.height / 2;
+
+    busy = true;
+
+    try {
+        await walkTo(x, y);
+        return true;
+    } finally {
+        busy = false;
+    }
+}
