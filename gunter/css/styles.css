@@ -867,3 +867,288 @@ body {
         transform: scale(.75) translateY(-5px);
     }
 }
+
+
+
+/* ==========================================
+   EVARKION - GOUNTER STATUS PANEL
+========================================== */
+
+.pet-status {
+    position: absolute;
+
+    top: 76px;
+    right: 22px;
+
+    width: 225px;
+
+    padding: 15px;
+
+    z-index: 18;
+
+    background: linear-gradient(
+        145deg,
+        rgba(24, 20, 23, .94),
+        rgba(12, 13, 20, .93)
+    );
+
+    border: 1px solid rgba(255, 145, 69, .55);
+
+    border-radius: 13px;
+
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 0 15px rgba(255, 132, 55, .12),
+        inset 0 0 15px rgba(255, 153, 78, .035);
+
+    transition: border-color .3s ease;
+}
+
+.pet-status:hover {
+    border-color: rgba(255, 170, 104, .85);
+}
+
+/* CABECERA */
+
+.pet-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pet-status-eyebrow {
+    font-size: 8px;
+    letter-spacing: 2px;
+
+    color: #d99b69;
+}
+
+.pet-status-header h2 {
+    margin-top: 4px;
+
+    font-size: 15px;
+    letter-spacing: 2px;
+
+    color: #fff0df;
+}
+
+.pet-status-header h2 span {
+    color: #ff8b80;
+}
+
+.pet-status-indicator {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #67e69a;
+
+    box-shadow: 0 0 9px #67e69a;
+}
+
+.pet-status-divider {
+    height: 1px;
+
+    margin: 12px 0;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 148, 76, .55),
+        transparent
+    );
+}
+
+/* NECESIDADES */
+
+.need-item {
+    margin-bottom: 12px;
+}
+
+.need-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+
+    color: #e9d7c9;
+
+    font-size: 11px;
+}
+
+.need-heading span:last-child {
+    color: #ffbd8a;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    font-variant-numeric: tabular-nums;
+}
+
+/* BASE DE LAS BARRAS */
+
+.need-bar {
+    position: relative;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.09);
+
+    border: 1px solid rgba(255,255,255,.055);
+
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+}
+
+/* RELLENO */
+
+.need-fill {
+    height: 100%;
+    width: 50%;
+
+    border-radius: 20px;
+
+    transition:
+        width .8s cubic-bezier(.22,.8,.25,1),
+        filter .4s ease;
+
+    position: relative;
+}
+
+/* REFLEJO ANIMADO */
+
+.need-fill::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -50%;
+
+    width: 40%;
+    height: 100%;
+
+    background: rgba(255,255,255,.35);
+
+    filter: blur(4px);
+
+    animation: need-shine 4s ease-in-out infinite;
+}
+
+@keyframes need-shine {
+    0%, 100% {
+        left: -50%;
+    }
+
+    50% {
+        left: 120%;
+    }
+}
+
+/* PALETA DE CADA NECESIDAD */
+
+.hunger-fill {
+    background: linear-gradient(
+        90deg,
+        #b95728,
+        #ff9b45,
+        #ffd08c
+    );
+
+    box-shadow: 0 0 8px rgba(255,143,63,.4);
+}
+
+.thirst-fill {
+    background: linear-gradient(
+        90deg,
+        #267fae,
+        #51c5ed,
+        #a0e9ff
+    );
+
+    box-shadow: 0 0 8px rgba(72,188,238,.4);
+}
+
+.energy-fill {
+    background: linear-gradient(
+        90deg,
+        #6850a7,
+        #aa83e9,
+        #d5b8ff
+    );
+
+    box-shadow: 0 0 8px rgba(167,125,235,.4);
+}
+
+.happiness-fill {
+    background: linear-gradient(
+        90deg,
+        #b94c64,
+        #ff8094,
+        #ffc0b0
+    );
+
+    box-shadow: 0 0 9px rgba(255,111,141,.45);
+}
+
+/* VALORES BAJOS */
+
+.need-fill.low {
+    filter: saturate(.7);
+    box-shadow: 0 0 7px rgba(255,70,55,.4);
+}
+
+/* PIE */
+
+.pet-status-footer {
+    margin-top: 3px;
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(255,255,255,.07);
+
+    color: #bca38f;
+
+    font-size: 9px;
+    text-align: center;
+    letter-spacing: .3px;
+}
+
+.pet-status-footer span {
+    color: #ff9c52;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 700px) {
+
+    .pet-status {
+        top: 65px;
+        right: 8px;
+
+        width: 170px;
+
+        padding: 10px;
+    }
+
+    .pet-status-header h2 {
+        font-size: 12px;
+    }
+
+    .need-heading {
+        font-size: 9px;
+    }
+
+    .need-item {
+        margin-bottom: 9px;
+    }
+
+    .pet-status-footer {
+        font-size: 7px;
+    }
+}
