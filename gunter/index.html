@@ -15,11 +15,13 @@
 
     <main class="game-container">
 
-        <!-- CABECERA -->
+        <!-- CABECERA EVARKION -->
         <header class="game-header">
+
             <div class="brand">
-                <span class="brand-icon">✦</span>
-                <div>
+                <div class="brand-icon">✦</div>
+
+                <div class="brand-info">
                     <h1>REFUGIO DE GUNTER</h1>
                     <p>Un pequeño mundo para un gran compañero</p>
                 </div>
@@ -29,163 +31,158 @@
                 <span class="online-dot"></span>
                 <span>Hogar activo</span>
             </div>
+
         </header>
 
-        <!-- ESCENARIO -->
+
+        <!-- HABITACIÓN PRINCIPAL -->
         <section class="room-frame">
 
             <div class="room" id="room">
 
-                <!-- PARED -->
-                <div class="room-wall">
+                <!-- FONDO DE LA HABITACIÓN -->
+                <div class="room-background"></div>
 
-                    <div class="wall-decoration decoration-left">
-                        <span>✦</span>
-                        <small>GUNTER</small>
-                    </div>
-
-                    <div class="window">
-                        <div class="window-sky">
-                            <span class="moon">☾</span>
-                            <span class="star star-one">✦</span>
-                            <span class="star star-two">✧</span>
-                        </div>
-                        <div class="window-bottom"></div>
-                    </div>
-
-                    <div class="wall-picture">
-                        <span>♡</span>
-                    </div>
-
-                    <div class="wall-shelf">
-                        <span>📚</span>
-                        <span>🪴</span>
-                        <span>⭐</span>
-                    </div>
-
-                </div>
-
-                <!-- SUELO -->
-                <div class="room-floor">
-                    <div class="floor-rug"></div>
-                </div>
-
-                <!-- ESTADO -->
+                <!-- INDICADOR DE ESTADO -->
                 <div id="status-indicator">
                     <span class="status-light"></span>
                     <span id="status-text">Gunter está descansando</span>
                 </div>
 
+
                 <!-- OBJETOS INTERACTIVOS -->
-                <div class="object-area">
+                <div class="game-object object-food"
+                     data-object="food-bowl"
+                     data-action="feed">
 
-                    <div class="game-object object-food"
-                         data-object="food-bowl"
-                         data-action="feed">
+                    <img src="./assets/objects/comida.png"
+                         alt="Cuenco de comida"
+                         draggable="false">
 
-                        <img src="./assets/objects/comida.png"
-                             alt="Cuenco de comida"
-                             draggable="false">
-
-                        <span class="object-label">Comida</span>
-                    </div>
-
-                    <div class="game-object object-water"
-                         data-object="water-bowl"
-                         data-action="drink">
-
-                        <img src="./assets/objects/agua.png"
-                             alt="Cuenco de agua"
-                             draggable="false">
-
-                        <span class="object-label">Agua</span>
-                    </div>
-
-                    <div class="game-object object-bag"
-                         data-object="food-bag"
-                         data-action="food">
-
-                        <img src="./assets/objects/saco.png"
-                             alt="Saco de comida"
-                             draggable="false">
-
-                        <span class="object-label">Pienso</span>
-                    </div>
-
-                    <div class="game-object object-box"
-                         data-object="cardboard-box"
-                         data-action="play">
-
-                        <img src="./assets/objects/caja.png"
-                             alt="Caja de cartón"
-                             draggable="false">
-
-                        <span class="object-label">Juguete</span>
-                    </div>
-
+                    <span class="object-label">Comida</span>
                 </div>
 
-                <!-- GUNTER -->
+
+                <div class="game-object object-water"
+                     data-object="water-bowl"
+                     data-action="drink">
+
+                    <img src="./assets/objects/agua.png"
+                         alt="Cuenco de agua"
+                         draggable="false">
+
+                    <span class="object-label">Agua</span>
+                </div>
+
+
+                <div class="game-object object-bag"
+                     data-object="food-bag"
+                     data-action="food">
+
+                    <img src="./assets/objects/saco.png"
+                         alt="Saco de pienso"
+                         draggable="false">
+
+                    <span class="object-label">Pienso</span>
+                </div>
+
+
+                <div class="game-object object-box"
+                     data-object="cardboard-box"
+                     data-action="play">
+
+                    <img src="./assets/objects/caja.png"
+                         alt="Caja de cartón"
+                         draggable="false">
+
+                    <span class="object-label">Caja</span>
+                </div>
+
+
+                <!-- PERSONAJE GUNTER -->
                 <div class="gunter-character" id="gunter">
+
                     <div class="character-shadow"></div>
 
                     <img src="./assets/characters/gunter_idle.png"
                          alt="Gunter"
                          draggable="false">
+
                 </div>
 
-                <!-- MENSAJE DE ACCIÓN -->
+
+                <!-- MENSAJE DE INTERACCIÓN -->
                 <div class="action-message" id="action-message">
                     ¡Bienvenido al refugio!
                 </div>
 
-                <!-- MARCO DECORATIVO -->
+
+                <!-- EFECTO DE PROFUNDIDAD -->
                 <div class="room-vignette"></div>
 
             </div>
 
         </section>
 
+
         <!-- PANEL DE KARU -->
         <section class="karu-panel" id="karu-panel">
 
             <div class="karu-avatar-button">
+
                 <img id="karu-avatar"
                      src="./assets/characters/karu_avatar.png"
                      alt="Hablar con Karu"
                      draggable="false">
+
                 <span class="karu-online"></span>
+
             </div>
 
+
             <div class="karu-conversation">
+
                 <div class="karu-heading">
+
                     <div>
                         <h2>Karu</h2>
                         <span>Tu asistente del refugio</span>
                     </div>
 
                     <span class="karu-bubble-icon">✦</span>
+
                 </div>
 
                 <p id="karu-text">
-                    ¡Hola! Gunter está esperándote. Puedes mover los objetos,
-                    darle de comer o hacer clic sobre él para acariciarlo.
+                    ¡Hola! Gunter está esperándote. Puedes acariciarlo,
+                    darle de comer o reorganizar los objetos de su habitación.
                 </p>
+
             </div>
+
 
             <button class="talk-button"
                     type="button"
                     onclick="document.getElementById('karu-avatar').click()">
+
                 Hablar con Karu
                 <span>↗</span>
+
             </button>
 
         </section>
 
-        <!-- PIE -->
+
+        <!-- PIE DE PÁGINA -->
         <footer class="game-footer">
+
             <span>EVARKION © 2026</span>
-            <span>Un refugio lleno de pequeños momentos <span class="heart">♥</span></span>
+
+            <span>
+                Un refugio lleno de pequeños momentos
+                <span class="heart">♥</span>
+            </span>
+
         </footer>
 
     </main>
