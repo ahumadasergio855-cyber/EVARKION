@@ -1,14 +1,14 @@
 
 /* ==========================================
    EVARKION - REFUGIO DE GUNTER
-   Diseño visual completo
+   HABITACIÓN A PANTALLA GRANDE
 ========================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 :root {
     --background: #090b16;
-    --panel: #151a2d;
+    --panel: #17182d;
     --text: #f4f1ff;
     --muted: #a7a9c4;
     --purple: #a78bfa;
@@ -22,335 +22,172 @@
     box-sizing: border-box;
 }
 
-html {
+html,
+body {
+    width: 100%;
     min-height: 100%;
 }
 
 body {
     min-height: 100vh;
-    background:
-        radial-gradient(ellipse at 50% 0%, #25254b 0%, transparent 55%),
-        linear-gradient(145deg, #080a15, #111329 55%, #090b17);
+    overflow-x: hidden;
+
+    padding: 18px 24px;
 
     color: var(--text);
     font-family: 'Nunito', Arial, sans-serif;
-    padding: 30px 20px;
+
+    background:
+        radial-gradient(ellipse at 50% 0%, #25254b 0%, transparent 55%),
+        linear-gradient(145deg, #080a15, #111329 55%, #090b17);
 }
 
 /* ==========================================
-   CONTENEDOR GENERAL
+   CONTENEDOR PRINCIPAL
 ========================================== */
 
 .game-container {
-    width: min(1120px, 100%);
+    width: 100%;
+    max-width: 1700px;
     margin: 0 auto;
 }
+
+/* ==========================================
+   CABECERA
+========================================== */
 
 .game-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+
+    margin-bottom: 17px;
+    padding: 0 4px;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 13px;
 }
 
 .brand-icon {
-    width: 48px;
-    height: 48px;
+    width: 47px;
+    height: 47px;
+
     display: grid;
     place-items: center;
-    border-radius: 15px;
+
+    border-radius: 14px;
+
     background: linear-gradient(135deg, #a78bfa, #ec9acb);
+
     color: #17152b;
     font-size: 25px;
+
     box-shadow: 0 0 25px #a78bfa55;
 }
 
 .brand h1 {
     font-size: 19px;
-    letter-spacing: 2px;
     font-weight: 900;
+    letter-spacing: 2px;
 }
 
 .brand p {
+    margin-top: 3px;
+
     color: var(--muted);
     font-size: 12px;
-    margin-top: 3px;
 }
 
 .header-status {
     display: flex;
     align-items: center;
     gap: 9px;
+
     padding: 9px 15px;
+
     border: 1px solid #ffffff16;
     border-radius: 30px;
+
     background: #ffffff08;
+
     color: #c8c9df;
     font-size: 12px;
 }
 
-.online-dot,
-.karu-online {
+.online-dot {
     width: 8px;
     height: 8px;
-    background: #7be6a6;
+
     border-radius: 50%;
+    background: #7be6a6;
+
     box-shadow: 0 0 10px #7be6a6;
 }
 
 /* ==========================================
-   MARCO DEL ESCENARIO
+   MARCO DE LA HABITACIÓN
 ========================================== */
 
 .room-frame {
     position: relative;
-    padding: 5px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, #b79aff, #f0a6d5, #7bdde5);
+
+    width: 100%;
+    padding: 4px;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        135deg,
+        #b79aff,
+        #f0a6d5,
+        #7bdde5
+    );
+
     box-shadow:
         0 20px 70px #0009,
         0 0 35px #a78bfa25;
 }
 
+/* ==========================================
+   ESCENARIO PRINCIPAL
+========================================== */
+
 .room {
     position: relative;
+
     width: 100%;
-    height: 590px;
+
+    /* Ocupa casi toda la pantalla disponible */
+    height: clamp(520px, calc(100vh - 225px), 900px);
+    min-height: 520px;
+
     overflow: hidden;
     isolation: isolate;
-    border-radius: 20px;
-    background: #b4a2a1;
+
+    border-radius: 17px;
+
+    background: #17182d;
 }
 
 /* ==========================================
-   PARED
+   FONDO ORIGINAL DE LA HABITACIÓN
 ========================================== */
 
-.room-wall {
+.room-background {
     position: absolute;
-    inset: 0 0 37% 0;
     z-index: 0;
 
-    background:
-        radial-gradient(ellipse at 50% 100%, #ffffff30, transparent 60%),
-        linear-gradient(180deg, #d9c7cf, #bfaebd 75%, #b29caf);
-
-    border-bottom: 8px solid #927c90;
-}
-
-.room-wall::before {
-    content: "";
-    position: absolute;
     inset: 0;
 
-    background-image:
-        linear-gradient(#ffffff0b 1px, transparent 1px),
-        linear-gradient(90deg, #ffffff0b 1px, transparent 1px);
+    background-image: url("../assets/background/habitacion.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 
-    background-size: 65px 65px;
-    opacity: 0.45;
-}
-
-/* ==========================================
-   VENTANA
-========================================== */
-
-.window {
-    position: absolute;
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    width: 185px;
-    height: 205px;
-    padding: 9px;
-
-    border: 9px solid #765b78;
-    border-radius: 90px 90px 12px 12px;
-
-    background: #f9e6cf;
-    box-shadow:
-        0 10px 25px #4c365544,
-        inset 0 0 0 3px #e6c8d4;
-}
-
-.window-sky {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
-    border-radius: 70px 70px 5px 5px;
-
-    background:
-        radial-gradient(circle at 75% 25%, #fff8c9 0 5px, transparent 6px),
-        linear-gradient(180deg, #536c9c, #8e9fc5 55%, #e5b9c5);
-}
-
-.moon {
-    position: absolute;
-    top: 22px;
-    right: 27px;
-    font-size: 35px;
-    color: #fff0c5;
-}
-
-.star {
-    position: absolute;
-    color: #fff2c6;
-}
-
-.star-one {
-    top: 45px;
-    left: 28px;
-}
-
-.star-two {
-    top: 85px;
-    right: 25px;
-}
-
-.window-bottom {
-    position: absolute;
-    bottom: -17px;
-    left: -17px;
-    width: calc(100% + 34px);
-    height: 13px;
-    border-radius: 5px;
-    background: #765b78;
-}
-
-/* ==========================================
-   DECORACIÓN DE PARED
-========================================== */
-
-.wall-decoration {
-    position: absolute;
-    top: 75px;
-    left: 8%;
-    width: 110px;
-    height: 105px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-
-    background: #f4e4db;
-    border: 7px solid #977b91;
-    box-shadow: 0 8px 15px #46324733;
-    transform: rotate(-4deg);
-}
-
-.wall-decoration span {
-    color: #bc86b9;
-    font-size: 32px;
-}
-
-.wall-decoration small {
-    color: #765b78;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 2px;
-}
-
-.wall-picture {
-    position: absolute;
-    top: 72px;
-    right: 10%;
-    width: 75px;
-    height: 95px;
-
-    display: grid;
-    place-items: center;
-
-    background: #f4dce5;
-    border: 7px solid #95748b;
-    box-shadow: 0 8px 15px #46324733;
-    transform: rotate(4deg);
-}
-
-.wall-picture span {
-    font-size: 35px;
-    color: #d47ba6;
-}
-
-.wall-shelf {
-    position: absolute;
-    right: 8%;
-    bottom: 12px;
-
-    width: 125px;
-    height: 12px;
-    background: #795c75;
-    border-radius: 4px;
-
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-
-    box-shadow: 0 6px 10px #0002;
-}
-
-.wall-shelf span {
-    font-size: 24px;
-    transform: translateY(-7px);
-}
-
-/* ==========================================
-   SUELO
-========================================== */
-
-.room-floor {
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 39%;
-
-    background:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0 110px,
-            #72526918 111px 113px
-        ),
-        repeating-linear-gradient(
-            0deg,
-            #ffffff08 0 3px,
-            transparent 4px 58px
-        ),
-        linear-gradient(180deg, #bd9eaa, #997d91);
-}
-
-.room-floor::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(90deg, #00000012, transparent 30%, transparent 70%, #00000012);
-}
-
-.floor-rug {
-    position: absolute;
-    width: 48%;
-    height: 62%;
-    left: 27%;
-    bottom: 5%;
-
-    border-radius: 50%;
-    background:
-        radial-gradient(ellipse, #d5b2c8 0%, #c29ab8 55%, #a47e9d 58%, #a47e9d 62%, transparent 63%);
-
-    opacity: 0.85;
+    pointer-events: none;
 }
 
 /* ==========================================
@@ -360,31 +197,40 @@ body {
 #status-indicator {
     position: absolute;
     z-index: 40;
+
     top: 18px;
     left: 18px;
 
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
 
     max-width: calc(100% - 36px);
-    padding: 10px 15px;
+
+    padding: 10px 16px;
+
+    border: 1px solid #ffffff30;
+    border-radius: 30px;
 
     background: #17172ad9;
-    border: 1px solid #ffffff28;
-    border-radius: 30px;
     backdrop-filter: blur(10px);
 
     color: #f2eafa;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
+
+    box-shadow: 0 5px 20px #0003;
 }
 
 .status-light {
     width: 8px;
     height: 8px;
+
+    flex-shrink: 0;
+
     border-radius: 50%;
     background: #8de7b0;
+
     box-shadow: 0 0 10px #8de7b0;
 }
 
@@ -392,17 +238,12 @@ body {
    OBJETOS INTERACTIVOS
 ========================================== */
 
-.object-area {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    pointer-events: none;
-}
-
 .game-object {
     position: absolute;
-    width: 100px;
-    height: 115px;
+    z-index: 10;
+
+    width: clamp(75px, 9vw, 125px);
+    height: clamp(85px, 11vw, 140px);
 
     display: flex;
     flex-direction: column;
@@ -411,7 +252,7 @@ body {
     gap: 5px;
 
     cursor: grab;
-    pointer-events: auto;
+
     user-select: none;
     touch-action: none;
 
@@ -421,11 +262,13 @@ body {
 }
 
 .game-object img {
-    width: 85px;
-    height: 85px;
+    width: 85%;
+    height: 85%;
+
     object-fit: contain;
 
-    filter: drop-shadow(0 9px 5px #38253b55);
+    filter: drop-shadow(0 9px 6px #0008);
+
     pointer-events: none;
     -webkit-user-drag: none;
 }
@@ -441,17 +284,20 @@ body {
 
 .object-label {
     padding: 4px 11px;
+
+    border: 1px solid #ffffff30;
     border-radius: 20px;
 
-    background: #282039d9;
-    border: 1px solid #ffffff30;
+    background: #282039e8;
 
     color: white;
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 900;
 
     opacity: 0;
+
     transform: translateY(5px);
+
     transition: 0.2s ease;
 }
 
@@ -461,30 +307,30 @@ body {
     transform: translateY(0);
 }
 
-/* Posiciones iniciales */
+/* POSICIONES INICIALES */
 
 .object-food {
     left: 13%;
-    bottom: 13%;
+    bottom: 10%;
 }
 
 .object-water {
-    left: 28%;
-    bottom: 13%;
+    left: 29%;
+    bottom: 10%;
 }
 
 .object-bag {
     right: 13%;
-    bottom: 13%;
+    bottom: 10%;
 }
 
 .object-box {
     right: 29%;
-    bottom: 12%;
+    bottom: 10%;
 }
 
 /* ==========================================
-   GUNTER
+   PERSONAJE GUNTER
 ========================================== */
 
 .gunter-character {
@@ -492,16 +338,17 @@ body {
     z-index: 20;
 
     left: 52%;
-    top: 66%;
+    top: 65%;
 
-    width: 175px;
-    height: 190px;
+    width: clamp(130px, 17vw, 220px);
+    height: clamp(150px, 20vw, 250px);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     transform: translate(-50%, -50%);
+
     cursor: pointer;
 
     transition:
@@ -516,9 +363,10 @@ body {
 
     width: 100%;
     height: 100%;
+
     object-fit: contain;
 
-    filter: drop-shadow(0 12px 8px #38253b55);
+    filter: drop-shadow(0 12px 9px #0008);
 
     user-select: none;
     -webkit-user-drag: none;
@@ -527,14 +375,16 @@ body {
 .character-shadow {
     position: absolute;
     z-index: 1;
+
     bottom: 4px;
 
     width: 75%;
     height: 18px;
 
-    background: #30223955;
     border-radius: 50%;
-    filter: blur(7px);
+
+    background: #0007;
+    filter: blur(8px);
 }
 
 .gunter-character:hover {
@@ -546,7 +396,7 @@ body {
 }
 
 /* ==========================================
-   MENSAJES DEL JUEGO
+   MENSAJE DE ACCIÓN
 ========================================== */
 
 .action-message {
@@ -554,12 +404,12 @@ body {
     z-index: 45;
 
     left: 50%;
-    bottom: 18px;
+    bottom: 17px;
 
     transform: translateX(-50%);
 
-    max-width: 80%;
-    padding: 10px 19px;
+    max-width: 85%;
+    padding: 10px 20px;
 
     border: 1px solid #ffffff35;
     border-radius: 30px;
@@ -569,10 +419,10 @@ body {
 
     color: #f6eaff;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
     text-align: center;
 
-    box-shadow: 0 5px 20px #0003;
+    box-shadow: 0 5px 20px #0004;
 }
 
 /* ==========================================
@@ -586,7 +436,24 @@ body {
 .game-object.selected img {
     filter:
         drop-shadow(0 0 8px #e4c4ff)
-        drop-shadow(0 9px 5px #38253b55);
+        drop-shadow(0 9px 6px #0008);
+}
+
+/* ==========================================
+   VIÑETA DEL ESCENARIO
+========================================== */
+
+.room-vignette {
+    position: absolute;
+    z-index: 35;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+        inset 0 0 70px #140b2b30,
+        inset 0 -30px 55px #140b2b20;
 }
 
 /* ==========================================
@@ -594,44 +461,58 @@ body {
 ========================================== */
 
 .karu-panel {
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 20px;
 
-    margin-top: 22px;
-    padding: 20px 24px;
+    margin-top: 15px;
+    padding: 15px 22px;
 
     border: 1px solid #ffffff17;
-    border-radius: 20px;
+    border-radius: 18px;
 
-    background:
-        linear-gradient(120deg, #1b1d37, #171629);
+    background: linear-gradient(
+        120deg,
+        #1b1d37,
+        #171629
+    );
 
     box-shadow: 0 12px 35px #0003;
 }
+
+/* AVATAR */
 
 .karu-avatar-button {
     position: relative;
     flex-shrink: 0;
 
-    width: 78px;
-    height: 78px;
+    width: 75px;
+    height: 75px;
 
     display: grid;
     place-items: center;
 
     border-radius: 50%;
-    background: linear-gradient(135deg, #b99aff, #f0a6d5);
+
+    background: linear-gradient(
+        135deg,
+        #b99aff,
+        #f0a6d5
+    );
 
     box-shadow: 0 0 22px #b99aff35;
 }
 
 #karu-avatar {
-    width: 68px;
-    height: 68px;
+    width: 67px;
+    height: 67px;
+
     object-fit: contain;
 
     cursor: pointer;
+
     transition: transform 0.25s ease;
 }
 
@@ -655,12 +536,21 @@ body {
 
 .karu-online {
     position: absolute;
+
     right: 3px;
     bottom: 5px;
-    border: 2px solid #1b1d37;
+
     width: 12px;
     height: 12px;
+
+    border: 2px solid #1b1d37;
+    border-radius: 50%;
+
+    background: #7be6a6;
+    box-shadow: 0 0 10px #7be6a6;
 }
+
+/* CONVERSACIÓN */
 
 .karu-conversation {
     flex: 1;
@@ -671,7 +561,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+
+    margin-bottom: 5px;
 }
 
 .karu-heading h2 {
@@ -679,14 +570,14 @@ body {
     font-weight: 900;
 }
 
-.karu-heading span {
+.karu-heading div span {
     color: var(--muted);
     font-size: 11px;
 }
 
 .karu-bubble-icon {
-    color: var(--purple) !important;
-    font-size: 22px !important;
+    color: var(--purple);
+    font-size: 22px;
 }
 
 #karu-text {
@@ -695,15 +586,21 @@ body {
     line-height: 1.6;
 }
 
+/* BOTÓN KARU */
+
 .talk-button {
     flex-shrink: 0;
+
+    padding: 12px 17px;
 
     border: 1px solid #c3a1ff55;
     border-radius: 12px;
 
-    padding: 12px 17px;
-
-    background: linear-gradient(135deg, #8d70d8, #ba80bd);
+    background: linear-gradient(
+        135deg,
+        #8d70d8,
+        #ba80bd
+    );
 
     color: white;
     font-family: inherit;
@@ -711,6 +608,7 @@ body {
     font-weight: 900;
 
     cursor: pointer;
+
     transition: 0.2s ease;
 }
 
@@ -732,7 +630,8 @@ body {
     justify-content: space-between;
     gap: 15px;
 
-    margin-top: 22px;
+    margin-top: 12px;
+    padding: 0 5px;
 
     color: #777b9b;
     font-size: 11px;
@@ -743,81 +642,92 @@ body {
 }
 
 /* ==========================================
-   VIÑETA DEL ESCENARIO
+   RESPONSIVE - TABLETS
 ========================================== */
 
-.room-vignette {
-    position: absolute;
-    z-index: 35;
-    inset: 0;
-
-    pointer-events: none;
-
-    box-shadow:
-        inset 0 0 65px #39213b25,
-        inset 0 -25px 50px #39213b18;
-}
-
-/* ==========================================
-   RESPONSIVE
-========================================== */
-
-@media (max-width: 700px) {
+@media (max-width: 850px) {
 
     body {
-        padding: 18px 12px;
-    }
-
-    .game-header {
-        align-items: flex-start;
-    }
-
-    .brand h1 {
-        font-size: 15px;
-    }
-
-    .brand p {
-        font-size: 10px;
-    }
-
-    .header-status {
-        font-size: 10px;
-        padding: 8px 10px;
+        padding: 15px;
     }
 
     .room {
-        height: 520px;
-    }
-
-    .window {
-        width: 135px;
-        height: 165px;
-    }
-
-    .wall-decoration {
-        left: 5%;
-        width: 75px;
-        height: 80px;
-    }
-
-    .wall-picture {
-        right: 5%;
-        width: 55px;
-        height: 75px;
-    }
-
-    .wall-shelf {
-        display: none;
+        height: 65vh;
+        min-height: 480px;
     }
 
     .game-object {
-        width: 75px;
-        height: 95px;
+        width: 90px;
+        height: 105px;
+    }
+
+    .gunter-character {
+        width: 160px;
+        height: 185px;
+    }
+
+    .karu-panel {
+        gap: 14px;
+    }
+
+}
+
+/* ==========================================
+   RESPONSIVE - MÓVILES
+========================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 12px 9px;
+    }
+
+    .game-header {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-icon {
+        width: 39px;
+        height: 39px;
+        font-size: 20px;
+    }
+
+    .brand h1 {
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .brand p {
+        font-size: 9px;
+    }
+
+    .header-status {
+        padding: 7px 9px;
+        font-size: 9px;
+    }
+
+    .room {
+        height: 65vh;
+        min-height: 430px;
+    }
+
+    .room-background {
+        background-position: center;
+    }
+
+    .game-object {
+        width: 67px;
+        height: 80px;
     }
 
     .game-object img {
-        width: 65px;
-        height: 65px;
+        width: 85%;
+        height: 85%;
     }
 
     .object-food {
@@ -825,7 +735,7 @@ body {
     }
 
     .object-water {
-        left: 22%;
+        left: 21%;
     }
 
     .object-bag {
@@ -833,32 +743,36 @@ body {
     }
 
     .object-box {
-        right: 22%;
+        right: 21%;
     }
 
     .gunter-character {
-        width: 135px;
-        height: 155px;
+        width: 120px;
+        height: 145px;
     }
 
     .karu-panel {
         flex-wrap: wrap;
-        padding: 16px;
-        gap: 13px;
+        padding: 13px;
+        gap: 12px;
     }
 
     .karu-avatar-button {
-        width: 62px;
-        height: 62px;
+        width: 60px;
+        height: 60px;
     }
 
     #karu-avatar {
-        width: 55px;
-        height: 55px;
+        width: 54px;
+        height: 54px;
     }
 
     .karu-conversation {
         flex: 1;
+    }
+
+    #karu-text {
+        font-size: 11px;
     }
 
     .talk-button {
@@ -868,40 +782,40 @@ body {
     .game-footer {
         flex-direction: column;
         text-align: center;
+        gap: 5px;
     }
+
 }
 
-@media (max-width: 420px) {
+/* ==========================================
+   PANTALLAS MUY PEQUEÑAS
+========================================== */
+
+@media (max-width: 380px) {
 
     .room {
-        height: 450px;
-    }
-
-    .room-wall {
-        bottom: 37%;
+        min-height: 400px;
     }
 
     .game-object {
-        width: 65px;
-    }
-
-    .game-object img {
         width: 58px;
-        height: 58px;
-    }
-
-    .object-label {
-        font-size: 9px;
-        padding: 3px 8px;
+        height: 70px;
     }
 
     .gunter-character {
-        width: 115px;
-        height: 135px;
+        width: 105px;
+        height: 125px;
+    }
+
+    #status-indicator {
+        top: 10px;
+        left: 10px;
+        font-size: 10px;
     }
 
     .action-message {
         font-size: 10px;
-        max-width: 90%;
+        max-width: 92%;
     }
+
 }
