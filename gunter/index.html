@@ -1,15 +1,18 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Refugio de Gunter | EVARKION</title>
 
+    <!-- ESTILOS -->
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="./css/karu-chat.css">
 
+    <!-- JAVASCRIPT -->
     <script src="./js/game.js" defer></script>
     <script src="./js/karu-chat.js" defer></script>
 </head>
@@ -18,7 +21,7 @@
 
     <main class="game-container">
 
-        <!-- ESCENARIO A PANTALLA COMPLETA -->
+        <!-- ESCENARIO -->
         <section class="room-frame">
 
             <div class="room" id="room">
@@ -26,11 +29,10 @@
                 <!-- FONDO -->
                 <div class="room-background"></div>
 
-                <!-- CAPA DE OSCURIDAD SUAVE -->
+                <!-- OSCURIDAD -->
                 <div class="room-overlay"></div>
 
-
-                <!-- CABECERA SUPERPUESTA -->
+                <!-- CABECERA -->
                 <header class="game-header">
 
                     <div class="brand">
@@ -51,7 +53,6 @@
 
                 </header>
 
-
                 <!-- ESTADO DE GUNTER -->
                 <div id="status-indicator">
 
@@ -63,8 +64,7 @@
 
                 </div>
 
-
-                <!-- OBJETO COMIDA -->
+                <!-- COMIDA -->
                 <div class="game-object object-food"
                      data-object="food-bowl"
                      data-action="feed">
@@ -77,8 +77,7 @@
 
                 </div>
 
-
-                <!-- OBJETO AGUA -->
+                <!-- AGUA -->
                 <div class="game-object object-water"
                      data-object="water-bowl"
                      data-action="drink">
@@ -90,7 +89,6 @@
                     <span class="object-label">Agua</span>
 
                 </div>
-
 
                 <!-- SACO DE PIENSO -->
                 <div class="game-object object-bag"
@@ -105,7 +103,6 @@
 
                 </div>
 
-
                 <!-- CAJA -->
                 <div class="game-object object-box"
                      data-object="cardboard-box"
@@ -119,7 +116,6 @@
 
                 </div>
 
-
                 <!-- GUNTER -->
                 <div class="gunter-character" id="gunter">
 
@@ -131,12 +127,10 @@
 
                 </div>
 
-
                 <!-- MENSAJE DEL JUEGO -->
                 <div class="action-message" id="action-message">
                     ¡Bienvenido al refugio!
                 </div>
-
 
                 <!-- VIÑETA -->
                 <div class="room-vignette"></div>
@@ -145,8 +139,7 @@
 
         </section>
 
-
-        <!-- BOTÓN FLOTANTE DE KARU -->
+        <!-- AVATAR ORIGINAL DE KARU -->
         <button class="karu-launcher"
                 id="karu-toggle"
                 type="button"
@@ -166,24 +159,28 @@
 
         </button>
 
-
-        <!-- CHAT MINI DE KARU -->
+        <!-- VENTANA DEL CHAT -->
         <section class="karu-chat"
                  id="karu-chat"
                  aria-label="Chat con Karu"
-                 aria-hidden="true">
+                 aria-hidden="true"
+                 hidden>
 
+            <!-- CABECERA DEL CHAT -->
             <div class="chat-header">
 
                 <div class="chat-character">
 
                     <div class="chat-avatar">
+
                         <img src="./assets/characters/karu_avatar.png"
-                             alt="">
+                             alt="Karu">
+
                     </div>
 
                     <div>
                         <h2>Karu</h2>
+
                         <span>
                             <span class="chat-online-dot"></span>
                             Disponible en el refugio
@@ -201,42 +198,25 @@
 
             </div>
 
-
+            <!-- MENSAJES -->
             <div class="chat-messages" id="chat-messages">
 
                 <div class="chat-message karu-message">
+
                     <span class="message-author">Karu</span>
-                    ¡Hola! ¿Qué tal? Estoy aquí para ayudarte con Gunter.
+
+                    ¡Hola! ¿Qué tal? Estoy aquí para acompañarte.
+
                 </div>
 
             </div>
 
-
-            <form class="chat-input-area" id="karu-chat-form">
-
-                <input
-                    type="text"
-                    id="karu-input"
-                    placeholder="Escribe a Karu..."
-                    maxlength="250"
-                    autocomplete="off"
-                    aria-label="Mensaje para Karu"
-                    required
-                >
-
-                <button type="submit" aria-label="Enviar mensaje">
-                    ➤
-                </button>
-
-            </form>
+            <!-- OPCIONES DE CONVERSACIÓN -->
+            <div class="chat-options" id="chat-options"></div>
 
         </section>
 
     </main>
 
-    <!-- KARU CHAT -->
-    <script type="module" src="./js/karu-chat.js"></script>
-    
-    
 </body>
 </html>
