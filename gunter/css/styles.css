@@ -1,0 +1,296 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    background:#0d0d0d;
+    color:white;
+
+    font-family:Segoe UI, sans-serif;
+
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+}
+
+/* HEADER */
+
+header{
+
+    text-align:center;
+
+    padding:30px;
+
+    border-bottom:1px solid #222;
+}
+
+header h1{
+
+    color:#e7915c;
+
+    margin-bottom:10px;
+
+    font-size:2.4rem;
+}
+
+header p{
+
+    color:#bbbbbb;
+}
+
+/* MAIN */
+
+main{
+
+    flex:1;
+
+    display:flex;
+    gap:20px;
+
+    padding:20px;
+}
+
+/* HABITACIÓN */
+
+#room{
+
+    flex:1;
+
+    position:relative;
+
+    min-height:650px;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        to top,
+        #1c1c1c,
+        #2c2c2c
+    );
+
+    overflow:hidden;
+
+    border:2px solid #333;
+}
+
+/* SUELO */
+
+#room::after{
+
+    content:"";
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+    height:140px;
+
+    background:#161616;
+}
+
+/* GUNTER */
+
+#gunter{
+
+    position:absolute;
+
+    width:180px;
+
+    bottom:90px;
+
+    left:45%;
+
+    transform:translateX(-50%);
+
+    z-index:10;
+
+    animation:respirar 3s infinite;
+}
+
+/* RESPIRACIÓN */
+
+@keyframes respirar{
+
+    0%{
+        transform:
+        translateX(-50%)
+        scale(1);
+    }
+
+    50%{
+        transform:
+        translateX(-50%)
+        scale(1.03);
+    }
+
+    100%{
+        transform:
+        translateX(-50%)
+        scale(1);
+    }
+}
+
+/* OBJETOS */
+
+.objeto{
+
+    position:absolute;
+
+    font-size:60px;
+
+    z-index:5;
+}
+
+/* Caja */
+
+.caja{
+
+    left:120px;
+    bottom:100px;
+}
+
+/* Ovillo */
+
+.ovillo{
+
+    right:150px;
+    bottom:110px;
+}
+
+/* Pienso */
+
+.comida{
+
+    left:350px;
+    bottom:100px;
+}
+
+/* Agua */
+
+.agua{
+
+    left:500px;
+    bottom:100px;
+}
+
+/* Saco */
+
+.saco{
+
+    right:320px;
+    bottom:100px;
+}
+
+/* PANEL KARU */
+
+#karu-panel{
+
+    width:320px;
+
+    background:#181818;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    border:1px solid #333;
+
+    height:fit-content;
+}
+
+.karu-top{
+
+    text-align:center;
+}
+
+#karu-avatar{
+
+    width:120px;
+    height:120px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid #e7915c;
+}
+
+.karu-top h2{
+
+    margin-top:10px;
+
+    color:#e7915c;
+}
+
+#karu-text{
+
+    margin-top:20px;
+
+    line-height:1.6;
+
+    color:#ddd;
+}
+
+/* BOTÓN */
+
+#dato-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#e7915c;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+#dato-btn:hover{
+
+    background:#ff9f61;
+}
+
+/* FOOTER */
+
+footer{
+
+    text-align:center;
+
+    padding:15px;
+
+    border-top:1px solid #222;
+
+    color:#777;
+}
+
+/* MÓVIL */
+
+@media(max-width:900px){
+
+    main{
+
+        flex-direction:column;
+    }
+
+    #karu-panel{
+
+        width:100%;
+    }
+}
