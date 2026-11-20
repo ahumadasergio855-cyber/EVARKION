@@ -1,10 +1,6 @@
-
 /* =========================================
-   GUNTER'S WORLD — EVARKION
-   Diseño responsive PC + móvil
+   CONFIGURACIÓN GENERAL
 ========================================= */
-
-/* RESET */
 
 * {
     margin: 0;
@@ -12,63 +8,34 @@
     box-sizing: border-box;
 }
 
-html {
-    min-width: 320px;
-    min-height: 100%;
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    background: #0d0d0d;
+    background: #050505;
+    font-family: Arial, Helvetica, sans-serif;
     color: white;
-    font-family: "Segoe UI", Arial, sans-serif;
-
-    min-height: 100vh;
-    min-height: 100svh;
-
-    display: flex;
-    flex-direction: column;
-
-    overflow-x: hidden;
+    user-select: none;
 }
 
 /* =========================================
-   HEADER
+   CONTENEDOR DEL JUEGO
 ========================================= */
 
-header {
-    text-align: center;
-    padding: 20px 15px;
-
-    border-bottom: 1px solid #222;
-}
-
-header h1 {
-    color: #e7915c;
-    margin-bottom: 7px;
-    font-size: clamp(1.5rem, 3vw, 2.3rem);
-}
-
-header p {
-    color: #bbbbbb;
-    font-size: clamp(12px, 1.5vw, 15px);
-}
-
-/* =========================================
-   MAIN
-========================================= */
-
-main {
-    position: relative;
-
-    flex: 1;
-
+#game {
     width: 100%;
-    max-width: 1700px;
+    height: 100vh;
+    height: 100dvh;
 
-    margin: 0 auto;
-    padding: 20px;
+    padding: 5px;
 
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* =========================================
@@ -79,58 +46,97 @@ main {
     position: relative;
 
     width: 100%;
-
-    min-height: 520px;
-    height: clamp(520px, 70svh, 760px);
-
-    border-radius: 20px;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 45%,
-            rgba(115, 90, 75, 0.18),
-            transparent 55%
-        ),
-        linear-gradient(
-            to top,
-            #1c1c1c,
-            #34302e
-        );
+    height: 100%;
 
     overflow: hidden;
 
-    border: 2px solid #333;
+    border: 2px solid #151515;
+    border-radius: 8px;
+
+    background-image: url("../assets/background/habitacion.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
 
     isolation: isolate;
+
+    box-shadow:
+        0 0 8px rgba(255, 115, 35, 0.35),
+        inset 0 0 15px rgba(0, 0, 0, 0.25);
+
+    animation: room-glow 4s ease-in-out infinite;
+}
+
+/* Luz decorativa EVARKION */
+
+@keyframes room-glow {
+    0%, 100% {
+        border-color: #21140e;
+
+        box-shadow:
+            0 0 7px rgba(255, 105, 35, 0.25),
+            inset 0 0 12px rgba(0, 0, 0, 0.2);
+    }
+
+    50% {
+        border-color: #a84d22;
+
+        box-shadow:
+            0 0 13px rgba(255, 105, 35, 0.65),
+            0 0 25px rgba(255, 105, 35, 0.2),
+            inset 0 0 12px rgba(0, 0, 0, 0.2);
+    }
 }
 
 /* =========================================
-   SUELO
+   CARTEL GUNTER'S WORLD
 ========================================= */
 
-#room::after {
-    content: "";
-
+#game-sign {
     position: absolute;
 
-    left: 0;
-    bottom: 0;
+    z-index: 20;
 
-    width: 100%;
-    height: 110px;
+    top: 2%;
+    left: 50%;
 
-    background:
-        linear-gradient(
-            to bottom,
-            #202020,
-            #141414
-        );
+    transform: translateX(-50%);
 
-    border-top: 2px solid #38302c;
+    padding: 9px 25px;
 
-    z-index: 1;
+    text-align: center;
+    white-space: nowrap;
 
-    pointer-events: none;
+    background: rgba(12, 10, 9, 0.85);
+
+    border: 1px solid rgba(255, 130, 55, 0.75);
+    border-radius: 8px;
+
+    box-shadow:
+        0 0 12px rgba(255, 105, 35, 0.3),
+        inset 0 0 10px rgba(255, 105, 35, 0.08);
+
+    backdrop-filter: blur(5px);
+}
+
+.sign-small {
+    display: block;
+
+    font-size: 8px;
+    letter-spacing: 3px;
+
+    color: #e7a47b;
+}
+
+#game-sign h1 {
+    font-size: clamp(15px, 2vw, 25px);
+    letter-spacing: 3px;
+
+    color: #ff9b58;
+
+    text-shadow:
+        0 0 5px #ff702b,
+        0 0 12px rgba(255, 105, 35, 0.7);
 }
 
 /* =========================================
@@ -140,412 +146,385 @@ main {
 #gunter {
     position: absolute;
 
-    width: clamp(130px, 18vw, 220px);
-    height: auto;
-
-    max-height: 45%;
-
-    object-fit: contain;
-
-    left: 50%;
-    bottom: 75px;
-
-    transform: translateX(-50%);
-
     z-index: 10;
 
-    user-select: none;
-    -webkit-user-drag: none;
+    width: clamp(95px, 13vw, 190px);
+    height: auto;
 
-    animation: respirar 3s ease-in-out infinite;
-}
+    left: 50%;
+    top: 64%;
 
-/* RESPIRACIÓN */
+    transform: translate(-50%, -50%);
 
-@keyframes respirar {
-
-    0%, 100% {
-        transform: translateX(-50%) scale(1);
-    }
-
-    50% {
-        transform: translateX(-50%) scale(1.03);
-    }
-}
-
-/* =========================================
-   OBJETOS
-========================================= */
-
-.objeto {
-    position: absolute;
-
-    font-size: clamp(30px, 5vw, 55px);
-
-    z-index: 5;
-
-    user-select: none;
+    object-fit: contain;
 
     cursor: pointer;
 
     transition:
-        transform 0.25s ease,
-        filter 0.25s ease;
+        left 0.8s ease,
+        top 0.8s ease,
+        filter 0.3s ease;
+
+    filter:
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.55))
+        drop-shadow(0 0 5px rgba(255, 130, 55, 0.2));
 }
 
-.objeto:hover {
-    transform: scale(1.12);
+/* Resplandor cuando Gunter realiza una acción */
 
-    filter: drop-shadow(
-        0 0 10px rgba(255, 255, 255, 0.2)
-    );
+#gunter.active {
+    filter:
+        drop-shadow(0 0 9px rgba(255, 130, 55, 0.8))
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.55));
+}
+
+/* =========================================
+   OBJETOS INTERACTIVOS
+========================================= */
+
+.game-object {
+    position: absolute;
+
+    z-index: 8;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: none;
+    background: transparent;
+
+    cursor: grab;
+
+    touch-action: none;
+
+    user-select: none;
+
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.6));
+
+    transition:
+        filter 0.2s ease,
+        transform 0.2s ease;
+}
+
+.game-object:hover {
+    filter:
+        drop-shadow(0 0 7px rgba(255, 145, 65, 0.9))
+        drop-shadow(0 4px 4px rgba(0, 0, 0, 0.6));
+
+    transform: scale(1.08);
+}
+
+.game-object:active {
+    cursor: grabbing;
+}
+
+.game-object.selected {
+    filter:
+        drop-shadow(0 0 10px #ff963f)
+        drop-shadow(0 0 18px rgba(255, 115, 35, 0.6));
+}
+
+/* COMEDERO DE COMIDA */
+
+.food-bowl {
+    left: 30%;
+    top: 78%;
+
+    width: clamp(38px, 5vw, 72px);
+    height: clamp(38px, 5vw, 72px);
+
+    font-size: clamp(30px, 4vw, 55px);
+}
+
+/* COMEDERO DE AGUA */
+
+.water-bowl {
+    left: 39%;
+    top: 78%;
+
+    width: clamp(32px, 4.5vw, 65px);
+    height: clamp(32px, 4.5vw, 65px);
+
+    font-size: clamp(26px, 3.5vw, 48px);
+}
+
+/* SACO DE PIENSO */
+
+.food-bag {
+    left: 12%;
+    top: 73%;
+
+    width: clamp(45px, 6vw, 85px);
+    height: clamp(55px, 7vw, 100px);
+
+    font-size: clamp(35px, 5vw, 65px);
 }
 
 /* CAJA */
 
-.caja {
-    left: 7%;
-    bottom: 75px;
-}
+.cardboard-box {
+    left: 72%;
+    top: 74%;
 
-/* OVILLO */
+    width: clamp(48px, 6vw, 90px);
+    height: clamp(45px, 5.5vw, 80px);
 
-.ovillo {
-    right: 7%;
-    bottom: 85px;
-}
-
-/* COMIDA */
-
-.comida {
-    left: 28%;
-    bottom: 75px;
-}
-
-/* AGUA */
-
-.agua {
-    right: 28%;
-    bottom: 75px;
-}
-
-/* SACO */
-
-.saco {
-    right: 43%;
-    bottom: 180px;
+    font-size: clamp(36px, 5vw, 65px);
 }
 
 /* =========================================
-   PANEL KARU
+   MENSAJE DE ACCIÓN
+========================================= */
+
+#action-message {
+    position: absolute;
+
+    z-index: 25;
+
+    left: 50%;
+    bottom: 3%;
+
+    transform: translateX(-50%);
+
+    max-width: 80%;
+
+    padding: 9px 18px;
+
+    background: rgba(8, 8, 8, 0.82);
+
+    border: 1px solid rgba(255, 135, 65, 0.45);
+    border-radius: 20px;
+
+    color: #ffd1ad;
+
+    font-size: clamp(11px, 1.2vw, 14px);
+    text-align: center;
+
+    pointer-events: none;
+}
+
+/* =========================================
+   PANEL DE KARU
 ========================================= */
 
 #karu-panel {
     position: absolute;
 
-    top: 38px;
-    right: 38px;
+    z-index: 30;
 
-    width: 225px;
+    top: 3%;
+    right: 2%;
 
-    padding: 15px;
-
-    background: rgba(24, 24, 24, 0.94);
-
-    border: 1px solid #514137;
-    border-radius: 18px;
-
-    z-index: 20;
-
-    box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.35),
-        0 0 15px rgba(231, 145, 92, 0.06);
-
-    backdrop-filter: blur(8px);
-}
-
-/* AVATAR KARU */
-
-.karu-top {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-}
-
-#karu-avatar {
-    width: 65px;
-    height: 65px;
-
-    flex-shrink: 0;
-
-    object-fit: cover;
-
-    border-radius: 50%;
-
-    border: 2px solid #e7915c;
-
-    box-shadow:
-        0 0 12px rgba(231, 145, 92, 0.3);
-}
-
-.karu-top h2 {
-    color: #e7915c;
-    font-size: 19px;
-}
-
-/* TEXTO KARU */
-
-#karu-text {
-    margin-top: 13px;
-
-    line-height: 1.5;
-
-    color: #ddd;
-
-    font-size: 12px;
-}
-
-/* =========================================
-   BOTÓN
-========================================= */
-
-#dato-btn {
-    width: 100%;
-
-    margin-top: 14px;
-    padding: 10px;
-
-    border: none;
-    border-radius: 9px;
-
-    background: #e7915c;
-    color: white;
-
-    font-weight: bold;
-    font-size: 12px;
-
-    cursor: pointer;
-
-    transition: 0.3s ease;
-}
-
-#dato-btn:hover {
-    background: #ff9f61;
-
-    box-shadow:
-        0 0 15px rgba(231, 145, 92, 0.3);
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-footer {
-    text-align: center;
+    width: clamp(170px, 19vw, 250px);
 
     padding: 12px;
 
-    border-top: 1px solid #222;
+    background: rgba(12, 12, 15, 0.88);
 
-    color: #777;
+    border: 1px solid rgba(255, 135, 65, 0.45);
+    border-radius: 12px;
 
-    font-size: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+
+    backdrop-filter: blur(5px);
+}
+
+.karu-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 9px;
+}
+
+#karu-avatar {
+    width: clamp(35px, 4vw, 55px);
+    height: clamp(35px, 4vw, 55px);
+
+    object-fit: contain;
+
+    border-radius: 50%;
+}
+
+.karu-heading h2 {
+    color: #ffad75;
+    font-size: 16px;
+}
+
+.karu-heading span {
+    color: #aaa;
+    font-size: 10px;
+}
+
+#karu-text {
+    color: #eee;
+
+    font-size: clamp(10px, 1vw, 13px);
+    line-height: 1.5;
 }
 
 /* =========================================
-   TABLETS
+   ESTADO DEL JUEGO
 ========================================= */
 
-@media (max-width: 900px) {
+#status-indicator {
+    position: absolute;
 
-    main {
-        padding: 14px;
-    }
+    z-index: 25;
 
-    #room {
-        height: 65svh;
-        min-height: 520px;
-    }
+    top: 3%;
+    left: 2%;
 
-    #karu-panel {
-        top: 20px;
-        right: 20px;
-    }
+    display: flex;
+    align-items: center;
+    gap: 7px;
 
-    #gunter {
-        width: clamp(130px, 23vw, 190px);
-    }
+    padding: 8px 11px;
+
+    background: rgba(10, 10, 10, 0.75);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+
+    font-size: 11px;
+    color: #eee;
+}
+
+.status-light {
+    width: 8px;
+    height: 8px;
+
+    background: #7dce75;
+    border-radius: 50%;
+
+    box-shadow: 0 0 7px #7dce75;
 }
 
 /* =========================================
-   MÓVILES
+   ADAPTACIÓN A MÓVILES
 ========================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
-    header {
-        padding: 15px 10px;
-    }
-
-    header h1 {
-        font-size: 1.65rem;
-    }
-
-    header p {
-        max-width: 330px;
-        margin: 0 auto;
-
-        line-height: 1.5;
-        font-size: 12px;
-    }
-
-    main {
-        padding: 9px;
+    #game {
+        padding: 3px;
     }
 
     #room {
-        width: 100%;
-
-        height: 68svh;
-        min-height: 480px;
-        max-height: 680px;
-
-        border-radius: 14px;
+        border-radius: 5px;
     }
 
-    /* GUNTER EN EL CENTRO */
+    #game-sign {
+        top: 2%;
 
-    #gunter {
-        width: clamp(120px, 36vw, 175px);
-
-        max-height: 38%;
-
-        left: 50%;
-        bottom: 65px;
+        padding: 6px 13px;
     }
 
-    /* OBJETOS MÁS PEQUEÑOS */
-
-    .objeto {
-        font-size: clamp(27px, 8vw, 39px);
+    #game-sign h1 {
+        font-size: clamp(12px, 3.5vw, 19px);
+        letter-spacing: 1.5px;
     }
 
-    .caja {
-        left: 5%;
-        bottom: 65px;
+    .sign-small {
+        font-size: 6px;
+        letter-spacing: 2px;
     }
-
-    .ovillo {
-        right: 5%;
-        bottom: 65px;
-    }
-
-    .comida {
-        left: 8%;
-        bottom: 175px;
-    }
-
-    .agua {
-        right: 8%;
-        bottom: 175px;
-    }
-
-    .saco {
-        right: 12%;
-        bottom: 260px;
-    }
-
-    /* KARU EN LA ESQUINA SUPERIOR */
 
     #karu-panel {
-        top: 12px;
-        right: 12px;
+        top: 12%;
+        right: 2%;
 
         width: 145px;
-
-        padding: 9px;
-
-        border-radius: 12px;
+        padding: 8px;
     }
 
-    .karu-top {
-        gap: 7px;
+    .karu-heading {
+        gap: 6px;
+        margin-bottom: 5px;
     }
 
-    #karu-avatar {
-        width: 42px;
-        height: 42px;
-
-        border-width: 2px;
+    .karu-heading h2 {
+        font-size: 13px;
     }
 
-    .karu-top h2 {
-        font-size: 15px;
+    .karu-heading span {
+        font-size: 8px;
     }
 
     #karu-text {
-        margin-top: 8px;
-
-        font-size: 10px;
-        line-height: 1.4;
+        font-size: 9px;
+        line-height: 1.35;
     }
 
-    #dato-btn {
-        margin-top: 9px;
+    #status-indicator {
+        top: 12%;
+        left: 2%;
 
-        padding: 8px 5px;
-
-        font-size: 10px;
+        padding: 6px 8px;
+        font-size: 9px;
     }
 
-    footer {
-        padding: 10px;
-        font-size: 10px;
+    #gunter {
+        width: clamp(85px, 23vw, 140px);
+    }
+
+    .food-bowl {
+        left: 24%;
+        top: 78%;
+    }
+
+    .water-bowl {
+        left: 36%;
+        top: 78%;
+    }
+
+    .food-bag {
+        left: 7%;
+        top: 72%;
+    }
+
+    .cardboard-box {
+        left: 75%;
+        top: 75%;
+    }
+
+    #action-message {
+        bottom: 2%;
+        padding: 7px 12px;
     }
 }
 
-/* =========================================
-   MÓVILES PEQUEÑOS
-========================================= */
+/* Móviles muy estrechos */
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
 
     #karu-panel {
-        width: 132px;
-        top: 9px;
-        right: 9px;
+        width: 125px;
     }
 
     #karu-avatar {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
     }
 
-    #gunter {
-        width: 120px;
+    #status-indicator {
+        font-size: 8px;
     }
 
-    .objeto {
-        font-size: 27px;
+    .game-object {
+        font-size: 30px;
     }
 }
 
-/* =========================================
-   REDUCIR MOVIMIENTO
-========================================= */
+/* Accesibilidad: reducir movimiento */
 
 @media (prefers-reduced-motion: reduce) {
-
-    #gunter {
-        animation: none;
-    }
 
     *,
     *::before,
     *::after {
-        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
 }
