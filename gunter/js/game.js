@@ -12,11 +12,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const objects = document.querySelectorAll(".room-object");
 
-    const needs = {
-        hunger: 65,
-        thirst: 75,
-        energy: 85
+    
+const needs = {
+    hunger: 65,
+    thirst: 75,
+    energy: 85,
+    happiness: 90
+};
+
+/* =====================================
+   ACTUALIZAR INTERFAZ DE NECESIDADES
+===================================== */
+
+function updateNeedsUI() {
+
+    const bars = {
+        hunger: "hunger-bar",
+        thirst: "thirst-bar",
+        energy: "energy-bar",
+        happiness: "happiness-bar"
     };
+
+    Object.entries(bars).forEach(([need, id]) => {
+
+        const bar = document.getElementById(id);
+        const value = document.getElementById(`${need}-value`);
+
+        if (!bar || !value) return;
+
+        const amount = Math.round(needs[need]);
+
+        bar.style.width = `${amount}%`;
+        bar.classList.toggle("low", amount < 25);
+
+        value.textContent = `${amount}%`;
+    });
+}
+
+/* =====================================
+   MODIFICAR NECESIDADES
+===================================== */
+
+function changeNeed(need, amount) {
+
+    if (!(need in needs)) return;
+
+    needs[need] = Math.max(
+        0,
+        Math.min(100, needs[need] + amount)
+    );
+
+    updateNeedsUI();
+}
+
+/* =====================================
+   RECOMPENSAS POR INTERACCIÓN
+===================================== */
+
+function rewardInteraction(action) {
+
+    switch (action) {
+
+        case "food":
+            changeNeed("hunger", 45);
+            changeNeed("happiness", 5);
+            break;
+
+        case "water":
+            changeNeed("thirst", 50);
+            changeNeed("happiness", 5);
+            break;
+
+        case "box":
+            changeNeed("energy", 35);
+            changeNeed("happiness", 8);
+            break;
+
+        case "sack":
+            changeNeed("happiness", 8);
+            changeNeed("energy", -3);
+            break;
+
+        case "pet":
+            changeNeed("happiness", 12);
+            break;
+    }
+}
+
+/* =====================================
+   INICIO DE LAS BARRAS
+===================================== */
+
+updateNeedsUI();
+
 
     let busy = false;
     let currentAction = null;
