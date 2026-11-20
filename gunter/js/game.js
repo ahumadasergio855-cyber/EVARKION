@@ -2,8 +2,10 @@
 /* =====================================================
    EVARKION - GOUNTER AI SYSTEM
    Mascota virtual autónoma
-   Version 2.0
+   Version 2.1
 ===================================================== */
+
+import { createGounterActions } from "./gounter-ai/actions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -101,13 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ================================================= */
 
     const personality = {
-
         curiosity: 85,
         playfulness: 75,
         sociability: 65,
         independence: 80,
         calmness: 70
-
     };
 
     /* =================================================
@@ -125,7 +125,13 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             if (saved && typeof saved === "object") {
-                return saved;
+                return {
+                    visits: saved.visits || {},
+                    favorites: saved.favorites || [],
+                    activities: saved.activities || {},
+                    discoveries: saved.discoveries || [],
+                    lastLocation: saved.lastLocation || null
+                };
             }
 
         } catch (error) {
@@ -260,10 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =================================================
        9. RECONOCIMIENTO DE LA HABITACIÓN
-
-       Coordenadas expresadas en porcentajes.
-       Son puntos de aproximación para Gounter,
-       no coordenadas exactas de los muebles.
     ================================================= */
 
     const locations = [
@@ -413,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             if (distance < 10) {
-                resolve();
+                resolve(true);
                 return;
             }
 
@@ -426,6 +428,11 @@ document.addEventListener("DOMContentLoaded", () => {
             cat.classList.toggle(
                 "facing-left",
                 targetX < start.x
+            );
+
+            cat.classList.toggle(
+                "facing-right",
+                targetX >= start.x
             );
 
             setState("walking");
@@ -445,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
 
                 setState(null);
-                resolve();
+                resolve(true);
 
             }, duration + 100);
 
@@ -656,9 +663,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         say("Zzz... Gounter está profundamente dormido. 💤", 7000);
 
-        // Descanso prolongado, pero interrumpible
-        // por el usuario.
-
         await delay(random(9000, 14000));
 
         changeNeed("energy", 24);
@@ -667,58 +671,47 @@ document.addEventListener("DOMContentLoaded", () => {
         setState(null);
 
         say("Gounter se está despertando lentamente.");
-
     }
 
     /* =================================================
-       14. ALIMENTACIÓN
+       14. ACCIONES EXTERNAS
+       APPROACH OBJECT / EAT / DRINK
     ================================================= */
 
-    async function eat() {
+    function findObject(action) {
 
-        setState("sniffing");
-
-        say("Gounter está olfateando la comida...");
-
-        await delay(1200);
-
-        setState("eating");
-
-        say("¡Ñam, ñam! Gounter está comiendo. 🐱");
-
-        await delay(4500);
-
-        changeNeed("hunger", 45);
-        changeNeed("happiness", 5);
-
-        rememberActivity("eat");
-
-        setState(null);
-
-        say("Gounter ha terminado de comer.");
+        return document.querySelector(
+            `.room-object[data-action="${action}"]`
+        );
     }
 
-    async function drink() {
+    function getObjectPosition(object) {
 
-        setState("sniffing");
+        const roomRect = room.getBoundingClientRect();
+        const rect = object.getBoundingClientRect();
 
-        say("Gounter está investigando el cuenco de agua.");
-
-        await delay(1000);
-
-        setState("drinking");
-
-        say("Gounter está bebiendo agua. 💧");
-
-        await delay(3500);
-
-        changeNeed("thirst", 50);
-        changeNeed("happiness", 3);
-
-        rememberActivity("drink");
-
-        setState(null);
+        return {
+            x: rect.left + rect.width / 2 - roomRect.left,
+            y: rect.top + rect.height / 2 - roomRect.top
+        };
     }
+
+    const {
+        approachObject,
+        eat,
+        drink
+    } = createGounterActions({
+
+        getObject: findObject,
+        walkTo,
+        getObjectPosition,
+        say,
+        setState,
+        delay,
+        changeNeed,
+        rememberActivity
+
+    });
 
     /* =================================================
        15. PROBABILIDADES DE INTERACCIÓN
@@ -830,6 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             case "sack":
                 await play();
+                rememberActivity("play");
                 break;
 
             case "box":
@@ -837,20 +831,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     name: "su caja",
                     id: "box"
                 });
+                rememberActivity("sleep");
                 break;
 
         }
-    }
-
-    function getObjectPosition(object) {
-
-        const roomRect = room.getBoundingClientRect();
-        const rect = object.getBoundingClientRect();
-
-        return {
-            x: rect.left + rect.width / 2 - roomRect.left,
-            y: rect.top + rect.height / 2 - roomRect.top
-        };
     }
 
     async function interact(object) {
@@ -866,15 +850,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            const position = getObjectPosition(object);
+            // Primero Gounter se acerca al objeto.
+            const approached = await approachObject(action);
 
-            await walkTo(
-                position.x,
-                position.y + 45
-            );
+            if (!approached) {
+                return;
+            }
 
             await delay(400);
 
+            // Después decide si quiere utilizarlo.
             if (decideInteraction(action)) {
 
                 await useObject(action);
@@ -904,19 +889,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let score = location.interest;
 
-        // Preferir lugares poco visitados.
-
         const visits = memory.visits[location.id] || 0;
 
         score += Math.max(0, 35 - visits * 8);
 
-        // Evitar repetir lugares.
-
         if (memory.lastLocation === location.id) {
             score *= 0.12;
         }
-
-        // Personalidad.
 
         if (location.type === "curiosity") {
             score += personality.curiosity * .3;
@@ -940,6 +919,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function weightedChoice(items) {
+
+        if (!items.length) return null;
 
         const total = items.reduce(
             (sum, item) => sum + item.score,
@@ -976,8 +957,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const food = findObject("food");
 
                 if (food) {
-                    busy = false;
-                    await interact(food);
+                    await approachObject("food");
+                    await eat();
                     return;
                 }
             }
@@ -987,8 +968,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const water = findObject("water");
 
                 if (water) {
-                    busy = false;
-                    await interact(water);
+                    await approachObject("water");
+                    await drink();
                     return;
                 }
             }
@@ -1001,7 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     getLocation("cat_bed"),
                     getLocation("main_bed"),
                     getLocation("armchair")
-                ];
+                ].filter(Boolean);
 
                 const target = weightedChoice(
                     beds.map(item => ({
@@ -1010,8 +991,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }))
                 );
 
-                await visitLocation(target);
-                await sleepAt(target);
+                if (target) {
+                    await visitLocation(target);
+                    await sleepAt(target);
+                }
 
                 return;
             }
@@ -1024,6 +1007,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }));
 
             const selected = weightedChoice(choices);
+
+            if (!selected) return;
 
             await visitLocation(selected);
 
@@ -1074,18 +1059,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =================================================
-       18. BUSCAR OBJETOS
-    ================================================= */
-
-    function findObject(action) {
-
-        return document.querySelector(
-            `.room-object[data-action="${action}"]`
-        );
-    }
-
-    /* =================================================
-       19. MOVIMIENTO ALEATORIO
+       18. MOVIMIENTO ALEATORIO
     ================================================= */
 
     async function randomExplore() {
@@ -1104,7 +1078,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =================================================
-       20. PROGRAMAR DECISIONES
+       19. PROGRAMAR DECISIONES
     ================================================= */
 
     function scheduleIdle() {
@@ -1124,7 +1098,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =================================================
-       21. NECESIDADES CON EL TIEMPO
+       20. NECESIDADES CON EL TIEMPO
     ================================================= */
 
     needsTimer = setInterval(() => {
@@ -1143,7 +1117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 10000);
 
     /* =================================================
-       22. ACARICIAR
+       21. ACARICIAR
     ================================================= */
 
     cat.addEventListener("click", async () => {
@@ -1160,6 +1134,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         changeNeed("happiness", 12);
 
+        rememberActivity("pet");
+
         say("¡Prrrrrr! Gounter está disfrutando de las caricias. ❤️");
 
         await delay(2800);
@@ -1172,7 +1148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* =================================================
-       23. ARRASTRAR OBJETOS
+       22. ARRASTRAR OBJETOS
     ================================================= */
 
     function prepareObjectPosition(object) {
@@ -1299,8 +1275,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         });
 
-        // Accesibilidad: activar con teclado.
-
         object.addEventListener("keydown", event => {
 
             if (event.key === "Enter" || event.key === " ") {
@@ -1313,10 +1287,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* =================================================
-       24. INICIALIZACIÓN
+       23. INICIALIZACIÓN
     ================================================= */
 
     cat.classList.remove("facing-left");
+    cat.classList.add("facing-right");
 
     updateNeedsUI();
 
@@ -1325,7 +1300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scheduleIdle();
 
     /* =================================================
-       25. LIMPIEZA
+       24. LIMPIEZA
     ================================================= */
 
     window.addEventListener("beforeunload", () => {
@@ -1343,7 +1318,8 @@ document.addEventListener("DOMContentLoaded", () => {
         {
             locations: locations.length,
             personality,
-            memory
+            memory,
+            actions: ["approachObject", "eat", "drink"]
         }
     );
 
