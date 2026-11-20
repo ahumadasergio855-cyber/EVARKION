@@ -1,14 +1,15 @@
 
-/* =============================================
-   EVARKION - GOUNTER PET SYSTEM
-   Sistema de mascota virtual
-============================================= */
+/* =====================================================
+   EVARKION - GOUNTER AI SYSTEM
+   Mascota virtual autónoma
+   Version 2.0
+===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* =========================================
-       ELEMENTOS PRINCIPALES
-    ========================================= */
+    /* =================================================
+       1. ELEMENTOS PRINCIPALES
+    ================================================= */
 
     const room = document.getElementById("room");
     const cat = document.getElementById("gounter");
@@ -18,33 +19,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const objects = document.querySelectorAll(".room-object");
 
     if (!room || !cat || !catArea) {
-        console.error("EVARKION: No se encontraron los elementos de Gounter.");
+        console.error("GOUNTER: No se encuentra la habitación.");
         return;
     }
 
-    /* =========================================
-       CONFIGURACIÓN GENERAL
-    ========================================= */
+    /* =================================================
+       2. CONFIGURACIÓN
+    ================================================= */
 
-    let busy = false;
-    let currentAction = null;
+    const clamp = (v, min, max) =>
+        Math.max(min, Math.min(max, v));
 
-    let messageTimer = null;
-    let idleTimer = null;
-    let needsTimer = null;
-
-    let drag = null;
-
-    const clamp = (value, min, max) =>
-        Math.max(min, Math.min(max, value));
+    const random = (min, max) =>
+        Math.random() * (max - min) + min;
 
     const delay = ms =>
         new Promise(resolve => setTimeout(resolve, ms));
 
+    let busy = false;
+    let currentAction = "idle";
+    let currentLocation = "floor";
 
-    /* =========================================
-       NECESIDADES DE GOUNTER
-    ========================================= */
+    let idleTimer = null;
+    let needsTimer = null;
+    let messageTimer = null;
+    let drag = null;
+
+    let lastActivity = null;
+    let lastDecision = 0;
+
+    const DECISION_MIN = 7000;
+    const DECISION_MAX = 14000;
+
+    /* =================================================
+       3. NECESIDADES
+    ================================================= */
 
     const needs = {
         hunger: 65,
@@ -53,77 +62,33 @@ document.addEventListener("DOMContentLoaded", () => {
         happiness: 90
     };
 
-
-    /* =========================================
-       PREPARAR POSICIONES
-       Evita conflictos con translate(-50%, -50%)
-    ========================================= */
-
-    function prepareCatPosition() {
-
-        const roomRect = room.getBoundingClientRect();
-        const catRect = catArea.getBoundingClientRect();
-
-        catArea.style.position = "absolute";
-        catArea.style.transform = "none";
-        catArea.style.right = "auto";
-        catArea.style.bottom = "auto";
-
-        catArea.style.left =
-            `${catRect.left - roomRect.left}px`;
-
-        catArea.style.top =
-            `${catRect.top - roomRect.top}px`;
-
-        catArea.style.willChange = "left, top";
-    }
-
-    prepareCatPosition();
-
-
-    /* =========================================
-       ACTUALIZAR INTERFAZ
-    ========================================= */
-
     function updateNeedsUI() {
 
-        const bars = {
-            hunger: "hunger-bar",
-            thirst: "thirst-bar",
-            energy: "energy-bar",
-            happiness: "happiness-bar"
-        };
+        Object.entries(needs).forEach(([name, amount]) => {
 
-        Object.entries(bars).forEach(([need, id]) => {
-
-            const bar = document.getElementById(id);
-            const value = document.getElementById(`${need}-value`);
+            const bar = document.getElementById(`${name}-bar`);
+            const value = document.getElementById(`${name}-value`);
 
             if (!bar) return;
 
-            const amount = Math.round(needs[need]);
+            const number = Math.round(amount);
 
-            bar.style.width = `${amount}%`;
-            bar.classList.toggle("low", amount < 25);
+            bar.style.width = `${number}%`;
+            bar.classList.toggle("low", number < 25);
 
             if (value) {
-                value.textContent = `${amount}%`;
+                value.textContent = `${number}%`;
             }
 
         });
     }
 
+    function changeNeed(name, amount) {
 
-    /* =========================================
-       MODIFICAR NECESIDADES
-    ========================================= */
+        if (!(name in needs)) return;
 
-    function changeNeed(need, amount) {
-
-        if (!(need in needs)) return;
-
-        needs[need] = clamp(
-            needs[need] + amount,
+        needs[name] = clamp(
+            needs[name] + amount,
             0,
             100
         );
@@ -131,55 +96,119 @@ document.addEventListener("DOMContentLoaded", () => {
         updateNeedsUI();
     }
 
+    /* =================================================
+       4. PERSONALIDAD
+    ================================================= */
 
-    /* =========================================
-       RECOMPENSAS DE INTERACCIÓN
-    ========================================= */
+    const personality = {
 
-    function rewardInteraction(action) {
+        curiosity: 85,
+        playfulness: 75,
+        sociability: 65,
+        independence: 80,
+        calmness: 70
 
-        switch (action) {
+    };
 
-            case "food":
+    /* =================================================
+       5. MEMORIA DE GOUNTER
+    ================================================= */
 
-                changeNeed("hunger", 45);
-                changeNeed("happiness", 5);
+    const MEMORY_KEY = "evarkion_gounter_memory_v2";
 
-                break;
+    function loadMemory() {
 
-            case "water":
+        try {
 
-                changeNeed("thirst", 50);
-                changeNeed("happiness", 5);
+            const saved = JSON.parse(
+                localStorage.getItem(MEMORY_KEY)
+            );
 
-                break;
+            if (saved && typeof saved === "object") {
+                return saved;
+            }
 
-            case "box":
+        } catch (error) {
+            console.warn("Gounter: No se pudo cargar la memoria.");
+        }
 
-                changeNeed("energy", 35);
-                changeNeed("happiness", 8);
+        return {
+            visits: {},
+            favorites: [],
+            activities: {},
+            discoveries: [],
+            lastLocation: null
+        };
+    }
 
-                break;
+    const memory = loadMemory();
 
-            case "sack":
+    function saveMemory() {
 
-                changeNeed("happiness", 8);
-                changeNeed("energy", -3);
-
-                break;
-
-            case "pet":
-
-                changeNeed("happiness", 12);
-
-                break;
+        try {
+            localStorage.setItem(
+                MEMORY_KEY,
+                JSON.stringify(memory)
+            );
+        } catch (error) {
+            console.warn("Gounter: No se pudo guardar la memoria.");
         }
     }
 
+    function rememberLocation(id) {
 
-    /* =========================================
-       MENSAJES DE GOUNTER
-    ========================================= */
+        memory.visits[id] = (memory.visits[id] || 0) + 1;
+
+        if (!memory.discoveries.includes(id)) {
+            memory.discoveries.push(id);
+        }
+
+        memory.lastLocation = id;
+
+        saveMemory();
+    }
+
+    function rememberActivity(action) {
+
+        memory.activities[action] =
+            (memory.activities[action] || 0) + 1;
+
+        saveMemory();
+    }
+
+    /* =================================================
+       6. ESTADOS VISUALES
+    ================================================= */
+
+    const stateClasses = [
+        "walking",
+        "sniffing",
+        "eating",
+        "drinking",
+        "sleeping",
+        "playing",
+        "purring",
+        "observing",
+        "curious",
+        "grooming",
+        "kneading",
+        "jumping"
+    ];
+
+    function setState(state) {
+
+        cat.classList.remove(...stateClasses);
+
+        if (state) {
+            cat.classList.add(state);
+        }
+
+        currentAction = state || "idle";
+    }
+
+    /* =================================================
+       7. MENSAJES
+    ================================================= */
 
     function say(text, duration = 3500) {
 
@@ -195,114 +224,252 @@ document.addEventListener("DOMContentLoaded", () => {
         }, duration);
     }
 
+    /* =================================================
+       8. POSICIONAMIENTO INICIAL
+    ================================================= */
 
-    /* =========================================
-       ESTADOS DEL GATO
-    ========================================= */
+    function prepareCatPosition() {
 
-    function setState(state) {
+        const roomRect = room.getBoundingClientRect();
+        const rect = catArea.getBoundingClientRect();
 
-        cat.classList.remove(
-            "walking",
-            "sniffing",
-            "eating",
-            "drinking",
-            "sleeping",
-            "playing",
-            "purring"
-        );
+        catArea.style.position = "absolute";
+        catArea.style.transform = "none";
+        catArea.style.right = "auto";
+        catArea.style.bottom = "auto";
 
-        if (state) {
-            cat.classList.add(state);
-        }
+        catArea.style.left =
+            `${rect.left - roomRect.left}px`;
 
-        currentAction = state;
+        catArea.style.top =
+            `${rect.top - roomRect.top}px`;
     }
 
-
-    /* =========================================
-       SOMBRA DINÁMICA
-    ========================================= */
-
-    function createCatShadow() {
-
-        let shadow = catArea.querySelector(".cat-shadow");
-
-        if (!shadow) {
-
-            shadow = document.createElement("div");
-            shadow.className = "cat-shadow";
-
-            catArea.insertBefore(shadow, cat);
-        }
-
-        return shadow;
-    }
-
-    createCatShadow();
-
-
-    /* =========================================
-       POSICIÓN DEL GATO
-    ========================================= */
+    prepareCatPosition();
 
     function getCatPosition() {
 
-        const roomRect = room.getBoundingClientRect();
+        const rect = room.getBoundingClientRect();
         const catRect = catArea.getBoundingClientRect();
 
         return {
-            x: catRect.left + catRect.width / 2 - roomRect.left,
-            y: catRect.top + catRect.height / 2 - roomRect.top
+            x: catRect.left + catRect.width / 2 - rect.left,
+            y: catRect.top + catRect.height / 2 - rect.top
         };
     }
 
+    /* =================================================
+       9. RECONOCIMIENTO DE LA HABITACIÓN
 
-    /* =========================================
-       CORAZONES AL ACARICIAR
-    ========================================= */
+       Coordenadas expresadas en porcentajes.
+       Son puntos de aproximación para Gounter,
+       no coordenadas exactas de los muebles.
+    ================================================= */
 
-    function showHearts() {
+    const locations = [
 
-        const roomRect = room.getBoundingClientRect();
-        const catRect = cat.getBoundingClientRect();
+        {
+            id: "main_bed",
+            name: "la cama",
+            x: 21,
+            y: 68,
+            type: "rest",
+            actions: ["sleep", "observe", "knead"],
+            interest: 75
+        },
 
-        const centerX =
-            catRect.left - roomRect.left + catRect.width / 2;
+        {
+            id: "cat_bed",
+            name: "su pequeña cama",
+            x: 55,
+            y: 68,
+            type: "rest",
+            actions: ["sleep", "groom"],
+            interest: 90
+        },
 
-        const topY =
-            catRect.top - roomRect.top + 10;
+        {
+            id: "window",
+            name: "el ventanal",
+            x: 57,
+            y: 53,
+            type: "observation",
+            actions: ["observe"],
+            interest: 95
+        },
 
-        const hearts = ["♥", "♡", "♥", "❤"];
+        {
+            id: "armchair",
+            name: "el sillón",
+            x: 42,
+            y: 65,
+            type: "rest",
+            actions: ["sleep", "observe", "groom"],
+            interest: 70
+        },
 
-        hearts.forEach((symbol, index) => {
+        {
+            id: "cat_tree",
+            name: "el árbol rascador",
+            x: 76,
+            y: 65,
+            type: "play",
+            actions: ["play", "observe"],
+            interest: 85
+        },
 
-            const heart = document.createElement("span");
+        {
+            id: "rug",
+            name: "la alfombra",
+            x: 59,
+            y: 83,
+            type: "play",
+            actions: ["play", "sleep"],
+            interest: 80
+        },
 
-            heart.className = "heart-float";
-            heart.textContent = symbol;
+        {
+            id: "bookshelves",
+            name: "las estanterías",
+            x: 30,
+            y: 46,
+            type: "curiosity",
+            actions: ["investigate"],
+            interest: 65
+        },
 
-            heart.style.left =
-                `${centerX + (Math.random() - 0.5) * 65}px`;
+        {
+            id: "guitar",
+            name: "la guitarra",
+            x: 83,
+            y: 72,
+            type: "curiosity",
+            actions: ["investigate"],
+            interest: 60
+        },
 
-            heart.style.top =
-                `${topY + Math.random() * 25}px`;
+        {
+            id: "wardrobe",
+            name: "el armario",
+            x: 94,
+            y: 58,
+            type: "curiosity",
+            actions: ["investigate"],
+            interest: 55
+        },
 
-            heart.style.animationDelay =
-                `${index * 180}ms`;
+        {
+            id: "plants",
+            name: "las plantas",
+            x: 28,
+            y: 39,
+            type: "curiosity",
+            actions: ["investigate"],
+            interest: 75
+        }
 
-            room.appendChild(heart);
+    ];
 
-            setTimeout(() => heart.remove(), 2500);
+    function getLocation(id) {
+        return locations.find(item => item.id === id);
+    }
+
+    function getLocationPosition(location) {
+
+        return {
+            x: room.clientWidth * location.x / 100,
+            y: room.clientHeight * location.y / 100
+        };
+    }
+
+    /* =================================================
+       10. MOVIMIENTO
+    ================================================= */
+
+    function walkTo(x, y) {
+
+        return new Promise(resolve => {
+
+            const width = catArea.offsetWidth;
+            const height = catArea.offsetHeight;
+
+            const start = getCatPosition();
+
+            const targetX = clamp(
+                x,
+                width / 2,
+                room.clientWidth - width / 2
+            );
+
+            const targetY = clamp(
+                y,
+                height / 2 + 35,
+                room.clientHeight - height / 2 - 20
+            );
+
+            const distance = Math.hypot(
+                targetX - start.x,
+                targetY - start.y
+            );
+
+            if (distance < 10) {
+                resolve();
+                return;
+            }
+
+            const duration = clamp(
+                distance * 4,
+                900,
+                2800
+            );
+
+            cat.classList.toggle(
+                "facing-left",
+                targetX < start.x
+            );
+
+            setState("walking");
+
+            createPawTrail(
+                start,
+                { x: targetX, y: targetY },
+                duration
+            );
+
+            catArea.style.left =
+                `${targetX - width / 2}px`;
+
+            catArea.style.top =
+                `${targetY - height / 2}px`;
+
+            setTimeout(() => {
+
+                setState(null);
+                resolve();
+
+            }, duration + 100);
+
         });
     }
 
+    async function visitLocation(location) {
 
-    /* =========================================
-       HUELLAS TEMPORALES
-    ========================================= */
+        if (!location) return;
 
-    function createPaw(x, y, index = 0) {
+        const position = getLocationPosition(location);
+
+        await walkTo(position.x, position.y);
+
+        currentLocation = location.id;
+
+        rememberLocation(location.id);
+    }
+
+    /* =================================================
+       11. EFECTOS: HUELLAS
+    ================================================= */
+
+    function createPaw(x, y, index) {
 
         const paw = document.createElement("span");
 
@@ -313,17 +480,12 @@ document.addEventListener("DOMContentLoaded", () => {
         paw.style.top = `${y}px`;
 
         paw.style.transform =
-            `rotate(${index % 2 === 0 ? -15 : 15}deg)`;
+            `rotate(${index % 2 ? 15 : -15}deg)`;
 
         room.appendChild(paw);
 
         setTimeout(() => paw.remove(), 2400);
     }
-
-
-    /* =========================================
-       GENERAR RASTRO DE HUELLAS
-    ========================================= */
 
     function createPawTrail(start, target, duration) {
 
@@ -332,14 +494,14 @@ document.addEventListener("DOMContentLoaded", () => {
             target.y - start.y
         );
 
-        const numberOfPaws = Math.min(
+        const count = Math.min(
             16,
             Math.max(3, Math.floor(distance / 38))
         );
 
-        for (let i = 0; i < numberOfPaws; i++) {
+        for (let i = 0; i < count; i++) {
 
-            const progress = (i + 1) / (numberOfPaws + 1);
+            const progress = (i + 1) / (count + 1);
 
             const x =
                 start.x + (target.x - start.x) * progress;
@@ -347,13 +509,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const y =
                 start.y + (target.y - start.y) * progress;
 
-            const side = i % 2 === 0 ? -7 : 7;
-
             setTimeout(() => {
 
                 createPaw(
-                    x + side,
-                    y + catArea.offsetHeight * 0.32,
+                    x + (i % 2 ? 7 : -7),
+                    y + catArea.offsetHeight * .32,
                     i
                 );
 
@@ -361,92 +521,659 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /* =================================================
+       12. EFECTOS: CORAZONES
+    ================================================= */
 
-    /* =========================================
-       MOVIMIENTO NATURAL
-    ========================================= */
+    function showHearts() {
 
-    function walkTo(x, y) {
+        const roomRect = room.getBoundingClientRect();
+        const rect = cat.getBoundingClientRect();
 
-        return new Promise(resolve => {
+        const x = rect.left - roomRect.left + rect.width / 2;
+        const y = rect.top - roomRect.top;
 
-            const roomWidth = room.clientWidth;
-            const roomHeight = room.clientHeight;
+        ["♥", "♡", "❤"].forEach((symbol, index) => {
 
-            const catWidth = catArea.offsetWidth;
-            const catHeight = catArea.offsetHeight;
+            const heart = document.createElement("span");
 
-            const targetX = clamp(
-                x,
-                catWidth / 2,
-                roomWidth - catWidth / 2
-            );
+            heart.className = "heart-float";
+            heart.textContent = symbol;
 
-            const targetY = clamp(
-                y,
-                catHeight / 2 + 40,
-                roomHeight - catHeight / 2 - 20
-            );
+            heart.style.left =
+                `${x + random(-30, 30)}px`;
 
-            const start = getCatPosition();
+            heart.style.top =
+                `${y + random(0, 25)}px`;
 
-            const distance = Math.hypot(
-                targetX - start.x,
-                targetY - start.y
-            );
+            heart.style.animationDelay =
+                `${index * 150}ms`;
 
-            if (distance < 8) {
-                resolve();
-                return;
-            }
+            room.appendChild(heart);
 
-            const duration = clamp(
-                distance * 4,
-                900,
-                2600
-            );
-
-            // Orientar al gato según la dirección.
-
-            cat.classList.toggle(
-                "facing-left",
-                targetX < start.x
-            );
-
-            // Activar animación de caminar.
-
-            setState("walking");
-
-            // Crear huellas.
-
-            createPawTrail(
-                start,
-                { x: targetX, y: targetY },
-                duration
-            );
-
-            // Desplazar el contenedor del gato.
-
-            catArea.style.left =
-                `${targetX - catWidth / 2}px`;
-
-            catArea.style.top =
-                `${targetY - catHeight / 2}px`;
-
-            setTimeout(() => {
-
-                setState(null);
-                resolve();
-
-            }, duration + 80);
-
+            setTimeout(() => heart.remove(), 2500);
         });
     }
 
+    /* =================================================
+       13. ACCIONES FELINAS
+    ================================================= */
 
-    /* =========================================
-       PREPARAR OBJETO PARA ARRASTRAR
-    ========================================= */
+    async function observe() {
+
+        setState("observing");
+
+        const thoughts = [
+            "Gounter está observando el atardecer...",
+            "¿Qué habrá detrás de aquella ventana?",
+            "Gounter sigue algo con la mirada.",
+            "Un pequeño ruido ha llamado su atención.",
+            "Gounter está contemplando la habitación."
+        ];
+
+        say(thoughts[Math.floor(Math.random() * thoughts.length)]);
+
+        await delay(random(4500, 7500));
+
+        changeNeed("happiness", 2);
+
+        setState(null);
+    }
+
+    async function investigate(location) {
+
+        setState("sniffing");
+
+        const messages = [
+            `Gounter está olfateando ${location.name}.`,
+            `¿Qué será esto? Gounter investiga ${location.name}.`,
+            `Gounter ha encontrado algo interesante cerca de ${location.name}.`
+        ];
+
+        say(messages[Math.floor(Math.random() * messages.length)]);
+
+        await delay(random(2500, 4500));
+
+        setState("curious");
+
+        await delay(1800);
+
+        changeNeed("happiness", 2);
+
+        setState(null);
+    }
+
+    async function groom() {
+
+        setState("grooming");
+
+        say("Gounter se está acicalando. 🐾");
+
+        await delay(5000);
+
+        changeNeed("happiness", 3);
+        changeNeed("energy", -1);
+
+        setState(null);
+    }
+
+    async function knead() {
+
+        setState("kneading");
+
+        say("Gounter está amasando las mantas. ❤️");
+
+        await delay(5000);
+
+        changeNeed("happiness", 4);
+
+        setState(null);
+    }
+
+    async function play() {
+
+        setState("playing");
+
+        say("Gounter está jugando y persiguiendo algo.");
+
+        await delay(4500);
+
+        changeNeed("happiness", 10);
+        changeNeed("energy", -7);
+
+        setState(null);
+    }
+
+    async function sleepAt(location) {
+
+        setState("sniffing");
+
+        say(`Gounter se acomoda en ${location.name}...`);
+
+        await delay(1400);
+
+        setState("sleeping");
+
+        say("Zzz... Gounter está profundamente dormido. 💤", 7000);
+
+        // Descanso prolongado, pero interrumpible
+        // por el usuario.
+
+        await delay(random(9000, 14000));
+
+        changeNeed("energy", 24);
+        changeNeed("happiness", 3);
+
+        setState(null);
+
+        say("Gounter se está despertando lentamente.");
+
+    }
+
+    /* =================================================
+       14. ALIMENTACIÓN
+    ================================================= */
+
+    async function eat() {
+
+        setState("sniffing");
+
+        say("Gounter está olfateando la comida...");
+
+        await delay(1200);
+
+        setState("eating");
+
+        say("¡Ñam, ñam! Gounter está comiendo. 🐱");
+
+        await delay(4500);
+
+        changeNeed("hunger", 45);
+        changeNeed("happiness", 5);
+
+        rememberActivity("eat");
+
+        setState(null);
+
+        say("Gounter ha terminado de comer.");
+    }
+
+    async function drink() {
+
+        setState("sniffing");
+
+        say("Gounter está investigando el cuenco de agua.");
+
+        await delay(1000);
+
+        setState("drinking");
+
+        say("Gounter está bebiendo agua. 💧");
+
+        await delay(3500);
+
+        changeNeed("thirst", 50);
+        changeNeed("happiness", 3);
+
+        rememberActivity("drink");
+
+        setState(null);
+    }
+
+    /* =================================================
+       15. PROBABILIDADES DE INTERACCIÓN
+    ================================================= */
+
+    function calculateChance(action) {
+
+        switch (action) {
+
+            case "food":
+                return clamp(
+                    (100 - needs.hunger) * 0.95,
+                    5,
+                    95
+                );
+
+            case "water":
+                return clamp(
+                    (100 - needs.thirst) * 0.95,
+                    5,
+                    95
+                );
+
+            case "box":
+                return clamp(
+                    (100 - needs.energy) * 0.95,
+                    5,
+                    95
+                );
+
+            case "sack":
+                return clamp(
+                    needs.happiness * 0.55 +
+                    personality.playfulness * 0.4,
+                    5,
+                    95
+                );
+
+            default:
+                return 50;
+        }
+    }
+
+    function decideInteraction(action) {
+
+        const probability = calculateChance(action);
+
+        return Math.random() * 100 < probability;
+    }
+
+    async function rejectInteraction(action) {
+
+        setState("sniffing");
+
+        const messages = {
+
+            food: [
+                "Gounter no tiene demasiada hambre.",
+                "Gounter prefiere investigar otra cosa.",
+                "Ahora mismo no le apetece comer."
+            ],
+
+            water: [
+                "Gounter no tiene sed.",
+                "El agua puede esperar un poquito.",
+                "Gounter prefiere seguir explorando."
+            ],
+
+            box: [
+                "Gounter todavía no tiene sueño.",
+                "Prefiere seguir investigando.",
+                "Gounter está demasiado curioso para dormir."
+            ],
+
+            sack: [
+                "Gounter no está de humor para jugar.",
+                "Prefiere descansar un poco.",
+                "Gounter mira el saco con curiosidad."
+            ]
+
+        };
+
+        const options = messages[action] || [
+            "Gounter no está interesado ahora mismo."
+        ];
+
+        say(options[Math.floor(Math.random() * options.length)]);
+
+        await delay(1600);
+
+        setState(null);
+    }
+
+    /* =================================================
+       16. COMPORTAMIENTO DE OBJETOS
+    ================================================= */
+
+    async function useObject(action) {
+
+        switch (action) {
+
+            case "food":
+                await eat();
+                break;
+
+            case "water":
+                await drink();
+                break;
+
+            case "sack":
+                await play();
+                break;
+
+            case "box":
+                await sleepAt({
+                    name: "su caja",
+                    id: "box"
+                });
+                break;
+
+        }
+    }
+
+    function getObjectPosition(object) {
+
+        const roomRect = room.getBoundingClientRect();
+        const rect = object.getBoundingClientRect();
+
+        return {
+            x: rect.left + rect.width / 2 - roomRect.left,
+            y: rect.top + rect.height / 2 - roomRect.top
+        };
+    }
+
+    async function interact(object) {
+
+        if (busy || !object) return;
+
+        const action = object.dataset.action;
+
+        if (!action) return;
+
+        busy = true;
+        clearTimeout(idleTimer);
+
+        try {
+
+            const position = getObjectPosition(object);
+
+            await walkTo(
+                position.x,
+                position.y + 45
+            );
+
+            await delay(400);
+
+            if (decideInteraction(action)) {
+
+                await useObject(action);
+
+            } else {
+
+                await rejectInteraction(action);
+
+            }
+
+        } catch (error) {
+
+            console.error("Gounter interaction:", error);
+
+        } finally {
+
+            busy = false;
+            scheduleIdle();
+        }
+    }
+
+    /* =================================================
+       17. CEREBRO AUTÓNOMO
+    ================================================= */
+
+    function calculateScore(location) {
+
+        let score = location.interest;
+
+        // Preferir lugares poco visitados.
+
+        const visits = memory.visits[location.id] || 0;
+
+        score += Math.max(0, 35 - visits * 8);
+
+        // Evitar repetir lugares.
+
+        if (memory.lastLocation === location.id) {
+            score *= 0.12;
+        }
+
+        // Personalidad.
+
+        if (location.type === "curiosity") {
+            score += personality.curiosity * .3;
+        }
+
+        if (location.type === "play") {
+            score += personality.playfulness * .25;
+            score += needs.happiness * .15;
+        }
+
+        if (location.type === "rest") {
+            score += personality.calmness * .2;
+            score += (100 - needs.energy) * .8;
+        }
+
+        if (location.type === "observation") {
+            score += personality.curiosity * .4;
+        }
+
+        return Math.max(1, score);
+    }
+
+    function weightedChoice(items) {
+
+        const total = items.reduce(
+            (sum, item) => sum + item.score,
+            0
+        );
+
+        let roll = Math.random() * total;
+
+        for (const item of items) {
+
+            roll -= item.score;
+
+            if (roll <= 0) {
+                return item;
+            }
+        }
+
+        return items[items.length - 1];
+    }
+
+    async function autonomousDecision() {
+
+        if (busy || drag) return;
+
+        busy = true;
+        lastDecision = Date.now();
+
+        try {
+
+            /* NECESIDADES PRIORITARIAS */
+
+            if (needs.hunger < 18 && Math.random() < .85) {
+
+                const food = findObject("food");
+
+                if (food) {
+                    busy = false;
+                    await interact(food);
+                    return;
+                }
+            }
+
+            if (needs.thirst < 18 && Math.random() < .9) {
+
+                const water = findObject("water");
+
+                if (water) {
+                    busy = false;
+                    await interact(water);
+                    return;
+                }
+            }
+
+            /* DESCANSO */
+
+            if (needs.energy < 22 && Math.random() < .9) {
+
+                const beds = [
+                    getLocation("cat_bed"),
+                    getLocation("main_bed"),
+                    getLocation("armchair")
+                ];
+
+                const target = weightedChoice(
+                    beds.map(item => ({
+                        ...item,
+                        score: calculateScore(item)
+                    }))
+                );
+
+                await visitLocation(target);
+                await sleepAt(target);
+
+                return;
+            }
+
+            /* ACTIVIDAD AUTÓNOMA */
+
+            const choices = locations.map(location => ({
+                ...location,
+                score: calculateScore(location)
+            }));
+
+            const selected = weightedChoice(choices);
+
+            await visitLocation(selected);
+
+            const action = selected.actions[
+                Math.floor(Math.random() * selected.actions.length)
+            ];
+
+            switch (action) {
+
+                case "observe":
+                    await observe();
+                    break;
+
+                case "investigate":
+                    await investigate(selected);
+                    break;
+
+                case "play":
+                    await play();
+                    break;
+
+                case "sleep":
+                    await sleepAt(selected);
+                    break;
+
+                case "groom":
+                    await groom();
+                    break;
+
+                case "knead":
+                    await knead();
+                    break;
+
+            }
+
+        } catch (error) {
+
+            console.error("Gounter AI:", error);
+
+        } finally {
+
+            busy = false;
+
+            if (!drag) {
+                scheduleIdle();
+            }
+        }
+    }
+
+    /* =================================================
+       18. BUSCAR OBJETOS
+    ================================================= */
+
+    function findObject(action) {
+
+        return document.querySelector(
+            `.room-object[data-action="${action}"]`
+        );
+    }
+
+    /* =================================================
+       19. MOVIMIENTO ALEATORIO
+    ================================================= */
+
+    async function randomExplore() {
+
+        const x = random(
+            room.clientWidth * .3,
+            room.clientWidth * .7
+        );
+
+        const y = random(
+            room.clientHeight * .62,
+            room.clientHeight * .86
+        );
+
+        await walkTo(x, y);
+    }
+
+    /* =================================================
+       20. PROGRAMAR DECISIONES
+    ================================================= */
+
+    function scheduleIdle() {
+
+        clearTimeout(idleTimer);
+
+        idleTimer = setTimeout(() => {
+
+            if (busy || drag) {
+                scheduleIdle();
+                return;
+            }
+
+            autonomousDecision();
+
+        }, random(DECISION_MIN, DECISION_MAX));
+    }
+
+    /* =================================================
+       21. NECESIDADES CON EL TIEMPO
+    ================================================= */
+
+    needsTimer = setInterval(() => {
+
+        changeNeed("hunger", -.12);
+        changeNeed("thirst", -.16);
+
+        if (currentAction !== "sleeping") {
+            changeNeed("energy", -.07);
+        }
+
+        if (currentAction !== "purring") {
+            changeNeed("happiness", -.035);
+        }
+
+    }, 10000);
+
+    /* =================================================
+       22. ACARICIAR
+    ================================================= */
+
+    cat.addEventListener("click", async () => {
+
+        if (busy || drag) return;
+
+        busy = true;
+
+        clearTimeout(idleTimer);
+
+        setState("purring");
+
+        showHearts();
+
+        changeNeed("happiness", 12);
+
+        say("¡Prrrrrr! Gounter está disfrutando de las caricias. ❤️");
+
+        await delay(2800);
+
+        setState(null);
+
+        busy = false;
+
+        scheduleIdle();
+    });
+
+    /* =================================================
+       23. ARRASTRAR OBJETOS
+    ================================================= */
 
     function prepareObjectPosition(object) {
 
@@ -454,239 +1181,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const rect = object.getBoundingClientRect();
 
         object.style.position = "absolute";
-        object.style.left = `${rect.left - roomRect.left}px`;
-        object.style.top = `${rect.top - roomRect.top}px`;
+
+        object.style.left =
+            `${rect.left - roomRect.left}px`;
+
+        object.style.top =
+            `${rect.top - roomRect.top}px`;
 
         object.style.right = "auto";
         object.style.bottom = "auto";
         object.style.transform = "none";
     }
 
-
-    /* =========================================
-       POSICIÓN DE LOS OBJETOS
-    ========================================= */
-
-    function getTargetPosition(object) {
-
-        const roomRect = room.getBoundingClientRect();
-        const rect = object.getBoundingClientRect();
-
-        const objectX =
-            rect.left + rect.width / 2 - roomRect.left;
-
-        const objectY =
-            rect.top + rect.height / 2 - roomRect.top;
-
-        const catWidth = catArea.offsetWidth;
-
-        const offset =
-            objectX < room.clientWidth / 2
-                ? catWidth * 0.43
-                : -catWidth * 0.43;
-
-        return {
-            x: objectX + offset,
-            y: objectY + 20
-        };
-    }
-
-
-    /* =========================================
-       COMPROBAR DISTANCIA
-    ========================================= */
-
     function isCloseToCat(object) {
 
         const catPosition = getCatPosition();
-
-        const roomRect = room.getBoundingClientRect();
-        const rect = object.getBoundingClientRect();
-
-        const x =
-            rect.left + rect.width / 2 - roomRect.left;
-
-        const y =
-            rect.top + rect.height / 2 - roomRect.top;
+        const objectPosition = getObjectPosition(object);
 
         return Math.hypot(
-            x - catPosition.x,
-            y - catPosition.y
+            catPosition.x - objectPosition.x,
+            catPosition.y - objectPosition.y
         ) < 190;
     }
-
-
-    /* =========================================
-       COMER
-    ========================================= */
-
-    async function eat() {
-
-        say("Gounter está olfateando su comida...");
-        setState("sniffing");
-
-        await delay(900);
-
-        say("¡Ñam, ñam! Gounter está comiendo. 🐱");
-        setState("eating");
-
-        await delay(4500);
-
-        rewardInteraction("food");
-
-        setState(null);
-        say("Gounter ha terminado de comer. ❤️");
-    }
-
-
-    /* =========================================
-       BEBER AGUA
-    ========================================= */
-
-    async function drink() {
-
-        say("Gounter se acerca al agua...");
-        setState("sniffing");
-
-        await delay(800);
-
-        say("Gounter está bebiendo agua. 💧");
-        setState("drinking");
-
-        await delay(3500);
-
-        rewardInteraction("water");
-
-        setState(null);
-        say("Gounter ha terminado de beber.");
-    }
-
-
-    /* =========================================
-       EXPLORAR EL SACO
-    ========================================= */
-
-    async function explore() {
-
-        say("¿Qué habrá aquí dentro? Gounter está investigando.");
-
-        setState("sniffing");
-
-        await delay(1800);
-
-        say("¡Gounter ha encontrado algo interesante!");
-
-        setState("playing");
-
-        await delay(3000);
-
-        rewardInteraction("sack");
-
-        setState(null);
-        say("Gounter vuelve a explorar la habitación.");
-    }
-
-
-    /* =========================================
-       DORMIR EN LA CAJA
-    ========================================= */
-
-    async function sleepInBox() {
-
-        say("Gounter está acomodándose en su caja...");
-
-        setState("sniffing");
-
-        await delay(1200);
-
-        say("Zzz... Gounter está durmiendo. 💤");
-
-        setState("sleeping");
-
-        await delay(8000);
-
-        rewardInteraction("box");
-
-        setState(null);
-        say("Gounter se ha despertado y está descansado.");
-    }
-
-
-    /* =========================================
-       INTERACTUAR CON OBJETOS
-    ========================================= */
-
-    async function interact(object) {
-
-        if (busy || !object) return;
-
-        busy = true;
-        clearTimeout(idleTimer);
-
-        try {
-
-            const action = object.dataset.action;
-
-            if (!action) return;
-
-            // Calcular dónde debe acercarse Gounter.
-
-            const target = getTargetPosition(object);
-
-            // Acercarse al objeto.
-
-            await walkTo(target.x, target.y);
-
-            setState("sniffing");
-
-            await delay(700);
-
-            // Realizar la actividad.
-
-            switch (action) {
-
-                case "food":
-                    await eat();
-                    break;
-
-                case "water":
-                    await drink();
-                    break;
-
-                case "sack":
-                    await explore();
-                    break;
-
-                case "box":
-                    await sleepInBox();
-                    break;
-
-                default:
-                    say("Gounter está investigando este objeto.");
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Error al interactuar con Gounter:",
-                error
-            );
-
-            setState(null);
-            say("Gounter ha tenido un pequeño problema.");
-
-        } finally {
-
-            busy = false;
-            scheduleIdle();
-
-        }
-    }
-
-
-    /* =========================================
-       ARRASTRAR Y MOVER OBJETOS
-    ========================================= */
 
     objects.forEach(object => {
 
@@ -696,8 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             event.preventDefault();
 
-            // Convertir la posición del objeto a coordenadas
-            // compatibles con el movimiento dentro de la habitación.
+            clearTimeout(idleTimer);
 
             prepareObjectPosition(object);
 
@@ -717,16 +1232,11 @@ document.addEventListener("DOMContentLoaded", () => {
             object.style.zIndex = "30";
         });
 
-
         object.addEventListener("pointermove", event => {
 
-            if (
-                !drag ||
+            if (!drag ||
                 drag.object !== object ||
-                drag.pointerId !== event.pointerId
-            ) {
-                return;
-            }
+                drag.pointerId !== event.pointerId) return;
 
             const dx = event.clientX - drag.startX;
             const dy = event.clientY - drag.startY;
@@ -737,41 +1247,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!drag.moved) return;
 
-            const roomRect = room.getBoundingClientRect();
-
-            const x =
-                event.clientX -
-                roomRect.left -
-                drag.offsetX;
-
-            const y =
-                event.clientY -
-                roomRect.top -
-                drag.offsetY;
+            const rect = room.getBoundingClientRect();
 
             object.style.left = `${clamp(
-                x,
+                event.clientX - rect.left - drag.offsetX,
                 0,
                 room.clientWidth - object.offsetWidth
             )}px`;
 
             object.style.top = `${clamp(
-                y,
+                event.clientY - rect.top - drag.offsetY,
                 45,
                 room.clientHeight - object.offsetHeight
             )}px`;
-        });
 
+        });
 
         object.addEventListener("pointerup", async event => {
 
-            if (
-                !drag ||
+            if (!drag ||
                 drag.object !== object ||
-                drag.pointerId !== event.pointerId
-            ) {
-                return;
-            }
+                drag.pointerId !== event.pointerId) return;
 
             const wasDragged = drag.moved;
 
@@ -779,219 +1275,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
             object.style.zIndex = "4";
 
-            // Si solo hemos pulsado, interactuar normalmente.
-            if (!wasDragged) {
-                await interact(object);
-                return;
-            }
+            if (wasDragged) {
 
-            // Si lo hemos arrastrado, solo interactúa
-            // cuando lo dejamos suficientemente cerca.
-
-            if (isCloseToCat(object)) {
-
-                await interact(object);
+                if (isCloseToCat(object)) {
+                    await interact(object);
+                } else {
+                    say("Gounter observa lo que has movido.");
+                    scheduleIdle();
+                }
 
             } else {
 
-                say("Gounter observa el objeto desde su sitio.");
+                await interact(object);
             }
-        });
 
+        });
 
         object.addEventListener("pointercancel", () => {
 
             drag = null;
             object.style.zIndex = "4";
+            scheduleIdle();
+
+        });
+
+        // Accesibilidad: activar con teclado.
+
+        object.addEventListener("keydown", event => {
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                interact(object);
+            }
 
         });
 
     });
 
-
-    /* =========================================
-       ACARICIAR A GOUNTER
-    ========================================= */
-
-    cat.addEventListener("click", async () => {
-
-        if (busy) return;
-
-        busy = true;
-
-        clearTimeout(idleTimer);
-
-        setState("purring");
-
-        showHearts();
-
-        rewardInteraction("pet");
-
-        say("¡Prrrrrr! Gounter está disfrutando de las caricias. ❤️");
-
-        await delay(3000);
-
-        setState(null);
-
-        busy = false;
-
-        scheduleIdle();
-    });
-
-
-    /* =========================================
-       EVOLUCIÓN DE LAS NECESIDADES
-    ========================================= */
-
-    needsTimer = setInterval(() => {
-
-        // El hambre disminuye lentamente.
-        changeNeed("hunger", -0.12);
-
-        // La sed disminuye lentamente.
-        changeNeed("thirst", -0.16);
-
-        // La energía baja mientras está despierto.
-        if (currentAction !== "sleeping") {
-            changeNeed("energy", -0.05);
-        }
-
-        // La felicidad disminuye lentamente.
-        if (currentAction !== "purring") {
-            changeNeed("happiness", -0.025);
-        }
-
-    }, 10000);
-
-
-    /* =========================================
-       COMPORTAMIENTO AUTÓNOMO
-    ========================================= */
-
-    function findObject(action) {
-
-        return document.querySelector(
-            `.room-object[data-action="${action}"]`
-        );
-    }
-
-
-    function randomWalkPosition() {
-
-        const current = getCatPosition();
-
-        return {
-            x: clamp(
-                current.x + (Math.random() - 0.5) * 180,
-                140,
-                room.clientWidth - 140
-            ),
-
-            y: clamp(
-                current.y + (Math.random() - 0.5) * 90,
-                150,
-                room.clientHeight - 150
-            )
-        };
-    }
-
-
-    function scheduleIdle() {
-
-        clearTimeout(idleTimer);
-
-        idleTimer = setTimeout(async () => {
-
-            if (busy) {
-                scheduleIdle();
-                return;
-            }
-
-            try {
-
-                // Si tiene mucha hambre, buscar comida.
-
-                if (needs.hunger < 25) {
-
-                    const food = findObject("food");
-
-                    if (food) {
-                        await interact(food);
-                    } else {
-                        say("Miau... Gounter parece tener hambre.");
-                    }
-
-                }
-
-                // Si tiene mucha sed, buscar agua.
-
-                else if (needs.thirst < 25) {
-
-                    const water = findObject("water");
-
-                    if (water) {
-                        await interact(water);
-                    } else {
-                        say("Gounter está buscando agua.");
-                    }
-
-                }
-
-                // Si está cansado, buscar la caja.
-
-                else if (needs.energy < 25) {
-
-                    const box = findObject("box");
-
-                    if (box) {
-                        await interact(box);
-                    } else {
-                        say("Gounter tiene mucho sueño...");
-                    }
-
-                }
-
-                // Si está bien, explorar un poco.
-
-                else {
-
-                    const target = randomWalkPosition();
-
-                    await walkTo(target.x, target.y);
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Error en comportamiento autónomo:",
-                    error
-                );
-
-            }
-
-            scheduleIdle();
-
-        }, 14000 + Math.random() * 10000);
-    }
-
-
-    /* =========================================
-       INICIALIZACIÓN
-    ========================================= */
+    /* =================================================
+       24. INICIALIZACIÓN
+    ================================================= */
 
     cat.classList.remove("facing-left");
 
     updateNeedsUI();
 
-    say("Gounter está descansando. ¡Ven a jugar con él!");
+    say("Gounter está explorando su pequeño mundo. 🐾", 5000);
 
     scheduleIdle();
 
-
-    /* =========================================
-       LIMPIEZA
-    ========================================= */
+    /* =================================================
+       25. LIMPIEZA
+    ================================================= */
 
     window.addEventListener("beforeunload", () => {
 
@@ -999,11 +1334,17 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(messageTimer);
         clearInterval(needsTimer);
 
+        saveMemory();
+
     });
 
-
     console.log(
-        "EVARKION: Gounter Pet System iniciado correctamente."
+        "EVARKION: GOUNTER AI SYSTEM iniciado.",
+        {
+            locations: locations.length,
+            personality,
+            memory
+        }
     );
 
 });
