@@ -5,116 +5,141 @@ import { karuModel } from "./firebase-config.js";
 // KARU CHAT - EVARKION
 // =====================================
 
-// Historial temporal: desaparece al recargar.
-const history = [];
-
-// Crear conversación
-const chat = karuModel.startChat({
-    history: []
-});
-
-// Elementos del chat
-let chatWindow;
+let chat;
 let messagesContainer;
 let messageInput;
 let sendButton;
 
+let sending = false;
+
 // =====================================
-// CREAR INTERFAZ
+// CREAR CHAT
 // =====================================
 
 function createKaruChat() {
 
-    const chatHTML = `
-        <div id="karu-chat-widget">
+    const widget = document.createElement("div");
 
-            <button id="karu-chat-toggle" aria-label="Abrir chat de Karu">
-                <img src="./assets/karu_avatar.png" alt="Karu">
-                <span class="karu-online"></span>
-            </button>
+    widget.id = "karu-chat-widget";
 
-            <section id="karu-chat-window" class="karu-hidden">
+    widget.innerHTML = `
+        <button
+            type="button"
+            id="karu-chat-toggle"
+            aria-label="Abrir conversación con Karu"
+        >
+            💬 Hablar con Karu
+        </button>
 
-                <header class="karu-chat-header">
+        <section id="karu-chat-window" class="karu-hidden">
 
-                    <div class="karu-header-avatar">
-                        <img src="./assets/karu_avatar.png" alt="Karu">
-                    </div>
+            <header class="karu-chat-header">
 
-                    <div class="karu-header-info">
-                        <h3>Karu</h3>
-                        <span>Asistente EVARKION · En línea</span>
-                    </div>
-
-                    <button id="karu-close" aria-label="Cerrar chat">
-                        ×
-                    </button>
-
-                </header>
-
-                <div id="karu-messages">
-
-                    <div class="karu-message bot">
-                        ¡Hola! Soy Karu.
-                        ¿Qué tal? ¿En qué puedo ayudarte hoy?
-                    </div>
-
+                <div class="karu-header-info">
+                    <h3>Karu</h3>
+                    <span>Asistente EVARKION</span>
                 </div>
 
-                <form id="karu-chat-form">
+                <button
+                    type="button"
+                    id="karu-close"
+                    aria-label="Cerrar chat"
+                >
+                    ×
+                </button>
 
-                    <input
-                        id="karu-message-input"
-                        type="text"
-                        placeholder="Escribe a Karu..."
-                        autocomplete="off"
-                        maxlength="2000"
-                        required
-                    >
+            </header>
 
-                    <button type="submit" id="karu-send">
-                        ➤
-                    </button>
+            <div id="karu-messages">
 
-                </form>
+                <div class="karu-message bot">
+                    ¡Hola! Soy Karu.
+                    ¿Qué tal? ¿En qué puedo ayudarte hoy?
+                </div>
 
-                <footer class="karu-chat-footer">
-                    EVARKION · Refugio Gunter
-                </footer>
+            </div>
 
-            </section>
+            <form id="karu-chat-form">
 
-        </div>
+                <input
+                    id="karu-message-input"
+                    type="text"
+                    placeholder="Escribe a Karu..."
+                    autocomplete="off"
+                    maxlength="2000"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="karu-send"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+            <footer class="karu-chat-footer">
+                EVARKION · Refugio Gunter
+            </footer>
+
+        </section>
     `;
 
-    document.body.insertAdjacentHTML("beforeend", chatHTML);
+    document.body.appendChild(widget);
 
-    chatWindow = document.getElementById("karu-chat-window");
-    messagesContainer = document.getElementById("karu-messages");
-    messageInput = document.getElementById("karu-message-input");
-    sendButton = document.getElementById("karu-send");
+    messagesContainer =
+        document.getElementById("karu-messages");
 
-    const toggle = document.getElementById("karu-chat-toggle");
-    const close = document.getElementById("karu-close");
-    const form = document.getElementById("karu-chat-form");
+    messageInput =
+        document.getElementById("karu-message-input");
 
+    sendButton =
+        document.getElementById("karu-send");
+
+    const chatWindow =
+        document.getElementById("karu-chat-window");
+
+    const toggle =
+        document.getElementById("karu-chat-toggle");
+
+    const close =
+        document.getElementById("karu-close");
+
+    const form =
+        document.getElementById("karu-chat-form");
+
+    // Abrir conversación
     toggle.addEventListener("click", () => {
+
         chatWindow.classList.toggle("karu-hidden");
 
         if (!chatWindow.classList.contains("karu-hidden")) {
             messageInput.focus();
         }
+
     });
 
+    // Cerrar conversación
     close.addEventListener("click", () => {
+
         chatWindow.classList.add("karu-hidden");
+
     });
 
+    // Enviar mensaje
     form.addEventListener("submit", sendMessage);
+
+    // Inicializar conversación
+    chat = karuModel.startChat({
+        history: []
+    });
+
+    console.log("🐱 Karu Chat iniciado correctamente.");
 }
 
 // =====================================
-// MOSTRAR MENSAJES
+// AÑADIR MENSAJE
 // =====================================
 
 function addMessage(text, sender) {
@@ -122,6 +147,7 @@ function addMessage(text, sender) {
     const message = document.createElement("div");
 
     message.classList.add("karu-message", sender);
+
     message.textContent = text;
 
     messagesContainer.appendChild(message);
@@ -133,29 +159,31 @@ function addMessage(text, sender) {
 }
 
 // =====================================
-// ENVIAR MENSAJES A GEMINI
+// ENVIAR MENSAJE
 // =====================================
 
 async function sendMessage(event) {
 
     event.preventDefault();
 
+    if (sending) return;
+
     const text = messageInput.value.trim();
 
-    if (!text || sendButton.disabled) return;
+    if (!text) return;
 
-    addMessage(text, "user");
-
-    history.push({
-        role: "user",
-        text: text
-    });
-
-    messageInput.value = "";
+    sending = true;
 
     sendButton.disabled = true;
 
-    const loading = addMessage("Karu está pensando...", "bot");
+    addMessage(text, "user");
+
+    messageInput.value = "";
+
+    const loading = addMessage(
+        "Karu está pensando...",
+        "bot"
+    );
 
     try {
 
@@ -164,36 +192,40 @@ async function sendMessage(event) {
         const response = result.response.text();
 
         loading.textContent = response ||
-            "¡Vaya! Me he quedado sin palabras. ¿Puedes repetirlo?";
-
-        history.push({
-            role: "model",
-            text: response
-        });
+            "¡Vaya! ¿Puedes repetirlo?";
 
     } catch (error) {
 
         console.error("Error de Karu:", error);
 
         loading.textContent =
-            "¡Ups! No consigo conectarme ahora mismo. Inténtalo de nuevo en un momento.";
+            "No consigo conectarme ahora mismo. Inténtalo de nuevo.";
 
     } finally {
 
+        sending = false;
+
         sendButton.disabled = false;
+
         messageInput.focus();
 
     }
 }
 
 // =====================================
-// INICIAR KARU
+// INICIAR
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    createKaruChat();
+    try {
 
-    console.log("🐱 Karu Chat iniciado.");
+        createKaruChat();
+
+    } catch (error) {
+
+        console.error("Error al iniciar Karu:", error);
+
+    }
 
 });
