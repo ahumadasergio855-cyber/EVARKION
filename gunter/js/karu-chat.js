@@ -1,295 +1,237 @@
 
+/* =========================================
+   EVARKION - KARU CHAT SYSTEM
+========================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const widget = document.createElement("div");
-    widget.id = "karu-chat-widget";
+    const chat = document.getElementById("karu-chat");
+    const minimizeButton = document.getElementById("karu-minimize");
 
-    widget.innerHTML = `
-        <button id="karu-chat-toggle" type="button">
-            💬 Hablar con Karu
-        </button>
-
-        <section id="karu-chat-window" class="karu-hidden">
-
-            <header class="karu-chat-header">
-                <div>
-                    <h3>Karu 🐱</h3>
-                    <span>Asistente EVARKION</span>
-                </div>
-                <button id="karu-close" type="button">×</button>
-            </header>
-
-            <div id="karu-messages"></div>
-
-            <div id="karu-options"></div>
-
-            <footer class="karu-chat-footer">
-                EVARKION · Refugio Gunter
-            </footer>
-
-        </section>
-    `;
-
-    document.body.appendChild(widget);
-
-    const windowChat = document.getElementById("karu-chat-window");
     const messages = document.getElementById("karu-messages");
+    const form = document.getElementById("karu-form");
+    const input = document.getElementById("karu-input");
+
     const options = document.getElementById("karu-options");
 
-    document.getElementById("karu-chat-toggle")
-        .addEventListener("click", () => {
-            windowChat.classList.toggle("karu-hidden");
-        });
+    /* =====================================
+       RESPUESTAS DE KARU
+    ===================================== */
 
-    document.getElementById("karu-close")
-        .addEventListener("click", () => {
-            windowChat.classList.add("karu-hidden");
-        });
+    const responses = [
 
-    // =====================================
-    // BASE DE PREGUNTAS Y RESPUESTAS
-    // =====================================
-
-    const conversations = {
-
-        inicio: {
-            message: "¡Hola! Soy Karu. 🐱 ¿Qué te gustaría hacer hoy?",
-            options: [
-                ["🎮 Hablar sobre videojuegos", "videojuegos"],
-                ["🎵 EVARKION Music", "musica"],
-                ["💻 Programación", "programacion"],
-                ["🐱 Conocer a Gunter", "gunter"],
-                ["💬 Simplemente charlar", "charlar"]
+        {
+            keywords: ["hola", "buenas", "hey"],
+            answers: [
+                "¡Hola! Me alegra verte por aquí. 🐾",
+                "¡Hola! Gounter estaba esperando tu visita.",
+                "¡Bienvenido de nuevo al refugio!"
             ]
         },
 
-        videojuegos: {
-            message: "¡Me encantan los videojuegos! ¿Qué te interesa?",
-            options: [
-                ["⚽ Inazuma Eleven", "inazuma"],
-                ["⛏️ Minecraft", "minecraft"],
-                ["🎮 Otros videojuegos", "otros_juegos"]
+        {
+            keywords: ["gounter", "gato"],
+            answers: [
+                "Gounter es un gato muy curioso. ¡Le encanta explorar!",
+                "¡Gounter está muy a gusto en su refugio!",
+                "Puedes acariciarlo haciendo clic sobre él."
             ]
         },
 
-        musica: {
-            message: "¡Bienvenido a EVARKION Music! 🎵 ¿Qué quieres descubrir?",
-            options: [
-                ["🎧 Escuchar música", "escuchar"],
-                ["🌟 Conocer EVARKION", "evarkion"],
-                ["🔙 Volver al inicio", "inicio"]
+        {
+            keywords: ["comida", "comer", "hambre"],
+            answers: [
+                "¡A Gounter le encanta comer! Acércale su comida.",
+                "Creo que Gounter tiene hambre. 🐱",
+                "No olvides alimentar a nuestro pequeño amigo."
             ]
         },
 
-        programacion: {
-            message: "¡El mundo del código! 💻 ¿Sobre qué quieres hablar?",
-            options: [
-                ["🌐 Desarrollo web", "web"],
-                ["☕ Java", "java"],
-                ["🚀 Crear proyectos", "proyectos"]
+        {
+            keywords: ["agua", "beber", "sed"],
+            answers: [
+                "El agua es muy importante para Gounter.",
+                "¡Dale un poquito de agua!",
+                "Gounter también necesita mantenerse hidratado. 💧"
             ]
         },
 
-        gunter: {
-            message: "¡Gunter! 🐱 Nuestro pequeño compañero del refugio. ¿Qué quieres saber?",
-            options: [
-                ["🐾 Su personalidad", "personalidad"],
-                ["🍗 Sus cuidados", "cuidados"],
-                ["🎮 Sus interacciones", "interacciones"]
+        {
+            keywords: ["saco"],
+            answers: [
+                "¡Ese saco despierta la curiosidad de Gounter!",
+                "Creo que Gounter quiere investigar qué hay dentro."
             ]
         },
 
-        charlar: {
-            message: "¡Me alegra que quieras charlar conmigo! ¿Cómo te encuentras?",
-            options: [
-                ["😄 Estoy genial", "genial"],
-                ["😴 Estoy cansado", "cansado"],
-                ["🤔 Estoy aburrido", "aburrido"]
+        {
+            keywords: ["caja"],
+            answers: [
+                "¡A los gatos les encantan las cajas!",
+                "Esa caja podría convertirse en su escondite favorito.",
+                "¡Gounter y las cajas son una combinación perfecta!"
             ]
         },
 
-        inazuma: {
-            message: "¡Inazuma Eleven! ⚽ Una aventura llena de fútbol, técnicas especiales y amistad.",
-            options: [
-                ["⚡ Técnicas especiales", "tecnicas"],
-                ["🏆 Equipos y personajes", "equipos"]
+        {
+            keywords: ["jugar", "juego", "divertir"],
+            answers: [
+                "¡Jugar es una de las mejores formas de pasar tiempo con Gounter!",
+                "Prueba a mover los objetos por la habitación.",
+                "¡Seguro que Gounter quiere divertirse contigo!"
             ]
         },
 
-        minecraft: {
-            message: "Minecraft es perfecto para construir y explorar. ⛏️ ¿Qué prefieres?",
-            options: [
-                ["🏡 Construcción", "construccion"],
-                ["⚔️ Supervivencia", "supervivencia"]
+        {
+            keywords: ["gracias"],
+            answers: [
+                "¡No hay de qué! Estoy aquí para ayudarte. ❤️",
+                "¡Para eso estamos! Cuida mucho de Gounter."
             ]
         },
 
-        otros_juegos: {
-            message: "¡Hay muchísimos mundos por descubrir! ¿Qué género te gusta?",
-            options: [
-                ["🗺️ Aventuras", "aventuras"],
-                ["⚔️ RPG", "rpg"]
+        {
+            keywords: ["adios", "adiós", "hasta luego"],
+            answers: [
+                "¡Hasta pronto! Gounter y yo estaremos aquí.",
+                "¡Nos vemos! Que tengas un buen día. 🐾"
             ]
-        },
-
-        escuchar: {
-            message: "¡Puedes descubrir los proyectos musicales de EVARKION desde su sección Music!",
-            options: [
-                ["🎵 Ir a EVARKION Music", "abrir_musica"]
-            ]
-        },
-
-        evarkion: {
-            message: "EVARKION es un universo creativo que reúne música, proyectos y experiencias digitales.",
-            options: []
-        },
-
-        web: {
-            message: "El desarrollo web combina HTML, CSS y JavaScript para construir páginas y aplicaciones.",
-            options: []
-        },
-
-        java: {
-            message: "Java es un lenguaje de programación orientado a objetos. ¡Ideal para aprender lógica y crear aplicaciones!",
-            options: []
-        },
-
-        proyectos: {
-            message: "¡Crear proyectos es una de las mejores formas de aprender! Empieza por algo pequeño y ve añadiendo funciones.",
-            options: []
-        },
-
-        personalidad: {
-            message: "Gunter es curioso, tranquilo y juguetón. Le encanta explorar el refugio.",
-            options: []
-        },
-
-        cuidados: {
-            message: "Gunter necesita cariño, descanso, agua y su cuenco de comida. ¡No olvides atenderlo!",
-            options: []
-        },
-
-        interacciones: {
-            message: "Puedes interactuar con Gunter, jugar con él y descubrir sus animaciones dentro del refugio.",
-            options: []
-        },
-
-        genial: {
-            message: "¡Esa es la actitud! 😸 Me alegra que tengas un buen día.",
-            options: []
-        },
-
-        cansado: {
-            message: "A veces necesitamos descansar. Tómate un respiro, ¡mañana será otro día!",
-            options: []
-        },
-
-        aburrido: {
-            message: "¡Pues vamos a cambiar eso! Podemos hablar de videojuegos, música o inventar algo.",
-            options: []
-        },
-
-        tecnicas: {
-            message: "¡Las supertécnicas son una de las mejores partes de Inazuma Eleven! ⚡",
-            options: []
-        },
-
-        equipos: {
-            message: "Hay equipos increíbles: Raimon, Royal Academy, Zeus y muchos más.",
-            options: []
-        },
-
-        construccion: {
-            message: "¡Construir es dar forma a tu imaginación! Puedes crear casas, ciudades y mundos enteros.",
-            options: []
-        },
-
-        supervivencia: {
-            message: "Consigue recursos, construye un refugio y prepárate para explorar.",
-            options: []
-        },
-
-        aventuras: {
-            message: "Las aventuras nos permiten explorar mundos y descubrir historias increíbles.",
-            options: []
-        },
-
-        rpg: {
-            message: "¡Los RPG! Personajes, progresión, habilidades y mundos llenos de historias.",
-            options: []
         }
 
-    };
+    ];
 
-    // =====================================
-    // MOSTRAR CONVERSACIÓN
-    // =====================================
+    /* =====================================
+       ELEGIR RESPUESTA
+    ===================================== */
 
-    function showConversation(id) {
+    function getResponse(text) {
 
-        const conversation = conversations[id];
+        const normalized = text.toLowerCase().trim();
 
-        if (!conversation) return;
+        for (const category of responses) {
 
-        const botMessage = document.createElement("div");
-        botMessage.className = "karu-message bot";
-        botMessage.textContent = conversation.message;
+            const found = category.keywords.some(keyword =>
+                normalized.includes(keyword)
+            );
 
-        messages.appendChild(botMessage);
+            if (found) {
 
-        options.innerHTML = "";
+                const index = Math.floor(
+                    Math.random() * category.answers.length
+                );
 
-        conversation.options.forEach(([label, next]) => {
-
-            const button = document.createElement("button");
-
-            button.type = "button";
-            button.className = "karu-option";
-            button.textContent = label;
-
-            button.addEventListener("click", () => {
-
-                const userMessage = document.createElement("div");
-
-                userMessage.className = "karu-message user";
-                userMessage.textContent = label;
-
-                messages.appendChild(userMessage);
-
-                showConversation(next);
-
-            });
-
-            options.appendChild(button);
-
-        });
-
-        // Botón volver al menú
-        if (id !== "inicio") {
-
-            const back = document.createElement("button");
-
-            back.type = "button";
-            back.className = "karu-back";
-            back.textContent = "↩ Volver al menú";
-
-            back.addEventListener("click", () => {
-                showConversation("inicio");
-            });
-
-            options.appendChild(back);
+                return category.answers[index];
+            }
 
         }
+
+        const defaultResponses = [
+            "¡Interesante! Cuéntame un poquito más.",
+            "Estoy aquí para escucharte. 🐾",
+            "¿Qué te gustaría hacer con Gounter?",
+            "¡Podemos seguir explorando el refugio juntos!",
+            "No estoy segura de entenderte, pero quiero ayudarte."
+        ];
+
+        return defaultResponses[
+            Math.floor(Math.random() * defaultResponses.length)
+        ];
+    }
+
+    /* =====================================
+       AÑADIR MENSAJE
+    ===================================== */
+
+    function addMessage(text, type) {
+
+        const message = document.createElement("div");
+
+        message.classList.add("message");
+
+        if (type === "user") {
+            message.classList.add("user-message");
+        } else {
+            message.classList.add("karu-message");
+        }
+
+        message.textContent = text;
+
+        messages.appendChild(message);
 
         messages.scrollTop = messages.scrollHeight;
     }
 
-    // =====================================
-    // INICIAR
-    // =====================================
+    /* =====================================
+       ENVIAR MENSAJE
+    ===================================== */
 
-    showConversation("inicio");
+    function sendMessage(text) {
 
-    console.log("🐱 Karu Chat interactivo iniciado.");
+        const cleanText = text.trim();
+
+        if (!cleanText) return;
+
+        addMessage(cleanText, "user");
+
+        input.value = "";
+
+        setTimeout(() => {
+
+            const response = getResponse(cleanText);
+
+            addMessage(response, "karu");
+
+        }, 500);
+
+    }
+
+    /* =====================================
+       FORMULARIO
+    ===================================== */
+
+    form.addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        sendMessage(input.value);
+
+    });
+
+    /* =====================================
+       OPCIONES PREDETERMINADAS
+    ===================================== */
+
+    options.addEventListener("click", event => {
+
+        const button = event.target.closest("button");
+
+        if (!button) return;
+
+        const text = button.dataset.message;
+
+        if (text) {
+            sendMessage(text);
+        }
+
+    });
+
+    /* =====================================
+       MINIMIZAR CHAT
+    ===================================== */
+
+    minimizeButton.addEventListener("click", () => {
+
+        chat.classList.toggle("minimized");
+
+        const minimized = chat.classList.contains("minimized");
+
+        minimizeButton.textContent = minimized ? "+" : "−";
+
+        minimizeButton.setAttribute(
+            "aria-label",
+            minimized ? "Abrir chat" : "Minimizar chat"
+        );
+
+    });
 
 });
