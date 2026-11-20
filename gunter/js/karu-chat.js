@@ -1,39 +1,37 @@
 
 /* =========================================
-   EVARKION - KARU CHAT SYSTEM
+   EVARKION - KARU CHAT
 ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const chat = document.getElementById("karu-chat");
-    const minimizeButton = document.getElementById("karu-minimize");
+    const minimize = document.getElementById("karu-minimize");
 
     const messages = document.getElementById("karu-messages");
     const form = document.getElementById("karu-form");
     const input = document.getElementById("karu-input");
 
-    const options = document.getElementById("karu-options");
+    const options = document.querySelector(".karu-options");
 
-    /* =====================================
-       RESPUESTAS DE KARU
-    ===================================== */
+    /* RESPUESTAS */
 
     const responses = [
 
         {
-            keywords: ["hola", "buenas", "hey"],
+            keywords: ["hola", "buenas"],
             answers: [
-                "¡Hola! Me alegra verte por aquí. 🐾",
-                "¡Hola! Gounter estaba esperando tu visita.",
-                "¡Bienvenido de nuevo al refugio!"
+                "¡Hola! Qué alegría verte por aquí. 🐾",
+                "¡Bienvenido al refugio!",
+                "Gounter estaba esperando tu visita."
             ]
         },
 
         {
             keywords: ["gounter", "gato"],
             answers: [
-                "Gounter es un gato muy curioso. ¡Le encanta explorar!",
-                "¡Gounter está muy a gusto en su refugio!",
+                "Gounter es muy curioso. Le encanta explorar.",
+                "¡Nuestro pequeño amigo está muy cómodo aquí!",
                 "Puedes acariciarlo haciendo clic sobre él."
             ]
         },
@@ -41,9 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         {
             keywords: ["comida", "comer", "hambre"],
             answers: [
-                "¡A Gounter le encanta comer! Acércale su comida.",
-                "Creo que Gounter tiene hambre. 🐱",
-                "No olvides alimentar a nuestro pequeño amigo."
+                "¡Acércale el cuenco de comida!",
+                "Gounter necesita sus pequeñas comidas.",
+                "¡Seguro que ya ha olfateado su comida!"
             ]
         },
 
@@ -51,70 +49,66 @@ document.addEventListener("DOMContentLoaded", () => {
             keywords: ["agua", "beber", "sed"],
             answers: [
                 "El agua es muy importante para Gounter.",
-                "¡Dale un poquito de agua!",
-                "Gounter también necesita mantenerse hidratado. 💧"
+                "¡Acércale su cuenco de agua!",
+                "Nuestro amigo necesita mantenerse hidratado."
             ]
         },
 
         {
-            keywords: ["saco"],
+            keywords: ["caja", "dormir", "sueño"],
             answers: [
-                "¡Ese saco despierta la curiosidad de Gounter!",
-                "Creo que Gounter quiere investigar qué hay dentro."
+                "¡Esa caja es su pequeño refugio!",
+                "Gounter puede descansar y sentirse seguro ahí.",
+                "Los gatos adoran encontrar lugares tranquilos."
             ]
         },
 
         {
-            keywords: ["caja"],
+            keywords: ["saco", "jugar"],
             answers: [
-                "¡A los gatos les encantan las cajas!",
-                "Esa caja podría convertirse en su escondite favorito.",
-                "¡Gounter y las cajas son una combinación perfecta!"
+                "¡Gounter tiene mucha curiosidad por ese saco!",
+                "Puedes moverlo para que Gounter lo investigue.",
+                "¡Un poquito de juego siempre viene bien!"
             ]
         },
 
         {
-            keywords: ["jugar", "juego", "divertir"],
+            keywords: ["videojuegos", "juegos"],
             answers: [
-                "¡Jugar es una de las mejores formas de pasar tiempo con Gounter!",
-                "Prueba a mover los objetos por la habitación.",
-                "¡Seguro que Gounter quiere divertirse contigo!"
+                "¡Me encantan las aventuras! ¿Cuál estás jugando?",
+                "EVARKION también tiene un espacio para los videojuegos."
+            ]
+        },
+
+        {
+            keywords: ["programación", "programar"],
+            answers: [
+                "¡La programación convierte las ideas en realidad!",
+                "¿Sigues trabajando en tus proyectos de EVARKION?"
             ]
         },
 
         {
             keywords: ["gracias"],
             answers: [
-                "¡No hay de qué! Estoy aquí para ayudarte. ❤️",
-                "¡Para eso estamos! Cuida mucho de Gounter."
-            ]
-        },
-
-        {
-            keywords: ["adios", "adiós", "hasta luego"],
-            answers: [
-                "¡Hasta pronto! Gounter y yo estaremos aquí.",
-                "¡Nos vemos! Que tengas un buen día. 🐾"
+                "¡De nada! Siempre estaré aquí. ❤️",
+                "¡Es un placer ayudarte!"
             ]
         }
 
     ];
 
-    /* =====================================
-       ELEGIR RESPUESTA
-    ===================================== */
+    /* RESPUESTA */
 
     function getResponse(text) {
 
-        const normalized = text.toLowerCase().trim();
+        const normalized = text.toLowerCase();
 
         for (const category of responses) {
 
-            const found = category.keywords.some(keyword =>
+            if (category.keywords.some(keyword =>
                 normalized.includes(keyword)
-            );
-
-            if (found) {
+            )) {
 
                 const index = Math.floor(
                     Math.random() * category.answers.length
@@ -122,72 +116,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 return category.answers[index];
             }
-
         }
 
-        const defaultResponses = [
-            "¡Interesante! Cuéntame un poquito más.",
-            "Estoy aquí para escucharte. 🐾",
-            "¿Qué te gustaría hacer con Gounter?",
-            "¡Podemos seguir explorando el refugio juntos!",
-            "No estoy segura de entenderte, pero quiero ayudarte."
-        ];
-
-        return defaultResponses[
-            Math.floor(Math.random() * defaultResponses.length)
-        ];
+        return "¡Cuéntame más! Estoy aquí para escucharte. 🐾";
     }
 
-    /* =====================================
-       AÑADIR MENSAJE
-    ===================================== */
+    /* MOSTRAR MENSAJES */
 
     function addMessage(text, type) {
 
-        const message = document.createElement("div");
+        const element = document.createElement("div");
 
-        message.classList.add("message");
+        element.classList.add("message");
 
-        if (type === "user") {
-            message.classList.add("user-message");
-        } else {
-            message.classList.add("karu-message");
-        }
+        element.classList.add(
+            type === "user" ? "user-message" : "karu-message"
+        );
 
-        message.textContent = text;
+        element.textContent = text;
 
-        messages.appendChild(message);
+        messages.appendChild(element);
 
         messages.scrollTop = messages.scrollHeight;
     }
 
-    /* =====================================
-       ENVIAR MENSAJE
-    ===================================== */
+    /* ENVIAR */
 
     function sendMessage(text) {
 
-        const cleanText = text.trim();
+        const clean = text.trim();
 
-        if (!cleanText) return;
+        if (!clean) return;
 
-        addMessage(cleanText, "user");
+        addMessage(clean, "user");
 
         input.value = "";
 
         setTimeout(() => {
 
-            const response = getResponse(cleanText);
-
-            addMessage(response, "karu");
+            addMessage(getResponse(clean), "karu");
 
         }, 500);
-
     }
-
-    /* =====================================
-       FORMULARIO
-    ===================================== */
 
     form.addEventListener("submit", event => {
 
@@ -197,9 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    /* =====================================
-       OPCIONES PREDETERMINADAS
-    ===================================== */
+    /* OPCIONES RÁPIDAS */
 
     options.addEventListener("click", event => {
 
@@ -207,29 +175,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!button) return;
 
-        const text = button.dataset.message;
-
-        if (text) {
-            sendMessage(text);
-        }
+        sendMessage(button.dataset.message);
 
     });
 
-    /* =====================================
-       MINIMIZAR CHAT
-    ===================================== */
+    /* MINIMIZAR */
 
-    minimizeButton.addEventListener("click", () => {
+    minimize.addEventListener("click", () => {
 
         chat.classList.toggle("minimized");
 
-        const minimized = chat.classList.contains("minimized");
+        const closed = chat.classList.contains("minimized");
 
-        minimizeButton.textContent = minimized ? "+" : "−";
+        minimize.textContent = closed ? "+" : "−";
 
-        minimizeButton.setAttribute(
+        minimize.setAttribute(
             "aria-label",
-            minimized ? "Abrir chat" : "Minimizar chat"
+            closed ? "Abrir chat" : "Minimizar chat"
         );
 
     });
