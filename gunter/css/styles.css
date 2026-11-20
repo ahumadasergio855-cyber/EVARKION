@@ -1,19 +1,19 @@
 
 /* ==========================================
    EVARKION - REFUGIO DE GUNTER
-   HABITACIÓN A PANTALLA GRANDE
+   FULLSCREEN + MARCO NARANJA + CHAT KARU
 ========================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-    --background: #090b16;
-    --panel: #17182d;
-    --text: #f4f1ff;
-    --muted: #a7a9c4;
+    --orange: #ff8c32;
+    --orange-light: #ffc078;
+    --orange-glow: #ff6a00;
     --purple: #a78bfa;
     --pink: #f0a6d5;
-    --cyan: #8ce8ed;
+    --text: #ffffff;
+    --muted: #c5c2d7;
 }
 
 * {
@@ -25,156 +25,129 @@
 html,
 body {
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    min-height: 100vh;
-    overflow-x: hidden;
-
-    padding: 18px 24px;
-
+    background: #080811;
     color: var(--text);
     font-family: 'Nunito', Arial, sans-serif;
-
-    background:
-        radial-gradient(ellipse at 50% 0%, #25254b 0%, transparent 55%),
-        linear-gradient(145deg, #080a15, #111329 55%, #090b17);
 }
 
 /* ==========================================
-   CONTENEDOR PRINCIPAL
+   CONTENEDOR
 ========================================== */
 
 .game-container {
+    position: fixed;
+    inset: 0;
     width: 100%;
-    max-width: 1700px;
-    margin: 0 auto;
+    height: 100%;
 }
 
 /* ==========================================
-   CABECERA
-========================================== */
-
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 17px;
-    padding: 0 4px;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.brand-icon {
-    width: 47px;
-    height: 47px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 14px;
-
-    background: linear-gradient(135deg, #a78bfa, #ec9acb);
-
-    color: #17152b;
-    font-size: 25px;
-
-    box-shadow: 0 0 25px #a78bfa55;
-}
-
-.brand h1 {
-    font-size: 19px;
-    font-weight: 900;
-    letter-spacing: 2px;
-}
-
-.brand p {
-    margin-top: 3px;
-
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.header-status {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    padding: 9px 15px;
-
-    border: 1px solid #ffffff16;
-    border-radius: 30px;
-
-    background: #ffffff08;
-
-    color: #c8c9df;
-    font-size: 12px;
-}
-
-.online-dot {
-    width: 8px;
-    height: 8px;
-
-    border-radius: 50%;
-    background: #7be6a6;
-
-    box-shadow: 0 0 10px #7be6a6;
-}
-
-/* ==========================================
-   MARCO DE LA HABITACIÓN
+   MARCO ANIMADO NARANJA
 ========================================== */
 
 .room-frame {
-    position: relative;
+    position: absolute;
+    inset: 9px;
 
-    width: 100%;
-    padding: 4px;
+    padding: 3px;
+    border-radius: 19px;
 
-    border-radius: 20px;
+    isolation: isolate;
+}
 
-    background: linear-gradient(
-        135deg,
-        #b79aff,
-        #f0a6d5,
-        #7bdde5
+/* Borde luminoso animado */
+
+.room-frame::before {
+    content: "";
+
+    position: absolute;
+    z-index: -1;
+
+    inset: -3px;
+    border-radius: 22px;
+
+    background: conic-gradient(
+        from 0deg,
+        #ff6a00,
+        #ffcf72,
+        #ff8c32,
+        #ff4d00,
+        #ffbd69,
+        #ff6a00
     );
 
-    box-shadow:
-        0 20px 70px #0009,
-        0 0 35px #a78bfa25;
+    background-size: 200% 200%;
+
+    animation: orangeFrame 5s linear infinite;
+
+    filter: blur(5px);
+}
+
+/* Borde exterior */
+
+.room-frame::after {
+    content: "";
+
+    position: absolute;
+    z-index: -2;
+
+    inset: -5px;
+    border-radius: 24px;
+
+    background: var(--orange);
+
+    filter: blur(16px);
+    opacity: 0.45;
+
+    animation: orangePulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes orangeFrame {
+    from {
+        filter: hue-rotate(0deg) blur(5px);
+    }
+
+    to {
+        filter: hue-rotate(-35deg) blur(5px);
+    }
+}
+
+@keyframes orangePulse {
+    from {
+        opacity: 0.25;
+        transform: scale(0.998);
+    }
+
+    to {
+        opacity: 0.75;
+        transform: scale(1.003);
+    }
 }
 
 /* ==========================================
-   ESCENARIO PRINCIPAL
+   HABITACIÓN
 ========================================== */
 
 .room {
     position: relative;
 
     width: 100%;
-
-    /* Ocupa casi toda la pantalla disponible */
-    height: clamp(520px, calc(100vh - 225px), 900px);
-    min-height: 520px;
+    height: 100%;
 
     overflow: hidden;
     isolation: isolate;
 
-    border-radius: 17px;
+    border-radius: 16px;
 
-    background: #17182d;
+    background: #151321;
 }
 
-/* ==========================================
-   FONDO ORIGINAL DE LA HABITACIÓN
-========================================== */
+/* Imagen de fondo */
 
 .room-background {
     position: absolute;
@@ -183,6 +156,7 @@ body {
     inset: 0;
 
     background-image: url("../assets/background/habitacion.png");
+
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -190,52 +164,160 @@ body {
     pointer-events: none;
 }
 
+/* Capa oscura muy sutil para facilitar lectura */
+
+.room-overlay {
+    position: absolute;
+    z-index: 1;
+
+    inset: 0;
+
+    background: linear-gradient(
+        180deg,
+        #09071665 0%,
+        transparent 25%,
+        transparent 70%,
+        #09071645 100%
+    );
+
+    pointer-events: none;
+}
+
 /* ==========================================
-   INDICADOR DE ESTADO
+   CABECERA SUPERPUESTA
+========================================== */
+
+.game-header {
+    position: absolute;
+    z-index: 50;
+
+    top: 20px;
+    left: 24px;
+    right: 24px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    pointer-events: none;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 11px 17px;
+
+    border: 1px solid #ffffff30;
+    border-radius: 15px;
+
+    background: #11101bc9;
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 6px 25px #0004;
+}
+
+.brand-icon {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #ffb15d,
+        #ff7135
+    );
+
+    color: #351b0b;
+    font-size: 23px;
+
+    box-shadow: 0 0 20px #ff8c3266;
+}
+
+.brand h1 {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+}
+
+.brand p {
+    margin-top: 2px;
+
+    color: #d3c9dd;
+    font-size: 10px;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border: 1px solid #ffffff30;
+    border-radius: 30px;
+
+    background: #11101bc9;
+    backdrop-filter: blur(12px);
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.online-dot,
+.status-light,
+.chat-online-dot {
+    width: 8px;
+    height: 8px;
+
+    display: inline-block;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #7be6a6;
+    box-shadow: 0 0 10px #7be6a6;
+}
+
+/* ==========================================
+   ESTADO DE GUNTER
 ========================================== */
 
 #status-indicator {
     position: absolute;
-    z-index: 40;
+    z-index: 45;
 
-    top: 18px;
-    left: 18px;
+    top: 95px;
+    left: 24px;
 
     display: flex;
     align-items: center;
     gap: 9px;
 
-    max-width: calc(100% - 36px);
+    max-width: calc(100% - 48px);
 
-    padding: 10px 16px;
+    padding: 10px 15px;
 
     border: 1px solid #ffffff30;
     border-radius: 30px;
 
-    background: #17172ad9;
-    backdrop-filter: blur(10px);
+    background: #151321c9;
+    backdrop-filter: blur(12px);
 
-    color: #f2eafa;
-    font-size: 12px;
+    color: white;
+    font-size: 11px;
     font-weight: 800;
 
     box-shadow: 0 5px 20px #0003;
 }
 
-.status-light {
-    width: 8px;
-    height: 8px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-    background: #8de7b0;
-
-    box-shadow: 0 0 10px #8de7b0;
-}
-
 /* ==========================================
-   OBJETOS INTERACTIVOS
+   OBJETOS DEL JUEGO
 ========================================== */
 
 .game-object {
@@ -267,7 +349,7 @@ body {
 
     object-fit: contain;
 
-    filter: drop-shadow(0 9px 6px #0008);
+    filter: drop-shadow(0 9px 6px #0009);
 
     pointer-events: none;
     -webkit-user-drag: none;
@@ -285,17 +367,16 @@ body {
 .object-label {
     padding: 4px 11px;
 
-    border: 1px solid #ffffff30;
+    border: 1px solid #ffffff35;
     border-radius: 20px;
 
-    background: #282039e8;
+    background: #171321e8;
 
     color: white;
     font-size: 10px;
     font-weight: 900;
 
     opacity: 0;
-
     transform: translateY(5px);
 
     transition: 0.2s ease;
@@ -307,7 +388,7 @@ body {
     transform: translateY(0);
 }
 
-/* POSICIONES INICIALES */
+/* Posiciones iniciales */
 
 .object-food {
     left: 13%;
@@ -330,7 +411,7 @@ body {
 }
 
 /* ==========================================
-   PERSONAJE GUNTER
+   GUNTER
 ========================================== */
 
 .gunter-character {
@@ -396,31 +477,29 @@ body {
 }
 
 /* ==========================================
-   MENSAJE DE ACCIÓN
+   MENSAJE DE INTERACCIÓN
 ========================================== */
 
 .action-message {
     position: absolute;
     z-index: 45;
 
-    left: 50%;
-    bottom: 17px;
+    left: 24px;
+    bottom: 23px;
 
-    transform: translateX(-50%);
+    max-width: min(360px, 45%);
 
-    max-width: 85%;
-    padding: 10px 20px;
+    padding: 12px 17px;
 
     border: 1px solid #ffffff35;
-    border-radius: 30px;
+    border-radius: 13px;
 
-    background: #17152de8;
-    backdrop-filter: blur(10px);
+    background: #151321d9;
+    backdrop-filter: blur(12px);
 
-    color: #f6eaff;
+    color: white;
     font-size: 12px;
     font-weight: 800;
-    text-align: center;
 
     box-shadow: 0 5px 20px #0004;
 }
@@ -430,17 +509,17 @@ body {
 ========================================== */
 
 .game-object.selected {
-    filter: drop-shadow(0 0 13px #d7b4ff);
+    filter: drop-shadow(0 0 13px #ffb66b);
 }
 
 .game-object.selected img {
     filter:
-        drop-shadow(0 0 8px #e4c4ff)
+        drop-shadow(0 0 8px #ffbd72)
         drop-shadow(0 9px 6px #0008);
 }
 
 /* ==========================================
-   VIÑETA DEL ESCENARIO
+   VIÑETA
 ========================================== */
 
 .room-vignette {
@@ -452,72 +531,114 @@ body {
     pointer-events: none;
 
     box-shadow:
-        inset 0 0 70px #140b2b30,
-        inset 0 -30px 55px #140b2b20;
+        inset 0 0 75px #140b2b35,
+        inset 0 -35px 55px #140b2b30;
 }
 
 /* ==========================================
-   PANEL DE KARU
+   AVATAR FLOTANTE DE KARU
 ========================================== */
 
-.karu-panel {
-    position: relative;
+.karu-launcher {
+    position: fixed;
+    z-index: 110;
+
+    right: 28px;
+    bottom: 27px;
+
+    width: 82px;
+    height: 82px;
 
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: center;
 
-    margin-top: 15px;
-    padding: 15px 22px;
-
-    border: 1px solid #ffffff17;
-    border-radius: 18px;
-
-    background: linear-gradient(
-        120deg,
-        #1b1d37,
-        #171629
-    );
-
-    box-shadow: 0 12px 35px #0003;
-}
-
-/* AVATAR */
-
-.karu-avatar-button {
-    position: relative;
-    flex-shrink: 0;
-
-    width: 75px;
-    height: 75px;
-
-    display: grid;
-    place-items: center;
-
+    border: 3px solid #ffae63;
     border-radius: 50%;
 
     background: linear-gradient(
-        135deg,
-        #b99aff,
-        #f0a6d5
+        145deg,
+        #a78bfa,
+        #e99dc9
     );
 
-    box-shadow: 0 0 22px #b99aff35;
-}
-
-#karu-avatar {
-    width: 67px;
-    height: 67px;
-
-    object-fit: contain;
-
     cursor: pointer;
+
+    box-shadow:
+        0 0 0 5px #ff8c3222,
+        0 0 25px #ff8c3280;
 
     transition: transform 0.25s ease;
 }
 
-#karu-avatar:hover {
-    transform: scale(1.1) rotate(-5deg);
+.karu-launcher:hover {
+    transform: translateY(-5px) scale(1.05);
+}
+
+.karu-launcher img {
+    position: relative;
+    z-index: 2;
+
+    width: 90%;
+    height: 90%;
+
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.karu-online {
+    position: absolute;
+    z-index: 3;
+
+    right: 3px;
+    bottom: 5px;
+
+    width: 13px;
+    height: 13px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #7be6a6;
+}
+
+.karu-launcher-label {
+    position: absolute;
+
+    right: 0;
+    bottom: -24px;
+
+    padding: 3px 10px;
+
+    border-radius: 15px;
+
+    background: #171321e8;
+
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.karu-launcher-glow {
+    position: absolute;
+    inset: -7px;
+
+    border: 2px solid #ffb66b88;
+    border-radius: 50%;
+
+    animation: karuGlow 2s ease-in-out infinite;
+}
+
+@keyframes karuGlow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.17);
+        opacity: 0.15;
+    }
 }
 
 #karu-avatar.talking {
@@ -534,200 +655,322 @@ body {
     }
 }
 
-.karu-online {
-    position: absolute;
+/* ==========================================
+   CHAT FLOTANTE
+========================================== */
 
-    right: 3px;
-    bottom: 5px;
+.karu-chat {
+    position: fixed;
+    z-index: 105;
 
-    width: 12px;
-    height: 12px;
+    right: 27px;
+    bottom: 125px;
 
-    border: 2px solid #1b1d37;
-    border-radius: 50%;
+    width: min(350px, calc(100vw - 30px));
+    height: 430px;
 
-    background: #7be6a6;
-    box-shadow: 0 0 10px #7be6a6;
-}
-
-/* CONVERSACIÓN */
-
-.karu-conversation {
-    flex: 1;
-    min-width: 0;
-}
-
-.karu-heading {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 
-    margin-bottom: 5px;
+    overflow: hidden;
+
+    border: 1px solid #ffad6266;
+    border-radius: 19px;
+
+    background: #151321f5;
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 15px 55px #0009,
+        0 0 25px #ff8c3225;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(15px) scale(0.96);
+    transform-origin: bottom right;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s ease;
 }
 
-.karu-heading h2 {
-    font-size: 17px;
+.karu-chat.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* CABECERA DEL CHAT */
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 15px;
+
+    border-bottom: 1px solid #ffffff18;
+
+    background: linear-gradient(
+        120deg,
+        #342341,
+        #252039
+    );
+}
+
+.chat-character {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-avatar {
+    width: 43px;
+    height: 43px;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, #b99aff, #f0a6d5);
+}
+
+.chat-avatar img {
+    width: 95%;
+    height: 95%;
+    object-fit: contain;
+}
+
+.chat-character h2 {
+    font-size: 14px;
     font-weight: 900;
 }
 
-.karu-heading div span {
-    color: var(--muted);
-    font-size: 11px;
+.chat-character div:last-child span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 3px;
+
+    color: #c7c0d7;
+    font-size: 10px;
 }
 
-.karu-bubble-icon {
-    color: var(--purple);
-    font-size: 22px;
+.chat-online-dot {
+    width: 6px;
+    height: 6px;
 }
 
-#karu-text {
-    color: #c9c8df;
-    font-size: 13px;
-    line-height: 1.6;
+.chat-close {
+    width: 30px;
+    height: 30px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #ffffff15;
+
+    color: white;
+    font-size: 23px;
+
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-/* BOTÓN KARU */
+.chat-close:hover {
+    background: #ff8c3244;
+}
 
-.talk-button {
-    flex-shrink: 0;
+/* MENSAJES */
 
-    padding: 12px 17px;
+.chat-messages {
+    flex: 1;
 
-    border: 1px solid #c3a1ff55;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    overflow-y: auto;
+
+    padding: 15px;
+}
+
+.chat-message {
+    width: fit-content;
+    max-width: 88%;
+
+    padding: 10px 12px;
+
+    border-radius: 13px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+    animation: messageAppear 0.2s ease;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.karu-message {
+    align-self: flex-start;
+
+    border: 1px solid #b99aff30;
+    border-bottom-left-radius: 3px;
+
+    background: #342b4b;
+    color: #f3eaff;
+}
+
+.user-message {
+    align-self: flex-end;
+
+    border: 1px solid #ffae6344;
+    border-bottom-right-radius: 3px;
+
+    background: #774a34;
+    color: white;
+}
+
+.message-author {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #ffca91;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+}
+
+/* ENTRADA DE MENSAJES */
+
+.chat-input-area {
+    display: flex;
+    gap: 8px;
+
+    padding: 12px;
+
+    border-top: 1px solid #ffffff18;
+    background: #100f1c;
+}
+
+.chat-input-area input {
+    flex: 1;
+    min-width: 0;
+
+    padding: 11px 13px;
+
+    outline: none;
+
+    border: 1px solid #ffffff20;
     border-radius: 12px;
 
-    background: linear-gradient(
-        135deg,
-        #8d70d8,
-        #ba80bd
-    );
+    background: #242136;
 
     color: white;
     font-family: inherit;
     font-size: 12px;
+}
+
+.chat-input-area input::placeholder {
+    color: #9993ac;
+}
+
+.chat-input-area input:focus {
+    border-color: #ffae63;
+    box-shadow: 0 0 0 2px #ff8c3220;
+}
+
+.chat-input-area button {
+    width: 42px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: linear-gradient(135deg, #ffb15d, #ff7135);
+
+    color: #321a0c;
+    font-size: 19px;
     font-weight: 900;
 
     cursor: pointer;
-
-    transition: 0.2s ease;
+    transition: 0.2s;
 }
 
-.talk-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 20px #a78bfa44;
-}
-
-.talk-button span {
-    margin-left: 7px;
+.chat-input-area button:hover {
+    filter: brightness(1.15);
+    transform: scale(1.04);
 }
 
 /* ==========================================
-   PIE DE PÁGINA
+   RESPONSIVE
 ========================================== */
 
-.game-footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
+@media (max-width: 650px) {
 
-    margin-top: 12px;
-    padding: 0 5px;
-
-    color: #777b9b;
-    font-size: 11px;
-}
-
-.heart {
-    color: #f09acb;
-}
-
-/* ==========================================
-   RESPONSIVE - TABLETS
-========================================== */
-
-@media (max-width: 850px) {
-
-    body {
-        padding: 15px;
-    }
-
-    .room {
-        height: 65vh;
-        min-height: 480px;
-    }
-
-    .game-object {
-        width: 90px;
-        height: 105px;
-    }
-
-    .gunter-character {
-        width: 160px;
-        height: 185px;
-    }
-
-    .karu-panel {
-        gap: 14px;
-    }
-
-}
-
-/* ==========================================
-   RESPONSIVE - MÓVILES
-========================================== */
-
-@media (max-width: 600px) {
-
-    body {
-        padding: 12px 9px;
+    .room-frame {
+        inset: 6px;
+        padding: 3px;
     }
 
     .game-header {
-        gap: 10px;
-        margin-bottom: 12px;
+        top: 13px;
+        left: 12px;
+        right: 12px;
+        align-items: flex-start;
     }
 
     .brand {
-        gap: 9px;
+        gap: 8px;
+        padding: 8px 10px;
     }
 
     .brand-icon {
-        width: 39px;
-        height: 39px;
-        font-size: 20px;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
     }
 
     .brand h1 {
-        font-size: 13px;
+        font-size: 11px;
         letter-spacing: 1px;
     }
 
     .brand p {
-        font-size: 9px;
+        font-size: 8px;
     }
 
     .header-status {
-        padding: 7px 9px;
+        padding: 8px;
         font-size: 9px;
     }
 
-    .room {
-        height: 65vh;
-        min-height: 430px;
-    }
-
-    .room-background {
-        background-position: center;
+    #status-indicator {
+        top: 76px;
+        left: 12px;
+        font-size: 9px;
+        padding: 8px 11px;
     }
 
     .game-object {
-        width: 67px;
-        height: 80px;
-    }
-
-    .game-object img {
-        width: 85%;
-        height: 85%;
+        width: 65px;
+        height: 75px;
     }
 
     .object-food {
@@ -747,75 +990,43 @@ body {
     }
 
     .gunter-character {
-        width: 120px;
-        height: 145px;
-    }
-
-    .karu-panel {
-        flex-wrap: wrap;
-        padding: 13px;
-        gap: 12px;
-    }
-
-    .karu-avatar-button {
-        width: 60px;
-        height: 60px;
-    }
-
-    #karu-avatar {
-        width: 54px;
-        height: 54px;
-    }
-
-    .karu-conversation {
-        flex: 1;
-    }
-
-    #karu-text {
-        font-size: 11px;
-    }
-
-    .talk-button {
-        width: 100%;
-    }
-
-    .game-footer {
-        flex-direction: column;
-        text-align: center;
-        gap: 5px;
-    }
-
-}
-
-/* ==========================================
-   PANTALLAS MUY PEQUEÑAS
-========================================== */
-
-@media (max-width: 380px) {
-
-    .room {
-        min-height: 400px;
-    }
-
-    .game-object {
-        width: 58px;
-        height: 70px;
-    }
-
-    .gunter-character {
-        width: 105px;
-        height: 125px;
-    }
-
-    #status-indicator {
-        top: 10px;
-        left: 10px;
-        font-size: 10px;
+        width: 115px;
+        height: 140px;
     }
 
     .action-message {
+        left: 12px;
+        bottom: 15px;
+
+        max-width: calc(100% - 115px);
+
         font-size: 10px;
-        max-width: 92%;
+        padding: 9px 11px;
     }
 
+    .karu-launcher {
+        right: 17px;
+        bottom: 22px;
+
+        width: 66px;
+        height: 66px;
+    }
+
+    .karu-chat {
+        right: 12px;
+        bottom: 105px;
+
+        width: min(340px, calc(100vw - 24px));
+        height: 390px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
 }
