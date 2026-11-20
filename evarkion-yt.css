@@ -850,3 +850,33 @@ button {
         animation-duration: 0.01ms !important;
     }
 }
+
+
+/* =========================================
+   REFUGIO GUNTER
+========================================= */
+
+.gunter-link {
+    position: relative;
+    overflow: hidden;
+    color: #e8c9a5;
+    border: 1px solid rgba(225, 190, 145, 0.15);
+    background: rgba(225, 190, 145, 0.04);
+    transition: all 0.3s ease;
+}
+
+.gunter-link .nav-icon {
+    font-size: 19px;
+    transition: transform 0.3s ease;
+}
+
+.gunter-link:hover {
+    color: #fff1d9;
+    background: rgba(225, 190, 145, 0.13);
+    border-color: rgba(225, 190, 145, 0.5);
+    box-shadow: 0 0 15px rgba(225, 190, 145, 0.12);
+}
+
+.gunter-link:hover .nav-icon {
+    transform: scale(1.2) rotate(-8deg);
+}
